@@ -23,7 +23,7 @@ const DrawerDetail = ({ doc, onClose, onSave }) => {
   if (!doc) return null;
 
   const typeInfo = DOC_TYPES[doc.type] || DOC_TYPES.inne;
-  const statusInfo = DOC_STATUSES[doc.status] || DOC_STATUSES.draft;
+  const statusInfo = DOC_STATUSES[doc.status] || null;
   const user = USERS_LIST.find(u => u.id === doc.assignee);
   const cls = CLASSIFICATIONS.find(c => c.code === doc.classification);
   const docAlerts = computeAlerts(doc);
@@ -166,7 +166,7 @@ const DrawerDetail = ({ doc, onClose, onSave }) => {
           <div style={{ minWidth: 0, flex: 1 }}>
             <div style={{ ...S.row, gap: 6 }}>
               <span style={{ ...typo.titleSmall, color: DS.primaryMain, fontWeight: 700, fontSize: 14, ...S.truncate }}>{doc.number || "Bez numeru"}</span>
-              <Badge color={statusInfo.color} bg={statusInfo.bg}>{statusInfo.label}</Badge>
+              {statusInfo && <Badge color={statusInfo.color} bg={statusInfo.bg}>{statusInfo.label}</Badge>}
             </div>
             <div style={{ ...typo.bodySmall, color: DS.textSecondary, fontSize: 11, marginTop: 1, ...S.truncate }}>
               {typeInfo.label} &bull; {doc.contractor || "Brak kontrahenta"}
@@ -259,7 +259,7 @@ const DrawerDetail = ({ doc, onClose, onSave }) => {
                 <FieldRow label="Klasyfikacja" value={cls ? `${cls.code} — ${cls.label}` : "—"} />
                 <FieldRow label="Wydział" value={doc.dept} />
                 <FieldRow label="Osoba odpow." value={user?.name} />
-                <FieldRow label="Status" value={<Badge color={statusInfo.color} bg={statusInfo.bg}>{statusInfo.label}</Badge>} />
+                <FieldRow label="Status" value={statusInfo ? <Badge color={statusInfo.color} bg={statusInfo.bg}>{statusInfo.label}</Badge> : "—"} />
 
                 {/* Tags */}
                 {doc.tags && doc.tags.length > 0 && (

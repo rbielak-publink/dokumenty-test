@@ -48,9 +48,10 @@ const App = () => {
   // View tabs state (P3 — system + custom)
   const [viewTabs, setViewTabs] = useState([
     { id: "all", label: "Wszystkie", system: true },
-    { id: "do_kontrasygnaty", label: "Do kontrasygnaty", system: true },
+    { id: "w_przygotowaniu", label: "W przygotowaniu", system: true },
     { id: "w_realizacji", label: "W realizacji", system: true },
-    { id: "drafts", label: "Szkice", system: true },
+    { id: "do_weryfikacji", label: "Do weryfikacji", system: true },
+    { id: "zakonczone", label: "Zakończone", system: true },
   ]);
   const [activeTab, setActiveTab] = useState("all");
 
@@ -63,18 +64,16 @@ const App = () => {
       case "faktury": result = result.filter(d => d.type === "faktura"); break;
       case "zlecenia": result = result.filter(d => d.type === "zlecenie"); break;
       case "inne": result = result.filter(d => d.type === "aneks" || d.type === "inne"); break;
-      case "do_kontrasygnaty": result = result.filter(d => d.status === "do_kontrasygnaty"); break;
-      case "do_zatwierdzenia": result = result.filter(d => d.status === "do_zatwierdzenia"); break;
-      case "drafts": result = result.filter(d => d.status === "draft"); break;
       case "bez_klasyfikacji": result = result.filter(d => !d.classification); break;
       case "z_alertami": result = result.filter(d => d.alerts && d.alerts.length > 0); break;
     }
 
     // Apply tab filter (on top of sidebar)
     switch (activeTab) {
-      case "do_kontrasygnaty": result = result.filter(d => d.status === "do_kontrasygnaty"); break;
-      case "w_realizacji": result = result.filter(d => d.status === "aktywny"); break;
-      case "drafts": result = result.filter(d => d.status === "draft"); break;
+      case "w_przygotowaniu": result = result.filter(d => d.status === "w_przygotowaniu"); break;
+      case "w_realizacji": result = result.filter(d => d.status === "w_realizacji"); break;
+      case "do_weryfikacji": result = result.filter(d => d.status === "do_weryfikacji"); break;
+      case "zakonczone": result = result.filter(d => d.status === "zakonczone" || d.status === "oplacona"); break;
     }
 
     // Apply type filter from DocTypeFilterBar
@@ -114,9 +113,10 @@ const App = () => {
     faktury: docs.filter(d => d.type === "faktura").length,
     zlecenia: docs.filter(d => d.type === "zlecenie").length,
     inne: docs.filter(d => d.type === "aneks" || d.type === "inne").length,
-    doKontrasygnaty: docs.filter(d => d.status === "do_kontrasygnaty").length,
-    doZatwierdzenia: docs.filter(d => d.status === "do_zatwierdzenia").length,
-    drafts: docs.filter(d => d.status === "draft").length,
+    wPrzygotowaniu: docs.filter(d => d.status === "w_przygotowaniu").length,
+    wRealizacji: docs.filter(d => d.status === "w_realizacji").length,
+    doWeryfikacji: docs.filter(d => d.status === "do_weryfikacji").length,
+    zakonczone: docs.filter(d => d.status === "zakonczone" || d.status === "oplacona").length,
     bezKlasyfikacji: docs.filter(d => !d.classification).length,
     zAlertami: docs.filter(d => d.alerts && d.alerts.length > 0).length,
   }), [docs]);
@@ -125,9 +125,10 @@ const App = () => {
   const tabsWithCounts = viewTabs.map(t => ({
     ...t,
     count: t.id === "all" ? docs.length
-      : t.id === "do_kontrasygnaty" ? docCounts.doKontrasygnaty
-      : t.id === "w_realizacji" ? docs.filter(d => d.status === "aktywny").length
-      : t.id === "drafts" ? docCounts.drafts
+      : t.id === "w_przygotowaniu" ? docCounts.wPrzygotowaniu
+      : t.id === "w_realizacji" ? docCounts.wRealizacji
+      : t.id === "do_weryfikacji" ? docCounts.doWeryfikacji
+      : t.id === "zakonczone" ? docCounts.zakonczone
       : undefined,
     removable: !t.system,
   }));
@@ -175,8 +176,7 @@ const App = () => {
   const viewLabel = {
     all: "Dokumenty", umowy: "Umowy", faktury: "Faktury",
     zlecenia: "Zlecenia", inne: "Inne dokumenty",
-    do_kontrasygnaty: "Do kontrasygnaty", do_zatwierdzenia: "Do zatwierdzenia",
-    drafts: "Szkice", bez_klasyfikacji: "Bez klasyfikacji", z_alertami: "Z alertami",
+    bez_klasyfikacji: "Bez klasyfikacji", z_alertami: "Z alertami",
     podsumowanie: "Monitor", kontrahenci: "Kontrahenci", foldery: "Foldery",
     ksef: "KSeF — Krajowy System e-Faktur", inwestycje: "Inwestycje", ustawienia: "Ustawienia",
   };

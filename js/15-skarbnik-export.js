@@ -6,7 +6,7 @@ const SkarbnikSummary = ({ docs, onSelectDoc, onNavigateFiltered }) => {
 
   /* ── data ── */
   const totalGross = docs.reduce((s, d) => s + (d.grossValue || 0), 0);
-  const activeUmowy = docs.filter(d => d.type === "umowa" && d.status === "aktywny");
+  const activeUmowy = docs.filter(d => d.type === "umowa" && d.status === "w_realizacji");
   const umowyVal = activeUmowy.reduce((s,d) => s + (d.grossValue||0), 0);
   const fakturyAll = docs.filter(d => d.type === "faktura");
   const fakturyVal = fakturyAll.reduce((s,d) => s + (d.grossValue||0), 0);
@@ -20,10 +20,10 @@ const SkarbnikSummary = ({ docs, onSelectDoc, onNavigateFiltered }) => {
 
   /* ── KPI config ── */
   const kpis = [
-    { label: "Aktywne umowy", value: activeUmowy.length, sub: formatCurrency(umowyVal), icon: "file", color: DS.primaryLightUmowyMain, bg: DS.primaryLightUmowyLighter,
-      onClick: () => onNavigateFiltered("umowa", { status: ["aktywny"] }) },
+    { label: "Umowy w realizacji", value: activeUmowy.length, sub: formatCurrency(umowyVal), icon: "file", color: DS.primaryLightUmowyMain, bg: DS.primaryLightUmowyLighter,
+      onClick: () => onNavigateFiltered("umowa", { status: ["w_realizacji"] }) },
     { label: "Faktury", value: fakturyAll.length, sub: formatCurrency(fakturyVal), icon: "receipt", color: "#0A7BE5", bg: "#E0EEFF",
-      onClick: () => onNavigateFiltered("faktura", { status: ["zatwierdzony"] }) },
+      onClick: () => onNavigateFiltered("faktura", { status: ["zweryfikowana"] }) },
     { label: "Wartość umów", value: formatCurrency(allUmowyVal), sub: `${allUmowy.length} umów`, icon: "trendingUp", color: DS.successDark, bg: DS.successLighter,
       onClick: () => onNavigateFiltered("umowa", {}), isAmount: true },
     { label: "Alerty", value: allAlertDocs.length, sub: `${new Set(allAlertDocs.map(a=>a.doc.id)).size} dok.`, icon: "zap", color: DS.errorDark, bg: DS.errorLighter,

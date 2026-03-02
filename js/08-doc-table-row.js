@@ -5,7 +5,7 @@ const EDITABLE_COLS = ["type", "number", "nrEwidencyjny", "title", "contractor",
 
 const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiSelectMode, expandedRows, toggleExpand, hoveredRow, setHoveredRow, setFilePreview, onToggleSelect, onSelectDoc, colStyle, onUpdateDoc }) => {
   const typeInfo = DOC_TYPES[doc.type] || DOC_TYPES.inne;
-  const statusInfo = DOC_STATUSES[doc.status] || DOC_STATUSES.draft;
+  const statusInfo = DOC_STATUSES[doc.status] || null;
   const isSelected = selectedId === doc.id;
   const isChecked = selectedIds.has(doc.id);
   const isZebra = idx % 2 === 1;
@@ -121,12 +121,14 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
         {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
       </select>;
     }
-    // Select for status
+    // Select for status — filtered by document type
     if (key === "status") {
+      const allowedStatuses = DOC_TYPE_STATUSES[doc.type] || [];
+      if (allowedStatuses.length === 0) return <span style={{ ...typo.bodySmall, color: DS.textDisabled }}>—</span>;
       return <select value={editValue} onChange={e => setEditValue(e.target.value)}
         onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
         autoFocus style={{ ...inputStyle, cursor: "pointer" }}>
-        {Object.entries(DOC_STATUSES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+        {allowedStatuses.map(k => <option key={k} value={k}>{DOC_STATUSES[k]?.label || k}</option>)}
       </select>;
     }
     // Date input
@@ -249,7 +251,7 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
       </div>}
       {showCol("status") && <div style={{ ...colStyle("status"), padding: "8px 6px", background: editingCell === "status" ? editCellBg : undefined }} {...editableCellProps("status")}>
         {editingCell === "status" ? renderEditInput("status") :
-          <Badge color={statusInfo.color} bg={statusInfo.bg}>{statusInfo.label}</Badge>}
+          statusInfo ? <Badge color={statusInfo.color} bg={statusInfo.bg}>{statusInfo.label}</Badge> : <span style={{ ...typo.bodySmall, color: DS.textDisabled }}>—</span>}
       </div>}
       {/* Actions column — children counter only */}
       <div style={{ width: 60, minWidth: 60, flex: "0 0 auto", padding: "8px 6px", ...S.row, gap: 6, justifyContent: "flex-end" }}>
