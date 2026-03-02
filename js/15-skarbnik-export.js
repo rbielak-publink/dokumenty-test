@@ -76,12 +76,12 @@ const SkarbnikSummary = ({ docs, onSelectDoc, onNavigateFiltered }) => {
         {kpis.map((kpi, i) => (
           <div key={i} onClick={kpi.onClick || undefined}
             style={{
-              background: DS.neutralWhite, borderRadius: 10, border: `1px solid ${DS.borderLightLight}`,
+              background: DS.neutralWhite, borderRadius: 10, border: `1px solid ${kpi.color}40`,
               padding: "14px 16px", cursor: kpi.onClick ? "pointer" : "default",
               transition: "all 0.15s", position: "relative",
             }}
             onMouseEnter={e => { if (kpi.onClick) { e.currentTarget.style.borderColor = kpi.color; e.currentTarget.style.boxShadow = `0 2px 8px ${kpi.color}15`; }}}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = DS.borderLightLight; e.currentTarget.style.boxShadow = "none"; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = kpi.color + "40"; e.currentTarget.style.boxShadow = "none"; }}
           >
             <div style={{ ...S.row, gap: 8, marginBottom: 8 }}>
               <div style={{ width: 30, height: 30, borderRadius: 8, background: kpi.bg, ...S.row, justifyContent: "center" }}>
