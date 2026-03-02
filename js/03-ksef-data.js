@@ -1,0 +1,176 @@
+/* ═══════════════════════════════════════════════════════════════
+   KSEF — MOCK INVOICES (inbox from Krajowy System e-Faktur)
+   ═══════════════════════════════════════════════════════════════ */
+const KSEF_STATUSES = {
+  nowy: { label: "Nowy", color: "#2563EB", bg: "#DBEAFE", icon: "inbox" },
+  przypisany: { label: "Przypisany", color: "#7C3AED", bg: "#EDE9FE", icon: "user" },
+  zweryfikowany: { label: "Zweryfikowany", color: "#16A34A", bg: "#DCFCE7", icon: "check" },
+  odrzucony: { label: "Odrzucony", color: "#DC2626", bg: "#FEE2E2", icon: "x" },
+};
+
+const INIT_KSEF_INVOICES = [
+  {
+    id: "ks1", nrKsef: "5265877635-20260204-0200A0D6723E-C2", status: "nowy",
+    seller: { nip: "526-025-09-95", name: "Orange Polska S.A.", address: "Al. Jerozolimskie 160, 02-326 Warszawa" },
+    buyer: { nip: "631-10-00-640", name: "Powiat Gliwicki", address: "ul. Zygmunta Starego 17, 44-100 Gliwice" },
+    invoiceNumber: "11-106205-02267", issueDate: "2026-02-04", sellDate: "2026-01-31",
+    dueDate: "2026-03-04", paymentMethod: "przelew",
+    items: [
+      { nr: 1, name: "Abonament telefoniczny — pakiet urzędowy", unit: "szt.", qty: 5, unitPrice: 23.00, netValue: 115.00, vatRate: "23%", vatAmount: 26.45, grossValue: 141.45 },
+    ],
+    netTotal: 115.00, vatTotal: 26.45, grossTotal: 141.45, currency: "PLN",
+    receivedAt: "2026-02-04T08:12:33Z", isCorrection: false,
+  },
+  {
+    id: "ks2", nrKsef: "2310014012-20260210-4FA82B1C90DE-A1", status: "nowy",
+    seller: { nip: "231-001-40-12", name: "TAURON Dystrybucja S.A.", address: "ul. Podgórska 25A, 31-035 Kraków" },
+    buyer: { nip: "631-10-00-640", name: "Powiat Gliwicki", address: "ul. Zygmunta Starego 17, 44-100 Gliwice" },
+    invoiceNumber: "D/DO/BN009193/0045/26", issueDate: "2026-02-10", sellDate: "2026-01-31",
+    dueDate: "2026-03-10", paymentMethod: "przelew",
+    items: [
+      { nr: 1, name: "Energia elektryczna — taryfa C11 (budynek główny)", unit: "kWh", qty: 4200, unitPrice: 0.0685, netValue: 287.70, vatRate: "23%", vatAmount: 66.17, grossValue: 353.87 },
+      { nr: 2, name: "Opłata dystrybucyjna stała", unit: "mies.", qty: 1, unitPrice: 100.00, netValue: 100.00, vatRate: "23%", vatAmount: 23.00, grossValue: 123.00 },
+    ],
+    netTotal: 387.70, vatTotal: 89.17, grossTotal: 476.87, currency: "PLN",
+    receivedAt: "2026-02-10T10:45:12Z", isCorrection: false,
+  },
+  {
+    id: "ks3", nrKsef: "6211766191-20260210-8BC1DE4F5A67-B3", status: "nowy",
+    seller: { nip: "621-176-61-91", name: "Dino Polska S.A.", address: "ul. Ostrowska 122, 63-700 Krotoszyn" },
+    buyer: { nip: "631-10-00-640", name: "Powiat Gliwicki", address: "ul. Zygmunta Starego 17, 44-100 Gliwice" },
+    invoiceNumber: "P/10459/2026/00015", issueDate: "2026-02-10", sellDate: "2026-02-10",
+    dueDate: "2026-02-24", paymentMethod: "przelew",
+    items: [
+      { nr: 1, name: "Artykuły spożywcze — catering narada", unit: "kpl.", qty: 1, unitPrice: 159.00, netValue: 159.00, vatRate: "8%", vatAmount: 12.72, grossValue: 171.72 },
+      { nr: 2, name: "Woda mineralna 0,5l (karton 24 szt.)", unit: "krt.", qty: 2, unitPrice: 18.155, netValue: 36.31, vatRate: "23%", vatAmount: 8.35, grossValue: 44.66 },
+    ],
+    netTotal: 195.31, vatTotal: 9.77, grossTotal: 205.08, currency: "PLN",
+    receivedAt: "2026-02-10T14:22:05Z", isCorrection: false,
+  },
+  {
+    id: "ks4", nrKsef: "5830018931-20260206-C1D2E3F4A5B6-D4", status: "nowy",
+    seller: { nip: "583-001-89-31", name: "Wolters Kluwer Polska Sp. z o.o.", address: "ul. Przyokopowa 33, 01-208 Warszawa" },
+    buyer: { nip: "631-10-00-640", name: "Powiat Gliwicki", address: "ul. Zygmunta Starego 17, 44-100 Gliwice" },
+    invoiceNumber: "1526054239", issueDate: "2026-02-06", sellDate: "2026-02-01",
+    dueDate: "2026-03-06", paymentMethod: "przelew",
+    items: [
+      { nr: 1, name: "Lex Omega — dostęp roczny (licencja stanowiskowa x3)", unit: "szt.", qty: 3, unitPrice: 174.963, netValue: 524.89, vatRate: "23%", vatAmount: 120.72, grossValue: 645.61 },
+    ],
+    netTotal: 524.89, vatTotal: 120.72, grossTotal: 645.61, currency: "PLN",
+    receivedAt: "2026-02-06T09:33:18Z", isCorrection: false,
+  },
+  {
+    id: "ks5", nrKsef: "7792369461-20260208-A1B2C3D4E5F6-E5", status: "nowy",
+    seller: { nip: "779-236-94-61", name: "ACS Audika Sp. z o.o.", address: "ul. Batorego 18, 02-591 Warszawa" },
+    buyer: { nip: "631-10-00-640", name: "Powiat Gliwicki", address: "ul. Zygmunta Starego 17, 44-100 Gliwice" },
+    invoiceNumber: "FV/KOR/2026/02/001", issueDate: "2026-02-08", sellDate: "2026-02-01",
+    dueDate: "2026-02-22", paymentMethod: "przelew",
+    items: [
+      { nr: 1, name: "Korekta — serwis aparatów słuchowych (nadpłata)", unit: "usł.", qty: 1, unitPrice: -81.30, netValue: -81.30, vatRate: "23%", vatAmount: -18.70, grossValue: -100.00 },
+    ],
+    netTotal: -81.30, vatTotal: -18.70, grossTotal: -100.00, currency: "PLN",
+    receivedAt: "2026-02-08T11:05:44Z", isCorrection: true,
+  },
+  {
+    id: "ks6", nrKsef: "9111234567-20260218-F6E5D4C3B2A1-F6", status: "przypisany",
+    seller: { nip: "911-123-45-67", name: "Hurt-Pap Sp. z o.o.", address: "ul. Magazynowa 7, 44-100 Gliwice" },
+    buyer: { nip: "631-10-00-640", name: "Powiat Gliwicki", address: "ul. Zygmunta Starego 17, 44-100 Gliwice" },
+    invoiceNumber: "FV/HP/2026/0234", issueDate: "2026-02-18", sellDate: "2026-02-18",
+    dueDate: "2026-03-18", paymentMethod: "przelew",
+    items: [
+      { nr: 1, name: "Papier ksero A4 80g (karton 5 ryz)", unit: "krt.", qty: 10, unitPrice: 28.50, netValue: 285.00, vatRate: "23%", vatAmount: 65.55, grossValue: 350.55 },
+      { nr: 2, name: "Tonery do drukarek HP LaserJet", unit: "szt.", qty: 4, unitPrice: 31.90, netValue: 127.60, vatRate: "23%", vatAmount: 29.35, grossValue: 156.95 },
+    ],
+    netTotal: 412.60, vatTotal: 94.90, grossTotal: 507.50, currency: "PLN",
+    receivedAt: "2026-02-18T07:48:22Z", isCorrection: false, assignedTo: "Wydział Organizacyjny",
+  },
+  {
+    id: "ks7", nrKsef: "2310003993-20260205-1A2B3C4D5E6F-G7", status: "przypisany",
+    seller: { nip: "231-000-39-93", name: "TAURON Sprzedaż Sp. z o.o.", address: "ul. Łagiewnicka 60, 30-417 Kraków" },
+    buyer: { nip: "631-10-00-640", name: "Powiat Gliwicki", address: "ul. Zygmunta Starego 17, 44-100 Gliwice" },
+    invoiceNumber: "S/FA/02/2026/004512", issueDate: "2026-02-05", sellDate: "2026-01-31",
+    dueDate: "2026-03-05", paymentMethod: "przelew",
+    items: [
+      { nr: 1, name: "Sprzedaż energii elektrycznej — I 2026", unit: "kWh", qty: 3580, unitPrice: 0.0686, netValue: 245.53, vatRate: "23%", vatAmount: 56.47, grossValue: 302.00 },
+    ],
+    netTotal: 245.53, vatTotal: 56.57, grossTotal: 302.10, currency: "PLN",
+    receivedAt: "2026-02-05T12:15:41Z", isCorrection: false, assignedTo: "Wydział Organizacyjny",
+  },
+  {
+    id: "ks8", nrKsef: "8131234567-20260222-7G8H9I0J1K2L-H8", status: "nowy",
+    seller: { nip: "813-123-45-67", name: "Softres Sp. z o.o.", address: "ul. Cicha 3, 35-326 Rzeszów" },
+    buyer: { nip: "631-10-00-640", name: "Powiat Gliwicki", address: "ul. Zygmunta Starego 17, 44-100 Gliwice" },
+    invoiceNumber: "FV/2026/02/0089", issueDate: "2026-02-22", sellDate: "2026-02-01",
+    dueDate: "2026-03-22", paymentMethod: "przelew",
+    items: [
+      { nr: 1, name: "Licencja roczna — system KSAT (moduł budżet)", unit: "szt.", qty: 1, unitPrice: 850.00, netValue: 850.00, vatRate: "23%", vatAmount: 195.50, grossValue: 1045.50 },
+      { nr: 2, name: "Licencja roczna — system KSAT (moduł kadry)", unit: "szt.", qty: 1, unitPrice: 650.00, netValue: 650.00, vatRate: "23%", vatAmount: 149.50, grossValue: 799.50 },
+      { nr: 3, name: "Wsparcie techniczne 24/7 (abonament miesięczny x2)", unit: "mies.", qty: 2, unitPrice: 175.00, netValue: 350.00, vatRate: "23%", vatAmount: 80.50, grossValue: 430.50 },
+    ],
+    netTotal: 1850.00, vatTotal: 425.50, grossTotal: 2275.50, currency: "PLN",
+    receivedAt: "2026-02-22T06:30:09Z", isCorrection: false,
+  },
+  {
+    id: "ks9", nrKsef: "6341234567-20260215-2M3N4O5P6Q7R-I9", status: "zweryfikowany",
+    seller: { nip: "634-123-45-67", name: "MediCare Sp. z o.o.", address: "ul. Szpitalna 12, 44-100 Gliwice" },
+    buyer: { nip: "631-10-00-640", name: "Powiat Gliwicki", address: "ul. Zygmunta Starego 17, 44-100 Gliwice" },
+    invoiceNumber: "FV/MC/2026/00142", issueDate: "2026-02-15", sellDate: "2026-02-14",
+    dueDate: "2026-03-15", paymentMethod: "przelew",
+    items: [
+      { nr: 1, name: "Badania okresowe pracowników (pakiet podstawowy)", unit: "os.", qty: 12, unitPrice: 95.00, netValue: 1140.00, vatRate: "zw.", vatAmount: 0, grossValue: 1140.00 },
+      { nr: 2, name: "Badania kierowców (kat. B)", unit: "os.", qty: 5, unitPrice: 150.00, netValue: 750.00, vatRate: "zw.", vatAmount: 0, grossValue: 750.00 },
+    ],
+    netTotal: 1890.00, vatTotal: 0, grossTotal: 1890.00, currency: "PLN",
+    receivedAt: "2026-02-15T09:22:33Z", isCorrection: false, assignedTo: "Wydział Organizacyjny",
+  },
+  {
+    id: "ks10", nrKsef: "5261234567-20260212-3S4T5U6V7W8X-J0", status: "zweryfikowany",
+    seller: { nip: "526-123-45-67", name: "Budimex S.A.", address: "ul. Siedmiogrodzka 9, 01-204 Warszawa" },
+    buyer: { nip: "631-10-00-640", name: "Powiat Gliwicki", address: "ul. Zygmunta Starego 17, 44-100 Gliwice" },
+    invoiceNumber: "FV/BDX/2026/003318", issueDate: "2026-02-12", sellDate: "2026-02-10",
+    dueDate: "2026-03-12", paymentMethod: "przelew",
+    items: [
+      { nr: 1, name: "Roboty budowlane — etap II remont drogi powiatowej nr 2945S", unit: "kpl.", qty: 1, unitPrice: 185000.00, netValue: 185000.00, vatRate: "23%", vatAmount: 42550.00, grossValue: 227550.00 },
+    ],
+    netTotal: 185000.00, vatTotal: 42550.00, grossTotal: 227550.00, currency: "PLN",
+    receivedAt: "2026-02-12T14:58:07Z", isCorrection: false, assignedTo: "Wydział Infrastruktury",
+  },
+  {
+    id: "ks11", nrKsef: "6451234567-20260220-4Y5Z6A7B8C9D-K1", status: "zweryfikowany",
+    seller: { nip: "645-123-45-67", name: "Auto-Serwis Gliwice Sp. z o.o.", address: "ul. Mechaników 5, 44-100 Gliwice" },
+    buyer: { nip: "631-10-00-640", name: "Powiat Gliwicki", address: "ul. Zygmunta Starego 17, 44-100 Gliwice" },
+    invoiceNumber: "FV/AS/2026/0078", issueDate: "2026-02-20", sellDate: "2026-02-20",
+    dueDate: "2026-03-06", paymentMethod: "przelew",
+    items: [
+      { nr: 1, name: "Przegląd techniczny — Skoda Octavia (GLC 12345)", unit: "usł.", qty: 1, unitPrice: 350.00, netValue: 350.00, vatRate: "23%", vatAmount: 80.50, grossValue: 430.50 },
+      { nr: 2, name: "Wymiana oleju silnikowego + filtr", unit: "kpl.", qty: 1, unitPrice: 220.00, netValue: 220.00, vatRate: "23%", vatAmount: 50.60, grossValue: 270.60 },
+      { nr: 3, name: "Wymiana klocków hamulcowych (przód)", unit: "kpl.", qty: 1, unitPrice: 180.00, netValue: 180.00, vatRate: "23%", vatAmount: 41.40, grossValue: 221.40 },
+    ],
+    netTotal: 750.00, vatTotal: 172.50, grossTotal: 922.50, currency: "PLN",
+    receivedAt: "2026-02-20T15:30:12Z", isCorrection: false, assignedTo: "Wydział Organizacyjny",
+  },
+  {
+    id: "ks12", nrKsef: "5471234567-20260225-5E6F7G8H9I0J-L2", status: "odrzucony",
+    seller: { nip: "547-123-45-67", name: "PHU Kowalski Jan Kowalski", address: "ul. Rzemieślnicza 44, 44-100 Gliwice" },
+    buyer: { nip: "631-10-00-640", name: "Powiat Gliwicki", address: "ul. Zygmunta Starego 17, 44-100 Gliwice" },
+    invoiceNumber: "FV/01/02/2026", issueDate: "2026-02-25", sellDate: "2026-02-25",
+    dueDate: "2026-03-11", paymentMethod: "przelew",
+    items: [
+      { nr: 1, name: "Usługa sprzątania — luty 2026", unit: "usł.", qty: 1, unitPrice: 3200.00, netValue: 3200.00, vatRate: "23%", vatAmount: 736.00, grossValue: 3936.00 },
+    ],
+    netTotal: 3200.00, vatTotal: 736.00, grossTotal: 3936.00, currency: "PLN",
+    receivedAt: "2026-02-25T10:12:55Z", isCorrection: false, rejectionReason: "Brak umowy — faktura niezamówiona",
+  },
+  {
+    id: "ks13", nrKsef: "8991234567-20260226-6K7L8M9N0O1P-M3", status: "odrzucony",
+    seller: { nip: "899-123-45-67", name: "DataCenter Solutions Sp. z o.o.", address: "ul. Serwerowa 1, 53-333 Wrocław" },
+    buyer: { nip: "631-10-00-640", name: "Powiat Gliwicki", address: "ul. Zygmunta Starego 17, 44-100 Gliwice" },
+    invoiceNumber: "FV/DCS/2026/0445", issueDate: "2026-02-26", sellDate: "2026-02-01",
+    dueDate: "2026-03-26", paymentMethod: "przelew",
+    items: [
+      { nr: 1, name: "Hosting serwerów — luty 2026 (pomyłka adresata)", unit: "mies.", qty: 1, unitPrice: 1200.00, netValue: 1200.00, vatRate: "23%", vatAmount: 276.00, grossValue: 1476.00 },
+    ],
+    netTotal: 1200.00, vatTotal: 276.00, grossTotal: 1476.00, currency: "PLN",
+    receivedAt: "2026-02-26T08:45:30Z", isCorrection: false, rejectionReason: "Pomyłka — faktura wystawiona na niewłaściwy podmiot",
+  },
+];
