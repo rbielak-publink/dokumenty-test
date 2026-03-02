@@ -128,7 +128,7 @@ const FoldersView = ({ folders, setFolders, docs, onSelectDoc, activeFolderId, s
                     <div style={{ width: 160, ...typo.bodySmall, color: DS.textSecondary, ...S.truncate }}>{doc.contractor || "—"}</div>
                     <div style={{ width: 100, ...typo.bodySmall, color: DS.textPrimary, fontWeight: 500, textAlign: "right", paddingRight: 12 }}>{doc.grossValue ? formatCurrency(doc.grossValue) : "—"}</div>
                     <div style={{ width: 100 }}>
-                      <Badge color={st.color || DS.textSecondary} bg={st.bg || DS.neutralLighter} small>{st.label || doc.status}</Badge>
+                      {st.label ? <Badge color={st.color} bg={st.bg} small>{st.label}</Badge> : <span style={{ ...typo.bodySmall, color: DS.textDisabled }}>—</span>}
                     </div>
                     <div style={{ width: 40, ...S.row, justifyContent: "center" }}>
                       <button onClick={e => { e.stopPropagation(); removeDocFromFolder(activeFolder.id, doc.id); }}

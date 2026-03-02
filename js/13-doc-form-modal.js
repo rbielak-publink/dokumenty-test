@@ -11,7 +11,7 @@ const DocFormModal = ({ onClose, onSave, docs, editDoc }) => {
   const [form, setForm] = useState(() => {
     if (editDoc) return { ...editDoc };
     return {
-      type: "", status: "draft", title: "", number: "", nrEwidencyjny: "", rodzajUmowy: "wydatkowa",
+      type: "", status: "w_przygotowaniu", title: "", number: "", nrEwidencyjny: "", rodzajUmowy: "wydatkowa",
       contractor: "", dept: DEPARTMENTS[0], assignee: 1, netValue: 0, grossValue: 0,
       classification: "", dateCreated: new Date().toISOString().split("T")[0],
       dateStart: "", dateEnd: "", tags: [], alerts: [], notes: "",

@@ -68,7 +68,7 @@ const ContractorsView = ({ docs, onSelectDoc }) => {
             <div style={{ borderTop: `1px solid ${DS.borderLight}`, padding: "4px 0" }}>
               {c.docs.map(doc => {
                 const typeInfo = DOC_TYPES[doc.type] || DOC_TYPES.inne;
-                const statusInfo = DOC_STATUSES[doc.status] || DOC_STATUSES.draft;
+                const statusInfo = DOC_STATUSES[doc.status] || null;
                 return (
                   <div key={doc.id} onClick={() => onSelectDoc(doc)} style={{
                     ...S.row, gap: 10, padding: "10px 18px 10px 66px",
@@ -84,7 +84,7 @@ const ContractorsView = ({ docs, onSelectDoc }) => {
                       </div>
                       {doc.number && <div style={{ ...typo.labelSmall, color: DS.textDisabled, fontFamily: "monospace" }}>{doc.number}</div>}
                     </div>
-                    <Badge color={statusInfo.color} bg={statusInfo.bg} small>{statusInfo.label}</Badge>
+                    {statusInfo ? <Badge color={statusInfo.color} bg={statusInfo.bg} small>{statusInfo.label}</Badge> : <span style={{ ...typo.bodySmall, color: DS.textDisabled }}>—</span>}
                     <span style={{ ...typo.bodySmall, color: DS.textSecondary, fontVariantNumeric: "tabular-nums", width: 90, textAlign: "right" }}>
                       {doc.grossValue ? formatCurrency(doc.grossValue) : "—"}
                     </span>
