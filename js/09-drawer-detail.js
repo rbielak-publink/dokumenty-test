@@ -1,17 +1,15 @@
 /* ═══════════════════════════════════════════════════════════════
-   DRAWER DETAIL — dual mode: preview (read-only) vs edit
-   with 4 tabs: Szczegóły / Faktury / Załączniki / Zaangażowanie (P3)
+   DRAWER DETAIL — inline side panel with tabs
+   Szczegóły | Faktury | Załączniki | Zaangażowanie
    ═══════════════════════════════════════════════════════════════ */
-const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) => {
+const DrawerDetail = ({ doc, onClose, onSave }) => {
   const [mode, setMode] = useState("preview"); // preview | edit
   const [activeTab, setActiveTab] = useState("details");
-  const [rightTab, setRightTab] = useState("budget"); // budget | preview
   const [form, setForm] = useState(null);
 
   useEffect(() => {
     setMode("preview");
     setActiveTab("details");
-    setRightTab("budget");
     if (doc) setForm({ ...doc });
   }, [doc?.id]);
 
@@ -31,6 +29,10 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
   const docAlerts = computeAlerts(doc);
   const children = CHILD_DOCS[doc.id] || [];
 
+  // Categorize children
+  const childFaktury = children.filter(c => c.childType === "faktura");
+  const childZalaczniki = children.filter(c => c.childType === "zalacznik" || c.childType === "plik");
+
   const set = (key, val) => setForm(prev => {
     const next = { ...prev, [key]: val };
     if (key === "netValue") next.grossValue = Math.round(val * 1.23 * 100) / 100;
@@ -43,17 +45,25 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
   };
 
   /* ---- Field row helper ---- */
-  const FieldRow = ({ label, value, icon }) => (
+  const FieldRow = ({ label, value }) => (
     <div style={{ display: "flex", gap: 10, padding: "9px 0", borderBottom: `1px solid ${DS.borderLight}` }}>
-      <div style={{ width: 150, flexShrink: 0 }}>
+      <div style={{ width: 140, flexShrink: 0 }}>
         <span style={{ ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>{label}</span>
       </div>
       <div style={{ flex: 1, ...typo.bodySmall, color: DS.textPrimary }}>{value || "—"}</div>
     </div>
   );
 
-  /* ---- Budget sidebar ---- */
-  const BudgetSidebar = () => {
+  /* ---- Tabs definition ---- */
+  const tabs = [
+    { id: "details", label: "Szczegóły" },
+    { id: "faktury", label: "Faktury", count: childFaktury.length },
+    { id: "zalaczniki", label: "Załączniki", count: childZalaczniki.length },
+    { id: "zaangazowanie", label: "Zaangażowanie" },
+  ];
+
+  /* ---- Budget / Zaangażowanie content ---- */
+  const BudgetContent = () => {
     if (!cls) return (
       <div style={{ textAlign: "center", padding: "40px 20px" }}>
         <Icon name="dollarSign" size={36} color={DS.neutralLight} style={{ margin: "0 auto 12px", display: "block" }} />
@@ -107,75 +117,117 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
     );
   };
 
+  /* ---- Child list helper ---- */
+  const ChildList = ({ items, emptyIcon, emptyLabel }) => {
+    if (items.length === 0) return (
+      <div style={{ textAlign: "center", padding: "40px 20px" }}>
+        <Icon name={emptyIcon} size={36} color={DS.neutralLight} style={{ margin: "0 auto 12px", display: "block" }} />
+        <div style={{ ...typo.bodySmall, color: DS.textDisabled }}>{emptyLabel}</div>
+      </div>
+    );
+    return items.map(ch => {
+      const ctInfo = CHILD_TYPE_LABELS[ch.childType] || { label: ch.childType, icon: "file", color: DS.neutralDark };
+      const childStatus = DOC_STATUSES[ch.status] || null;
+      return (
+        <div key={ch.id} style={{
+          ...S.row, gap: 10, padding: "10px 0", borderBottom: `1px solid ${DS.borderLight}`,
+        }}>
+          <Icon name={ctInfo.icon} size={13} color={ctInfo.color} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <span style={{ ...typo.bodySmall, color: DS.textPrimary, ...S.truncate, display: "block" }}>{ch.title}</span>
+            {ch.number && <span style={{ ...typo.labelSmall, color: DS.textDisabled, fontFamily: "monospace", fontSize: 10 }}>{ch.number}</span>}
+          </div>
+          {ch.grossValue > 0 && <span style={{ ...typo.labelSmall, fontWeight: 500, color: DS.textPrimary, fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>{formatCurrency(ch.grossValue)}</span>}
+          {ch.fileName && <span style={{ ...typo.labelSmall, color: DS.textDisabled, flexShrink: 0 }}>{ch.fileName}</span>}
+          {childStatus && <Badge color={childStatus.color} bg={childStatus.bg} small>{childStatus.label}</Badge>}
+        </div>
+      );
+    });
+  };
+
   return (
-    <div style={{ ...S.overlay, zIndex: 100, background: "rgba(15,23,74,0.35)", backdropFilter: "blur(2px)" }} onClick={onClose}>
-    <div onClick={e => e.stopPropagation()} style={{
-      position: "absolute", top: 0, right: 0, bottom: 0,
-      width: "min(1100px, 85vw)", background: DS.neutralWhite, ...S.col,
-      boxShadow: "-8px 0 30px rgba(0,0,0,0.12)", overflow: "hidden",
+    <div style={{
+      width: 480, minWidth: 480, ...S.col, borderLeft: `1px solid ${DS.borderLight}`,
+      background: DS.neutralWhite, overflow: "hidden",
+      animation: "slideIn 0.2s ease-out",
     }}>
       {/* ===== Header ===== */}
       <div style={{
-        padding: "16px 24px", borderBottom: `1px solid ${DS.borderLight}`,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "14px 20px", borderBottom: `1px solid ${DS.borderLight}`,
+        display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0,
       }}>
-        <div style={{ ...S.row, gap: 12, flex: 1, minWidth: 0 }}>
+        <div style={{ ...S.row, gap: 10, flex: 1, minWidth: 0 }}>
           <div style={{
-            width: 36, height: 36, borderRadius: 8, background: DS.accentUmowyLighter,
+            width: 32, height: 32, borderRadius: 8, background: DS.primaryLighter,
             ...S.row, justifyContent: "center", alignItems: "center", flexShrink: 0,
           }}>
-            <Icon name={typeInfo.icon} size={18} color={DS.accentUmowyMain} />
+            <Icon name={typeInfo.icon} size={16} color={DS.primaryLight} />
           </div>
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ ...S.row, gap: 8 }}>
-              <span style={{ ...typo.titleSmall, color: DS.primaryMain, fontWeight: 700, fontSize: 16 }}>{doc.number || "Bez numeru"}</span>
+            <div style={{ ...S.row, gap: 6 }}>
+              <span style={{ ...typo.titleSmall, color: DS.primaryMain, fontWeight: 700, fontSize: 14, ...S.truncate }}>{doc.number || "Bez numeru"}</span>
               <Badge color={statusInfo.color} bg={statusInfo.bg}>{statusInfo.label}</Badge>
-              {docAlerts.map(a => <AlertBadge key={a} code={a} />)}
             </div>
-            <div style={{ ...typo.bodySmall, color: DS.textSecondary, marginTop: 2 }}>
+            <div style={{ ...typo.bodySmall, color: DS.textSecondary, fontSize: 11, marginTop: 1, ...S.truncate }}>
               {typeInfo.label} &bull; {doc.contractor || "Brak kontrahenta"}
             </div>
           </div>
         </div>
-        <div style={{ ...S.row, gap: 4, flexShrink: 0, marginLeft: 16 }}>
-          <Btn variant="ghost" icon="chevronLeft" small disabled={!hasPrev} onClick={() => onNavigate(-1)} title="Poprzedni" />
-          <Btn variant="ghost" icon="chevronRight" small disabled={!hasNext} onClick={() => onNavigate(1)} title="Następny" />
-          <div style={{ width: 1, height: 20, background: DS.borderLight, margin: "0 4px" }} />
-          <Btn variant="ghost" icon="x" small onClick={onClose} title="Zamknij" />
-        </div>
+        <Btn variant="ghost" icon="x" small onClick={onClose} title="Zamknij" style={{ flexShrink: 0, marginLeft: 8 }} />
       </div>
 
-      {/* ===== Two-column body ===== */}
-      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+      {/* ===== Tabs ===== */}
+      <div style={{ padding: "0 20px", borderBottom: `1px solid ${DS.borderLight}`, ...S.row, flexShrink: 0, overflowX: "auto" }}>
+        {tabs.map(t => (
+          <button key={t.id} onClick={() => setActiveTab(t.id)} style={{
+            padding: "9px 12px", border: "none", background: "transparent", cursor: "pointer",
+            fontFamily: DS.fontFamily, fontSize: 12, fontWeight: activeTab === t.id ? 600 : 400,
+            color: activeTab === t.id ? DS.primaryMain : DS.textSecondary,
+            borderBottom: activeTab === t.id ? `2px solid ${DS.primaryLight}` : "2px solid transparent",
+            transition: "all 0.15s", whiteSpace: "nowrap", ...S.row, gap: 4,
+          }}>
+            {t.label}
+            {t.count != null && t.count > 0 && (
+              <span style={{
+                ...typo.labelSmall, fontSize: 10, fontWeight: 600,
+                background: activeTab === t.id ? DS.primaryLighter : DS.neutralLighter,
+                color: activeTab === t.id ? DS.primaryLight : DS.textDisabled,
+                padding: "1px 5px", borderRadius: 8, marginLeft: 2,
+              }}>{t.count}</span>
+            )}
+          </button>
+        ))}
+      </div>
 
-        {/* ---- LEFT: Dane dokumentu ---- */}
-        <div style={{ flex: 1, ...S.col, borderRight: `1px solid ${DS.borderLight}`, overflow: "hidden" }}>
-          {/* Left header label */}
-          <div style={{ padding: "10px 24px", borderBottom: `1px solid ${DS.borderLight}`, ...S.row, gap: 8 }}>
-            <span style={{ ...typo.labelMedium, color: DS.primaryMain, fontWeight: 600 }}>Dane dokumentu</span>
+      {/* ===== Tab content ===== */}
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
+
+        {/* --- Szczegóły tab --- */}
+        {activeTab === "details" && (
+          <>
+            {/* Edit/Save bar */}
             {mode === "preview" && (
-              <button onClick={() => setMode("edit")} style={{
-                marginLeft: "auto", ...S.row, gap: 4, padding: "3px 10px", borderRadius: 5,
-                border: `1px solid ${DS.borderLight}`, background: DS.neutralWhite,
-                color: DS.textSecondary, cursor: "pointer", ...typo.labelSmall,
-                fontFamily: DS.fontFamily, fontWeight: 500, fontSize: 11,
-              }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = DS.accentUmowyMain; e.currentTarget.style.color = DS.accentUmowyMain; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = DS.borderLight; e.currentTarget.style.color = DS.textSecondary; }}
-              >
-                <Icon name="edit" size={11} /> Edytuj
-              </button>
+              <div style={{ ...S.row, justifyContent: "flex-end", marginBottom: 12 }}>
+                <button onClick={() => setMode("edit")} style={{
+                  ...S.row, gap: 4, padding: "4px 12px", borderRadius: 6,
+                  border: `1px solid ${DS.borderLight}`, background: DS.neutralWhite,
+                  color: DS.textSecondary, cursor: "pointer", ...typo.labelSmall,
+                  fontFamily: DS.fontFamily, fontWeight: 500, fontSize: 11, transition: "all 0.15s",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = DS.primaryLight; e.currentTarget.style.color = DS.primaryLight; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = DS.borderLight; e.currentTarget.style.color = DS.textSecondary; }}
+                >
+                  <Icon name="edit" size={11} /> Edytuj
+                </button>
+              </div>
             )}
             {mode === "edit" && (
-              <div style={{ marginLeft: "auto", ...S.row, gap: 6 }}>
+              <div style={{ ...S.row, justifyContent: "flex-end", gap: 6, marginBottom: 12 }}>
                 <Btn variant="accent" icon="check" onClick={handleSaveEdit} small>Zapisz</Btn>
                 <Btn variant="ghost" onClick={() => setMode("preview")} small>Anuluj</Btn>
               </div>
             )}
-          </div>
 
-          {/* Left scrollable content */}
-          <div style={{ flex: 1, overflowY: "auto", padding: "16px 24px" }}>
             {mode === "preview" && (
               <>
                 {/* Alerts box */}
@@ -195,7 +247,7 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
                   </div>
                 )}
 
-                {/* Field rows — form-like layout */}
+                {/* Field rows */}
                 <FieldRow label="Numer" value={doc.number} />
                 <FieldRow label="Typ" value={typeInfo.label} />
                 <FieldRow label="Kontrahent" value={doc.contractor} />
@@ -204,9 +256,9 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
                 <FieldRow label="Kwota netto" value={doc.netValue ? formatCurrency(doc.netValue) : "—"} />
                 <FieldRow label="Data" value={formatDate(doc.dateCreated)} />
                 <FieldRow label="Okres" value={doc.dateStart ? `${formatDate(doc.dateStart)} — ${formatDate(doc.dateEnd)}` : "—"} />
-                <FieldRow label="Klasyfikacja budżetowa" value={cls ? `${cls.code} — ${cls.label}` : "—"} />
+                <FieldRow label="Klasyfikacja" value={cls ? `${cls.code} — ${cls.label}` : "—"} />
                 <FieldRow label="Wydział" value={doc.dept} />
-                <FieldRow label="Osoba odpowiedzialna" value={user?.name} />
+                <FieldRow label="Osoba odpow." value={user?.name} />
                 <FieldRow label="Status" value={<Badge color={statusInfo.color} bg={statusInfo.bg}>{statusInfo.label}</Badge>} />
 
                 {/* Tags */}
@@ -223,27 +275,6 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
                   <div style={{ marginTop: 8, padding: 12, background: DS.neutralLighter, borderRadius: 8, ...typo.bodySmall, color: DS.textPrimary }}>{doc.notes}</div>
                 )}
 
-                {/* Podpięte dokumenty (children) */}
-                {children.length > 0 && (
-                  <div style={{ marginTop: 20, paddingTop: 16, borderTop: `1px solid ${DS.borderLight}` }}>
-                    <div style={{ ...S.row, gap: 6, marginBottom: 10 }}>
-                      <Icon name="layers" size={14} color={DS.primaryMain} />
-                      <span style={{ ...typo.labelMedium, color: DS.primaryMain, fontWeight: 600 }}>Podpięte dokumenty ({children.length})</span>
-                    </div>
-                    {children.map(ch => {
-                      const ctInfo = CHILD_TYPE_LABELS[ch.childType] || { label: ch.childType, icon: "file", color: DS.neutralDark };
-                      return (
-                        <div key={ch.id} style={{ ...S.row, gap: 10, padding: "8px 0", borderBottom: `1px solid ${DS.borderLight}` }}>
-                          <Icon name={ctInfo.icon} size={13} color={ctInfo.color} />
-                          <span style={{ ...typo.bodySmall, color: DS.textPrimary, flex: 1 }}>{ch.title}</span>
-                          {ch.grossValue > 0 && <span style={{ ...typo.labelSmall, fontWeight: 500, color: DS.textPrimary, fontVariantNumeric: "tabular-nums" }}>{formatCurrency(ch.grossValue)}</span>}
-                          {ch.fileName && <span style={{ ...typo.labelSmall, color: DS.textDisabled }}>{ch.fileName}</span>}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
                 {/* Historia */}
                 {doc.history && doc.history.length > 0 && (
                   <div style={{ marginTop: 20, paddingTop: 16, borderTop: `1px solid ${DS.borderLight}` }}>
@@ -255,7 +286,7 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
                       <div style={{ position: "absolute", left: 7, top: 8, bottom: 8, width: 2, background: DS.borderLight, borderRadius: 1 }} />
                       {doc.history.slice().reverse().map((entry, idx) => (
                         <div key={idx} style={{ position: "relative", paddingBottom: 14, paddingLeft: 16 }}>
-                          <div style={{ position: "absolute", left: -17, top: 6, width: 10, height: 10, borderRadius: "50%", background: idx === 0 ? DS.accentUmowyMain : DS.neutralMain, border: `2px solid ${DS.neutralWhite}` }} />
+                          <div style={{ position: "absolute", left: -17, top: 6, width: 10, height: 10, borderRadius: "50%", background: idx === 0 ? DS.primaryLight : DS.neutralMain, border: `2px solid ${DS.neutralWhite}` }} />
                           <div style={{ ...S.row, justifyContent: "space-between", alignItems: "flex-start" }}>
                             <div>
                               <span style={{ ...typo.bodySmall, fontWeight: 500, color: DS.textPrimary }}>{entry.user}</span>
@@ -317,41 +348,24 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
                 </Section>
               </>
             )}
-          </div>
-        </div>
+          </>
+        )}
 
-        {/* ---- RIGHT: Context panel ---- */}
-        <div style={{ width: 380, minWidth: 380, ...S.col, overflow: "hidden", background: DS.neutralWhite }}>
-          {/* Right tabs */}
-          <div style={{ padding: "0 16px", borderBottom: `1px solid ${DS.borderLight}`, ...S.row }}>
-            {[
-              { id: "budget", label: "Kontekst budżetowy" },
-              { id: "preview", label: "Podgląd załącznika" },
-            ].map(t => (
-              <button key={t.id} onClick={() => setRightTab(t.id)} style={{
-                padding: "10px 14px", border: "none", background: "transparent", cursor: "pointer",
-                fontFamily: DS.fontFamily, fontSize: 12, fontWeight: rightTab === t.id ? 600 : 400,
-                color: rightTab === t.id ? DS.primaryMain : DS.textSecondary,
-                borderBottom: rightTab === t.id ? `2px solid ${DS.accentUmowyMain}` : "2px solid transparent",
-                transition: "all 0.15s",
-              }}>{t.label}</button>
-            ))}
-          </div>
-          {/* Right content */}
-          <div style={{ flex: 1, overflowY: "auto", padding: 16 }}>
-            {rightTab === "budget" && <BudgetSidebar />}
-            {rightTab === "preview" && (
-              <div style={{ textAlign: "center", padding: "40px 16px" }}>
-                <Icon name="file" size={40} color={DS.neutralLight} style={{ margin: "0 auto 12px", display: "block" }} />
-                <div style={{ ...typo.titleSmall, color: DS.textSecondary, marginBottom: 4 }}>Podgląd pliku</div>
-                <div style={{ ...typo.bodySmall, color: DS.textDisabled }}>Wybierz załącznik aby zobaczyć podgląd</div>
-              </div>
-            )}
-          </div>
-        </div>
+        {/* --- Faktury tab --- */}
+        {activeTab === "faktury" && (
+          <ChildList items={childFaktury} emptyIcon="file" emptyLabel="Brak podpiętych faktur" />
+        )}
 
+        {/* --- Załączniki tab --- */}
+        {activeTab === "zalaczniki" && (
+          <ChildList items={childZalaczniki} emptyIcon="paperclip" emptyLabel="Brak załączników" />
+        )}
+
+        {/* --- Zaangażowanie tab --- */}
+        {activeTab === "zaangazowanie" && (
+          <BudgetContent />
+        )}
       </div>
-    </div>
     </div>
   );
 };

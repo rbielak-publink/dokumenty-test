@@ -2,7 +2,7 @@
    DATA DEFINITIONS
    ═══════════════════════════════════════════════════════════════ */
 const DOC_TYPES = {
-  umowa: { label: "Umowa", color: DS.accentUmowyMain, bg: DS.accentUmowyLighter, icon: "file" },
+  umowa: { label: "Umowa", color: DS.primaryLight, bg: DS.primaryLighter, icon: "file" },
   faktura: { label: "Faktura", color: "#0A7BE5", bg: "#E0EEFF", icon: "receipt" },
   zlecenie: { label: "Zlecenie", color: "#E5850A", bg: "#FFF4E0", icon: "zap" },
   aneks: { label: "Aneks", color: "#7C3AED", bg: "#F0E7FF", icon: "gitBranch" },
@@ -64,7 +64,7 @@ const CLASSIFICATIONS = [
 
 const TAGS = [
   { id: "pilne", label: "Pilne", color: DS.errorMain },
-  { id: "inwestycja", label: "Inwestycja", color: DS.accentUmowyMain },
+  { id: "inwestycja", label: "Inwestycja", color: DS.primaryLight },
   { id: "dotacja", label: "Dotacja", color: DS.successMain },
   { id: "przetarg", label: "Przetarg", color: DS.infoMain },
   { id: "ksef", label: "KSeF", color: "#7C3AED" },

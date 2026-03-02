@@ -207,12 +207,12 @@ const AiSuggestionBanner = ({ title, contractor, onAccept }) => {
   return (
     <div style={{
       ...S.row, gap: 10, padding: "10px 14px",
-      background: `linear-gradient(135deg, ${DS.accentUmowyLighter}, ${DS.secondaryLighter})`,
-      borderRadius: 10, border: `1px solid ${DS.accentUmowyLight}`, marginBottom: 14,
+      background: `linear-gradient(135deg, ${DS.primaryLighter}, ${DS.secondaryLighter})`,
+      borderRadius: 10, border: `1px solid ${DS.primaryLight}`, marginBottom: 14,
     }}>
-      <Icon name="sparkles" size={16} color={DS.accentUmowyMain} />
+      <Icon name="sparkles" size={16} color={DS.primaryLight} />
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ ...typo.labelSmall, color: DS.accentUmowyDark, fontWeight: 600 }}>
+        <div style={{ ...typo.labelSmall, color: DS.primaryDark, fontWeight: 600 }}>
           Sugestia AI · {suggestion.confidence}% pewności
         </div>
         <div style={{ ...typo.bodySmall, color: DS.textPrimary, marginTop: 2 }}>
@@ -276,11 +276,11 @@ const OcrWizard = ({ visible, onClose, onPrefill }) => {
         <div style={{
           padding: "16px 20px", ...S.row, gap: 10,
           borderBottom: `1px solid ${DS.borderLight}`,
-          background: `linear-gradient(135deg, ${DS.accentUmowyLighter}, ${DS.neutralWhite})`,
+          background: `linear-gradient(135deg, ${DS.primaryLighter}, ${DS.neutralWhite})`,
         }}>
           <div style={{
             width: 36, height: 36, borderRadius: 10, ...S.row, justifyContent: "center",
-            background: `linear-gradient(135deg, ${DS.accentUmowyMain}, ${DS.accentUmowyDark})`,
+            background: `linear-gradient(135deg, ${DS.primaryLight}, ${DS.primaryDark})`,
           }}>
             <Icon name="camera" size={18} color="#fff" />
           </div>
@@ -298,10 +298,10 @@ const OcrWizard = ({ visible, onClose, onPrefill }) => {
             <div key={i} style={{ flex: 1, textAlign: "center" }}>
               <div style={{
                 height: 4, borderRadius: 2, marginBottom: 6,
-                background: i <= step ? DS.accentUmowyMain : DS.borderLight,
+                background: i <= step ? DS.primaryLight : DS.borderLight,
                 transition: "background 0.3s",
               }} />
-              <span style={{ ...typo.labelSmall, color: i <= step ? DS.accentUmowyDark : DS.textDisabled }}>{label}</span>
+              <span style={{ ...typo.labelSmall, color: i <= step ? DS.primaryDark : DS.textDisabled }}>{label}</span>
             </div>
           ))}
         </div>
@@ -311,14 +311,14 @@ const OcrWizard = ({ visible, onClose, onPrefill }) => {
           {step === 0 && (
             <div style={{ textAlign: "center", padding: "24px 0" }}>
               <div onClick={handleUpload} style={{
-                border: `2px dashed ${DS.accentUmowyLight}`, borderRadius: 12, padding: "32px 24px",
+                border: `2px dashed ${DS.primaryLight}`, borderRadius: 12, padding: "32px 24px",
                 cursor: "pointer", transition: "all 0.15s",
                 background: DS.neutralLighter,
               }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = DS.accentUmowyMain; e.currentTarget.style.background = DS.accentUmowyLighter; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = DS.accentUmowyLight; e.currentTarget.style.background = DS.neutralLighter; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = DS.primaryLight; e.currentTarget.style.background = DS.primaryLighter; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = DS.primaryLight; e.currentTarget.style.background = DS.neutralLighter; }}
               >
-                <Icon name="upload" size={32} color={DS.accentUmowyMain} style={{ marginBottom: 12 }} />
+                <Icon name="upload" size={32} color={DS.primaryLight} style={{ marginBottom: 12 }} />
                 <div style={{ ...typo.bodyMedium, color: DS.textPrimary, marginBottom: 4 }}>Przeciągnij plik lub kliknij</div>
                 <div style={{ ...typo.bodySmall, color: DS.textDisabled }}>PDF, JPG, PNG • max 10 MB</div>
               </div>
@@ -329,7 +329,7 @@ const OcrWizard = ({ visible, onClose, onPrefill }) => {
             <div style={{ textAlign: "center", padding: "32px 0" }}>
               <div style={{
                 width: 48, height: 48, borderRadius: "50%", margin: "0 auto 16px",
-                border: `3px solid ${DS.borderLight}`, borderTopColor: DS.accentUmowyMain,
+                border: `3px solid ${DS.borderLight}`, borderTopColor: DS.primaryLight,
                 animation: "spin 1s linear infinite",
               }} />
               <div style={{ ...typo.bodyMedium, color: DS.textPrimary, marginBottom: 4 }}>Rozpoznawanie tekstu...</div>

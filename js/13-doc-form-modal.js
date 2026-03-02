@@ -50,11 +50,11 @@ const DocFormModal = ({ onClose, onSave, docs, editDoc }) => {
         <div style={{
           padding: "16px 20px", ...S.row, gap: 10,
           borderBottom: `1px solid ${DS.borderLight}`,
-          background: `linear-gradient(135deg, ${DS.accentUmowyLighter}, ${DS.neutralWhite})`,
+          background: `linear-gradient(135deg, ${DS.primaryLighter}, ${DS.neutralWhite})`,
         }}>
           <div style={{
             width: 36, height: 36, borderRadius: 10, ...S.row, justifyContent: "center",
-            background: `linear-gradient(135deg, ${DS.accentUmowyMain}, ${DS.accentUmowyDark})`,
+            background: `linear-gradient(135deg, ${DS.primaryLight}, ${DS.primaryDark})`,
           }}>
             <Icon name={isEdit ? "edit" : "plus"} size={18} color="#fff" />
           </div>
@@ -76,12 +76,12 @@ const DocFormModal = ({ onClose, onSave, docs, editDoc }) => {
             const circleSize = 28;
             return (
               <React.Fragment key={i}>
-                {i > 0 && <div style={{ flex: 1, height: 2, background: isDone || isCurrent ? DS.accentUmowyMain : DS.borderLight, transition: "background 0.3s" }} />}
+                {i > 0 && <div style={{ flex: 1, height: 2, background: isDone || isCurrent ? DS.primaryLight : DS.borderLight, transition: "background 0.3s" }} />}
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flexShrink: 0 }}>
                   <div style={{
                     width: circleSize, height: circleSize, borderRadius: "50%",
-                    background: isDone ? DS.successMain : isCurrent ? DS.accentUmowyMain : DS.neutralWhite,
-                    border: `2px solid ${isDone ? DS.successMain : isCurrent ? DS.accentUmowyMain : DS.borderLight}`,
+                    background: isDone ? DS.successMain : isCurrent ? DS.primaryLight : DS.neutralWhite,
+                    border: `2px solid ${isDone ? DS.successMain : isCurrent ? DS.primaryLight : DS.borderLight}`,
                     display: "flex", alignItems: "center", justifyContent: "center",
                     transition: "all 0.3s",
                   }}>
@@ -89,7 +89,7 @@ const DocFormModal = ({ onClose, onSave, docs, editDoc }) => {
                       <span style={{ ...typo.labelSmall, fontWeight: 700, color: isCurrent ? "#fff" : DS.textDisabled }}>{i + 1}</span>}
                   </div>
                   <span style={{
-                    ...typo.labelSmall, fontSize: 9, color: isDone ? DS.successDark : isCurrent ? DS.accentUmowyDark : DS.textDisabled,
+                    ...typo.labelSmall, fontSize: 9, color: isDone ? DS.successDark : isCurrent ? DS.primaryDark : DS.textDisabled,
                     maxWidth: 64, textAlign: "center", lineHeight: "1.2",
                     whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
                   }}>{label}</span>

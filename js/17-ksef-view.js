@@ -87,7 +87,7 @@ const KsefView = ({ invoices, setInvoices, onSelectInvoice }) => {
             <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
               display: "inline-flex", alignItems: "center", gap: 6,
               padding: "8px 14px", border: "none", borderRadius: 0,
-              borderBottom: active ? `2px solid ${DS.accentUmowyMain}` : "2px solid transparent",
+              borderBottom: active ? `2px solid ${DS.primaryLight}` : "2px solid transparent",
               background: "transparent", cursor: "pointer", fontFamily: DS.fontFamily,
               fontSize: 13, fontWeight: active ? 600 : 400,
               color: active ? DS.primaryMain : DS.textSecondary,
@@ -99,8 +99,8 @@ const KsefView = ({ invoices, setInvoices, onSelectInvoice }) => {
               {tab.label}
               <span style={{
                 ...typo.labelSmall, padding: "0 5px", ...S.pill,
-                background: active ? DS.accentUmowyLighter : DS.neutralLighter,
-                color: active ? DS.accentUmowyDark : DS.textDisabled,
+                background: active ? DS.primaryLighter : DS.neutralLighter,
+                color: active ? DS.primaryDark : DS.textDisabled,
               }}>{tab.count}</span>
             </button>
           );
@@ -172,7 +172,7 @@ const KsefView = ({ invoices, setInvoices, onSelectInvoice }) => {
                   background: DS.neutralWhite, cursor: "pointer", ...typo.labelSmall, color: DS.textSecondary,
                   fontWeight: 500, fontSize: 11, transition: "all 0.15s", whiteSpace: "nowrap",
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = DS.accentUmowyMain; e.currentTarget.style.color = DS.accentUmowyMain; }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = DS.primaryLight; e.currentTarget.style.color = DS.primaryLight; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = DS.borderLight; e.currentTarget.style.color = DS.textSecondary; }}
                 >
                   <Icon name="eye" size={11} /> Szczegóły

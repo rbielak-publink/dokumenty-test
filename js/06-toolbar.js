@@ -26,8 +26,8 @@ const ColumnSelector = ({ allColumns, visibleColumns, onChange, open, onToggle }
           >
             <div style={{
               width: 16, height: 16, borderRadius: 4,
-              border: `1.5px solid ${checked ? DS.accentUmowyMain : DS.borderLight}`,
-              background: checked ? DS.accentUmowyMain : "transparent",
+              border: `1.5px solid ${checked ? DS.primaryLight : DS.borderLight}`,
+              background: checked ? DS.primaryLight : "transparent",
               ...S.row, justifyContent: "center", alignItems: "center", flexShrink: 0,
             }}>
               {checked && <Icon name="check" size={10} color="#fff" />}
@@ -73,13 +73,13 @@ const DocTypeFilterBar = ({ activeType, onTypeChange, filterCount, onToggleFilte
           return (
             <button key={tab.key} onClick={() => onTypeChange(tab.key)} style={{
               padding: "5px 12px", border: "none", borderRadius: 6,
-              background: active ? DS.accentUmowyLighter : "transparent",
-              color: active ? DS.accentUmowyDark : DS.textSecondary,
+              background: active ? DS.primaryLighter : "transparent",
+              color: active ? DS.primaryDark : DS.textSecondary,
               fontFamily: DS.fontFamily, fontSize: 12, fontWeight: active ? 600 : 400,
               cursor: "pointer", transition: "all 0.12s", whiteSpace: "nowrap",
             }}
               onMouseEnter={e => { if (!active) e.currentTarget.style.background = DS.neutralLighter; }}
-              onMouseLeave={e => { if (!active) e.currentTarget.style.background = active ? DS.accentUmowyLighter : "transparent"; }}
+              onMouseLeave={e => { if (!active) e.currentTarget.style.background = active ? DS.primaryLighter : "transparent"; }}
             >{tab.label}</button>
           );
         })}
@@ -128,7 +128,7 @@ const SaveViewModal = ({ open, onClose, onSave, filters, visibleColumns, allColu
               width: "100%", padding: "8px 12px", border: `1px solid ${DS.borderLight}`,
               borderRadius: 8, fontFamily: DS.fontFamily, fontSize: 13, outline: "none", boxSizing: "border-box",
             }}
-              onFocus={e => e.target.style.borderColor = DS.accentUmowyMain}
+              onFocus={e => e.target.style.borderColor = DS.primaryLight}
               onBlur={e => e.target.style.borderColor = DS.borderLight}
             />
           </Field>
@@ -137,7 +137,7 @@ const SaveViewModal = ({ open, onClose, onSave, filters, visibleColumns, allColu
             {activeFilters.length > 0 ? (
               <div style={{ ...S.row, gap: 6, flexWrap: "wrap" }}>
                 {activeFilters.map(([key, val]) => (
-                  <Badge key={key} color={DS.accentUmowyDark} bg={DS.accentUmowyLighter} small>
+                  <Badge key={key} color={DS.primaryDark} bg={DS.primaryLighter} small>
                     {filterLabels[key]?.(val) || val}
                   </Badge>
                 ))}

@@ -51,8 +51,8 @@ const FoldersView = ({ folders, setFolders, docs, onSelectDoc, activeFolderId, s
         {/* Folder detail header */}
         <div style={{ padding: "16px 24px", borderBottom: `1px solid ${DS.borderLight}`, background: DS.neutralWhite }}>
           <div style={{ ...S.row, gap: 10, marginBottom: 10 }}>
-            <button onClick={() => { setActiveFolderId(null); setFolderDocSearch(""); }} style={{ ...S.row, gap: 4, border: "none", background: "none", cursor: "pointer", color: DS.accentUmowyMain, fontSize: 13, fontWeight: 500, fontFamily: DS.fontFamily, padding: 0 }}>
-              <Icon name="chevronLeft" size={14} color={DS.accentUmowyMain} /> Foldery
+            <button onClick={() => { setActiveFolderId(null); setFolderDocSearch(""); }} style={{ ...S.row, gap: 4, border: "none", background: "none", cursor: "pointer", color: DS.primaryLight, fontSize: 13, fontWeight: 500, fontFamily: DS.fontFamily, padding: 0 }}>
+              <Icon name="chevronLeft" size={14} color={DS.primaryLight} /> Foldery
             </button>
           </div>
           <div style={{ ...S.row, gap: 12, justifyContent: "space-between" }}>
@@ -65,7 +65,7 @@ const FoldersView = ({ folders, setFolders, docs, onSelectDoc, activeFolderId, s
                   <div style={{ ...S.row, gap: 6 }}>
                     <input value={editName} onChange={e => setEditName(e.target.value)} autoFocus
                       onKeyDown={e => { if (e.key === "Enter") renameFolder(activeFolder.id); if (e.key === "Escape") setEditingId(null); }}
-                      style={{ ...typo.titleMedium, color: DS.textPrimary, border: `1px solid ${DS.accentUmowyMain}`, borderRadius: 6, padding: "2px 8px", outline: "none", fontFamily: DS.fontFamily, width: 300 }} />
+                      style={{ ...typo.titleMedium, color: DS.textPrimary, border: `1px solid ${DS.primaryLight}`, borderRadius: 6, padding: "2px 8px", outline: "none", fontFamily: DS.fontFamily, width: 300 }} />
                     <Btn variant="primary" icon="check" onClick={() => renameFolder(activeFolder.id)} small>OK</Btn>
                   </div>
                 ) : (
@@ -73,7 +73,7 @@ const FoldersView = ({ folders, setFolders, docs, onSelectDoc, activeFolderId, s
                 )}
                 {activeFolder.description && <div style={{ ...typo.bodySmall, color: DS.textSecondary, marginTop: 2 }}>{activeFolder.description}</div>}
               </div>
-              <Badge color={DS.accentUmowyDark} bg={DS.accentUmowyLighter} small>{activeFolder.docIds.length} dok.</Badge>
+              <Badge color={DS.primaryDark} bg={DS.primaryLighter} small>{activeFolder.docIds.length} dok.</Badge>
             </div>
             <div style={{ ...S.row, gap: 6 }}>
               <Btn variant="ghost" icon="edit" small onClick={() => { setEditingId(activeFolder.id); setEditName(activeFolder.name); }}>Zmień nazwę</Btn>
@@ -171,10 +171,10 @@ const FoldersView = ({ folders, setFolders, docs, onSelectDoc, activeFolderId, s
             {[{ id: "tiles", icon: "grid" }, { id: "list", icon: "list" }].map(v => (
               <button key={v.id} onClick={() => setViewMode(v.id)} style={{
                 padding: "6px 10px", border: "none", cursor: "pointer",
-                background: viewMode === v.id ? DS.accentUmowyLighter : DS.neutralWhite,
-                color: viewMode === v.id ? DS.accentUmowyDark : DS.textSecondary,
+                background: viewMode === v.id ? DS.primaryLighter : DS.neutralWhite,
+                color: viewMode === v.id ? DS.primaryDark : DS.textSecondary,
               }}>
-                <Icon name={v.icon} size={14} color={viewMode === v.id ? DS.accentUmowyMain : DS.textDisabled} />
+                <Icon name={v.icon} size={14} color={viewMode === v.id ? DS.primaryLight : DS.textDisabled} />
               </button>
             ))}
           </div>
@@ -276,7 +276,7 @@ const FoldersView = ({ folders, setFolders, docs, onSelectDoc, activeFolderId, s
                   {folder.description && <div style={{ ...typo.labelSmall, color: DS.textDisabled, ...S.truncate, marginTop: 1 }}>{folder.description}</div>}
                 </div>
                 <div style={{ width: 80, textAlign: "center" }}>
-                  <Badge color={DS.accentUmowyDark} bg={DS.accentUmowyLighter} small>{folder.docIds.length}</Badge>
+                  <Badge color={DS.primaryDark} bg={DS.primaryLighter} small>{folder.docIds.length}</Badge>
                 </div>
                 <div style={{ width: 100, ...typo.labelSmall, color: DS.textSecondary }}>{folder.createdAt ? formatDate(folder.createdAt) : "—"}</div>
                 <div style={{ width: 80, ...S.row, gap: 4, justifyContent: "flex-end" }}>
@@ -329,9 +329,9 @@ const FolderPickerModal = ({ visible, folders, setFolders, selectedIds, onConfir
         {/* Header */}
         <div style={{ padding: "16px 20px", borderBottom: `1px solid ${DS.borderLight}`, ...S.row, justifyContent: "space-between" }}>
           <div style={{ ...S.row, gap: 8 }}>
-            <Icon name="folder" size={18} color={DS.accentUmowyMain} />
+            <Icon name="folder" size={18} color={DS.primaryLight} />
             <span style={{ ...typo.titleSmall, color: DS.textPrimary }}>Dodaj do folderu</span>
-            <Badge color={DS.accentUmowyDark} bg={DS.accentUmowyLighter} small>{selectedIds.size} dok.</Badge>
+            <Badge color={DS.primaryDark} bg={DS.primaryLighter} small>{selectedIds.size} dok.</Badge>
           </div>
           <button onClick={onClose} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
             <Icon name="x" size={16} color={DS.textSecondary} />
@@ -344,8 +344,8 @@ const FolderPickerModal = ({ visible, folders, setFolders, selectedIds, onConfir
             <div key={f.id} onClick={() => setPickedFolderId(f.id)}
               style={{
                 ...S.row, gap: 10, padding: "10px 12px", borderRadius: 8, cursor: "pointer",
-                background: pickedFolderId === f.id ? DS.accentUmowyLighter : "transparent",
-                border: `1px solid ${pickedFolderId === f.id ? DS.accentUmowyLight : "transparent"}`,
+                background: pickedFolderId === f.id ? DS.primaryLighter : "transparent",
+                border: `1px solid ${pickedFolderId === f.id ? DS.primaryLight : "transparent"}`,
                 transition: "all 0.1s", marginBottom: 2,
               }}
               onMouseEnter={e => { if (pickedFolderId !== f.id) e.currentTarget.style.background = DS.neutralLighter; }}
@@ -357,8 +357,8 @@ const FolderPickerModal = ({ visible, folders, setFolders, selectedIds, onConfir
                 <div style={{ ...typo.bodySmall, color: DS.textPrimary, fontWeight: 500 }}>{f.name}</div>
                 <div style={{ ...typo.labelSmall, color: DS.textDisabled }}>{f.docIds.length} dok.</div>
               </div>
-              <div style={{ width: 20, height: 20, borderRadius: "50%", border: `2px solid ${pickedFolderId === f.id ? DS.accentUmowyMain : DS.borderMedium}`, ...S.row, justifyContent: "center" }}>
-                {pickedFolderId === f.id && <div style={{ width: 10, height: 10, borderRadius: "50%", background: DS.accentUmowyMain }} />}
+              <div style={{ width: 20, height: 20, borderRadius: "50%", border: `2px solid ${pickedFolderId === f.id ? DS.primaryLight : DS.borderMedium}`, ...S.row, justifyContent: "center" }}>
+                {pickedFolderId === f.id && <div style={{ width: 10, height: 10, borderRadius: "50%", background: DS.primaryLight }} />}
               </div>
             </div>
           ))}
