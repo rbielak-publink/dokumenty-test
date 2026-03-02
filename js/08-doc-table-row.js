@@ -1,7 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════
    DOC TABLE ROW — single row + expanded children (extracted from DocTable)
    ═══════════════════════════════════════════════════════════════ */
-const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiSelectMode, expandedRows, toggleExpand, hoveredRow, setHoveredRow, setFilePreview, onToggleSelect, onSelectDoc, colStyle }) => {
+const EDITABLE_COLS = ["type", "number", "nrEwidencyjny", "title", "contractor", "dept", "dateEnd", "grossValue", "status"];
+
+const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiSelectMode, expandedRows, toggleExpand, hoveredRow, setHoveredRow, setFilePreview, onToggleSelect, onSelectDoc, colStyle, onUpdateDoc }) => {
   const typeInfo = DOC_TYPES[doc.type] || DOC_TYPES.inne;
   const statusInfo = DOC_STATUSES[doc.status] || DOC_STATUSES.draft;
   const isSelected = selectedId === doc.id;
@@ -18,71 +20,221 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
   const isExpanded = expandedRows.has(doc.id);
   const isHovered = hoveredRow === doc.id;
 
+  // Inline editing state
+  const [editingCell, setEditingCell] = useState(null);
+  const [editValue, setEditValue] = useState(null);
+  const tabMovingRef = useRef(false);
+
+  const visibleEditableCols = EDITABLE_COLS.filter(k => showCol(k));
+
+  const commitEdit = useCallback((key, value) => {
+    if (onUpdateDoc && value !== doc[key]) {
+      const finalValue = key === "grossValue" ? (parseFloat(value) || 0) : value;
+      onUpdateDoc(doc.id, key, finalValue);
+    }
+  }, [doc, onUpdateDoc]);
+
+  const startEdit = useCallback((key, e) => {
+    if (e) { e.stopPropagation(); e.preventDefault(); }
+    setEditingCell(key);
+    setEditValue(key === "grossValue" ? (doc[key] || 0) : (doc[key] || ""));
+  }, [doc]);
+
+  const cancelEdit = useCallback(() => {
+    setEditingCell(null);
+    setEditValue(null);
+  }, []);
+
+  const handleKeyDown = useCallback((e, key) => {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      cancelEdit();
+      return;
+    }
+    if (e.key === "Enter") {
+      e.preventDefault();
+      commitEdit(key, editValue);
+      setEditingCell(null);
+      setEditValue(null);
+      return;
+    }
+    if (e.key === "Tab") {
+      e.preventDefault();
+      commitEdit(key, editValue);
+      const curIdx = visibleEditableCols.indexOf(key);
+      const nextIdx = e.shiftKey ? curIdx - 1 : curIdx + 1;
+      if (nextIdx >= 0 && nextIdx < visibleEditableCols.length) {
+        const nextKey = visibleEditableCols[nextIdx];
+        tabMovingRef.current = true;
+        setEditingCell(nextKey);
+        setEditValue(nextKey === "grossValue" ? (doc[nextKey] || 0) : (doc[nextKey] || ""));
+      } else {
+        setEditingCell(null);
+        setEditValue(null);
+      }
+    }
+  }, [editValue, visibleEditableCols, commitEdit, cancelEdit, doc]);
+
+  const handleBlur = useCallback((key) => {
+    // Small delay to allow Tab handler to set tabMovingRef first
+    setTimeout(() => {
+      if (tabMovingRef.current) {
+        tabMovingRef.current = false;
+        return;
+      }
+      commitEdit(key, editValue);
+      setEditingCell(null);
+      setEditValue(null);
+    }, 0);
+  }, [editValue, commitEdit]);
+
+  const inputStyle = {
+    width: "100%", padding: "2px 4px", border: `1px solid ${DS.primaryLight}`,
+    borderRadius: 4, background: DS.neutralWhite, fontFamily: DS.fontFamily,
+    fontSize: 13, color: DS.textPrimary, outline: "none", boxSizing: "border-box",
+  };
+
+  const renderEditInput = (key) => {
+    // Select for type
+    if (key === "type") {
+      return <select value={editValue} onChange={e => setEditValue(e.target.value)}
+        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
+        autoFocus style={{ ...inputStyle, cursor: "pointer" }}>
+        {Object.entries(DOC_TYPES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+      </select>;
+    }
+    // Select for contractor
+    if (key === "contractor") {
+      return <select value={editValue} onChange={e => setEditValue(e.target.value)}
+        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
+        autoFocus style={{ ...inputStyle, cursor: "pointer" }}>
+        <option value="">— brak —</option>
+        {CONTRACTORS.map(c => <option key={c} value={c}>{c}</option>)}
+      </select>;
+    }
+    // Select for dept
+    if (key === "dept") {
+      return <select value={editValue} onChange={e => setEditValue(e.target.value)}
+        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
+        autoFocus style={{ ...inputStyle, cursor: "pointer" }}>
+        <option value="">— brak —</option>
+        {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+      </select>;
+    }
+    // Select for status
+    if (key === "status") {
+      return <select value={editValue} onChange={e => setEditValue(e.target.value)}
+        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
+        autoFocus style={{ ...inputStyle, cursor: "pointer" }}>
+        {Object.entries(DOC_STATUSES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+      </select>;
+    }
+    // Date input
+    if (key === "dateEnd") {
+      return <input type="date" value={editValue || ""} onChange={e => setEditValue(e.target.value)}
+        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
+        autoFocus style={inputStyle} />;
+    }
+    // Number input
+    if (key === "grossValue") {
+      return <input type="number" value={editValue} onChange={e => setEditValue(e.target.value)}
+        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
+        autoFocus onFocus={e => e.target.select()} step="0.01" style={{ ...inputStyle, textAlign: "right" }} />;
+    }
+    // Default text input
+    return <input type="text" value={editValue} onChange={e => setEditValue(e.target.value)}
+      onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
+      autoFocus onFocus={e => e.target.select()} style={inputStyle} />;
+  };
+
+  const editableCellProps = (key) => {
+    if (!onUpdateDoc || !EDITABLE_COLS.includes(key)) return {};
+    return {
+      onDoubleClick: (e) => startEdit(key, e),
+    };
+  };
+
+  const editCellBg = DS.primaryLighter;
+
   return (
     <React.Fragment>
-    <div onClick={hasChildren ? (e) => toggleExpand(doc.id, e) : undefined}
+    <div onClick={() => onSelectDoc(doc)}
       draggable onDragStart={e => { e.dataTransfer.setData("text/plain", String(doc.id)); e.dataTransfer.effectAllowed = "move"; }}
       onMouseEnter={e => { setHoveredRow(doc.id); if (!isSelected && !isExpanded) e.currentTarget.style.background = DS.primaryLighter; }}
-      onMouseLeave={e => { setHoveredRow(null); if (!isSelected && !isExpanded) e.currentTarget.style.background = isChecked ? `${DS.accentUmowyMain}08` : isZebra ? DS.neutralLighter : DS.neutralWhite; }}
+      onMouseLeave={e => { setHoveredRow(null); if (!isSelected && !isExpanded) e.currentTarget.style.background = isChecked ? `${DS.primaryLight}08` : isZebra ? DS.neutralLighter : DS.neutralWhite; }}
       style={{
       ...S.row, padding: "0 20px", position: "relative",
-      minHeight: 48, cursor: hasChildren ? "pointer" : "default", transition: "background 0.1s",
-      background: isSelected ? DS.accentUmowyLighter : isExpanded ? `${DS.primaryMain}06` : isChecked ? `${DS.accentUmowyMain}08` : isZebra ? DS.neutralLighter : DS.neutralWhite,
+      minHeight: 48, cursor: "pointer", transition: "background 0.1s",
+      background: isSelected ? DS.primaryLighter : isExpanded ? `${DS.primaryMain}06` : isChecked ? `${DS.primaryLight}08` : isZebra ? DS.neutralLighter : DS.neutralWhite,
       borderBottom: `1px solid ${DS.borderLight}`,
-      borderLeft: isSelected ? `3px solid ${DS.accentUmowyMain}` : isExpanded ? `3px solid ${DS.primaryMain}40` : "3px solid transparent",
+      borderLeft: isSelected ? `3px solid ${DS.primaryLight}` : isExpanded ? `3px solid ${DS.primaryMain}40` : "3px solid transparent",
     }}
     >
         {/* Expand chevron column */}
       <div style={{ width: 28, minWidth: 28, flex: "0 0 auto", padding: "8px 2px 8px 0", ...S.row, justifyContent: "center" }}>
         {hasChildren && (
-          <Icon name={isExpanded ? "chevronDown" : "chevronRight"} size={13} color={DS.primaryMain} style={{ transition: "transform 0.15s" }} />
+          <div onClick={(e) => { e.stopPropagation(); toggleExpand(doc.id, e); }}
+            onMouseEnter={e => { e.currentTarget.style.background = DS.primaryLighter; e.currentTarget.style.border = `1px solid ${DS.primaryLight}`; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.border = "1px solid transparent"; }}
+            style={{ width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", borderRadius: 4, border: "1px solid transparent", transition: "all 0.15s" }}>
+            <Icon name={isExpanded ? "chevronDown" : "chevronRight"} size={13} color={DS.primaryMain} style={{ transition: "transform 0.15s" }} />
+          </div>
         )}
       </div>
       {multiSelectMode && <div style={{ width: 36, padding: "8px 6px" }} onClick={e => e.stopPropagation()}>
         <Checkbox checked={isChecked} onChange={() => onToggleSelect(doc.id)} />
       </div>}
-      {showCol("type") && <div style={{ ...colStyle("type"), padding: "8px 6px", ...S.row, gap: 4 }}>
-        <Icon name={typeInfo.icon} size={14} color={DS.neutralMain} />
-        <span style={{ ...typo.bodySmall, color: DS.textSecondary, ...S.truncate }}>{typeInfo.label}</span>
+      {showCol("type") && <div style={{ ...colStyle("type"), padding: "8px 6px", ...S.row, gap: 4, background: editingCell === "type" ? editCellBg : undefined }} {...editableCellProps("type")}>
+        {editingCell === "type" ? renderEditInput("type") : <>
+          <Icon name={typeInfo.icon} size={14} color={DS.neutralMain} />
+          <span style={{ ...typo.bodySmall, color: DS.textSecondary, ...S.truncate }}>{typeInfo.label}</span>
+        </>}
       </div>}
       {showCol("alerts") && <div style={{ ...colStyle("alerts"), padding: "8px 4px", ...S.row, gap: 3, justifyContent: "center" }}>
         {docAlerts.length > 0 ? docAlerts.map(code => <AlertBadge key={code} code={code} />) : <span style={{ color: DS.textDisabled }}>—</span>}
       </div>}
-      {showCol("number") && <div style={{ ...colStyle("number"), padding: "8px 6px" }}>
-        <span style={{ ...typo.bodySmall, color: DS.textSecondary, fontFamily: "monospace", ...S.truncate, display: "block", fontSize: 12 }}>{doc.number || "—"}</span>
+      {showCol("number") && <div style={{ ...colStyle("number"), padding: "8px 6px", background: editingCell === "number" ? editCellBg : undefined }} {...editableCellProps("number")}>
+        {editingCell === "number" ? renderEditInput("number") :
+          <span style={{ ...typo.bodySmall, color: DS.textSecondary, fontFamily: "monospace", ...S.truncate, display: "block", fontSize: 12 }}>{doc.number || "—"}</span>}
       </div>}
-      {showCol("nrEwidencyjny") && <div style={{ ...colStyle("nrEwidencyjny"), padding: "8px 6px" }}>
-        <span style={{ ...typo.bodySmall, color: doc.nrEwidencyjny ? DS.accentUmowyDark : DS.textDisabled, fontFamily: "monospace", ...S.truncate, display: "block", fontSize: 11, fontWeight: doc.nrEwidencyjny ? 600 : 400 }}>{doc.nrEwidencyjny || "—"}</span>
+      {showCol("nrEwidencyjny") && <div style={{ ...colStyle("nrEwidencyjny"), padding: "8px 6px", background: editingCell === "nrEwidencyjny" ? editCellBg : undefined }} {...editableCellProps("nrEwidencyjny")}>
+        {editingCell === "nrEwidencyjny" ? renderEditInput("nrEwidencyjny") :
+          <span style={{ ...typo.bodySmall, color: doc.nrEwidencyjny ? DS.primaryDark : DS.textDisabled, fontFamily: "monospace", ...S.truncate, display: "block", fontSize: 11, fontWeight: doc.nrEwidencyjny ? 600 : 400 }}>{doc.nrEwidencyjny || "—"}</span>}
       </div>}
-      {showCol("title") && <div style={{ ...colStyle("title"), padding: "8px 6px" }}>
-        <span style={{ ...typo.bodySmall, fontWeight: 500, color: DS.textPrimary, ...S.truncate, display: "block" }}>
-          {doc.title || "Bez tytułu"}
-        </span>
+      {showCol("title") && <div style={{ ...colStyle("title"), padding: "8px 6px", background: editingCell === "title" ? editCellBg : undefined }} {...editableCellProps("title")}>
+        {editingCell === "title" ? renderEditInput("title") :
+          <span style={{ ...typo.bodySmall, fontWeight: 500, color: DS.textPrimary, ...S.truncate, display: "block" }}>
+            {doc.title || "Bez tytułu"}
+          </span>}
       </div>}
-      {showCol("contractor") && <div style={{ ...colStyle("contractor"), padding: "8px 6px" }}>
-        <span style={{ ...typo.bodySmall, color: DS.textSecondary, ...S.truncate, display: "block" }}>
-          {doc.contractor || "—"}
-        </span>
+      {showCol("contractor") && <div style={{ ...colStyle("contractor"), padding: "8px 6px", background: editingCell === "contractor" ? editCellBg : undefined }} {...editableCellProps("contractor")}>
+        {editingCell === "contractor" ? renderEditInput("contractor") :
+          <span style={{ ...typo.bodySmall, color: DS.textSecondary, ...S.truncate, display: "block" }}>
+            {doc.contractor || "—"}
+          </span>}
       </div>}
       {showCol("assignee") && <div style={{ ...colStyle("assignee"), padding: "8px 4px", ...S.row, justifyContent: "center" }}>
         {(() => { const u = USERS_LIST.find(u => u.id === doc.assignee); return u ? (
-          <div title={u.name} style={{ width: 26, height: 26, borderRadius: "50%", background: DS.accentUmowyLighter, ...S.row, justifyContent: "center", alignItems: "center" }}>
-            <span style={{ ...typo.labelSmall, color: DS.accentUmowyDark, fontWeight: 600, fontSize: 10 }}>{u.initials}</span>
+          <div title={u.name} style={{ width: 26, height: 26, borderRadius: "50%", background: DS.primaryLighter, ...S.row, justifyContent: "center", alignItems: "center" }}>
+            <span style={{ ...typo.labelSmall, color: DS.primaryDark, fontWeight: 600, fontSize: 10 }}>{u.initials}</span>
           </div>
         ) : <span style={{ ...typo.labelSmall, color: DS.textDisabled }}>—</span>; })()}
       </div>}
-      {showCol("dept") && <div style={{ ...colStyle("dept"), padding: "8px 6px" }}>
-        <span style={{ ...typo.bodySmall, color: DS.textSecondary, ...S.truncate, display: "block" }}>
-          {doc.dept}
-        </span>
+      {showCol("dept") && <div style={{ ...colStyle("dept"), padding: "8px 6px", background: editingCell === "dept" ? editCellBg : undefined }} {...editableCellProps("dept")}>
+        {editingCell === "dept" ? renderEditInput("dept") :
+          <span style={{ ...typo.bodySmall, color: DS.textSecondary, ...S.truncate, display: "block" }}>
+            {doc.dept}
+          </span>}
       </div>}
-      {showCol("dateEnd") && <div style={{ ...colStyle("dateEnd"), padding: "8px 6px" }}>
-        <span style={{ ...typo.bodySmall, color: DS.textSecondary }}>{doc.dateEnd ? formatDate(doc.dateEnd) : "—"}</span>
+      {showCol("dateEnd") && <div style={{ ...colStyle("dateEnd"), padding: "8px 6px", background: editingCell === "dateEnd" ? editCellBg : undefined }} {...editableCellProps("dateEnd")}>
+        {editingCell === "dateEnd" ? renderEditInput("dateEnd") :
+          <span style={{ ...typo.bodySmall, color: DS.textSecondary }}>{doc.dateEnd ? formatDate(doc.dateEnd) : "—"}</span>}
       </div>}
-      {showCol("grossValue") && <div style={{ ...colStyle("grossValue"), padding: "8px 6px", textAlign: "right" }}>
-        <span style={{ ...typo.bodySmall, fontWeight: 500, color: DS.textPrimary, fontVariantNumeric: "tabular-nums" }}>
-          {doc.grossValue ? formatCurrency(doc.grossValue) : "—"}
-        </span>
+      {showCol("grossValue") && <div style={{ ...colStyle("grossValue"), padding: "8px 6px", textAlign: "right", background: editingCell === "grossValue" ? editCellBg : undefined }} {...editableCellProps("grossValue")}>
+        {editingCell === "grossValue" ? renderEditInput("grossValue") :
+          <span style={{ ...typo.bodySmall, fontWeight: 500, color: DS.textPrimary, fontVariantNumeric: "tabular-nums" }}>
+            {doc.grossValue ? formatCurrency(doc.grossValue) : "—"}
+          </span>}
       </div>}
       {showCol("classification") && <div style={{ ...colStyle("classification"), padding: "8px 6px" }}>
         <span style={{ ...typo.labelSmall, color: DS.textSecondary, ...S.truncate, display: "block" }}>
@@ -95,11 +247,12 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
         ))}
         {extraTags > 0 && <span style={{ ...typo.labelSmall, color: DS.textDisabled, fontWeight: 500 }}>+{extraTags}</span>}
       </div>}
-      {showCol("status") && <div style={{ ...colStyle("status"), padding: "8px 6px" }}>
-        <Badge color={statusInfo.color} bg={statusInfo.bg}>{statusInfo.label}</Badge>
+      {showCol("status") && <div style={{ ...colStyle("status"), padding: "8px 6px", background: editingCell === "status" ? editCellBg : undefined }} {...editableCellProps("status")}>
+        {editingCell === "status" ? renderEditInput("status") :
+          <Badge color={statusInfo.color} bg={statusInfo.bg}>{statusInfo.label}</Badge>}
       </div>}
-      {/* Actions column — children counter + Szczegóły button */}
-      <div style={{ width: 120, minWidth: 120, flex: "0 0 auto", padding: "8px 6px", ...S.row, gap: 6, justifyContent: "flex-end" }}>
+      {/* Actions column — children counter only */}
+      <div style={{ width: 60, minWidth: 60, flex: "0 0 auto", padding: "8px 6px", ...S.row, gap: 6, justifyContent: "flex-end" }}>
         {hasChildren && !isExpanded && (
           <span style={{
             ...typo.labelSmall, color: DS.primaryMain, fontWeight: 500,
@@ -110,19 +263,6 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
             {children.length}
           </span>
         )}
-        <button onClick={(e) => { e.stopPropagation(); onSelectDoc(doc); }} style={{
-          ...S.row, gap: 3, padding: "3px 10px", borderRadius: 5,
-          border: `1px solid ${DS.borderLight}`, background: DS.neutralWhite,
-          color: DS.textSecondary, cursor: "pointer", ...typo.labelSmall,
-          fontFamily: DS.fontFamily, fontWeight: 500, whiteSpace: "nowrap",
-          fontSize: 11, transition: "all 0.15s",
-        }}
-        onMouseEnter={e => { e.currentTarget.style.borderColor = DS.accentUmowyMain; e.currentTarget.style.color = DS.accentUmowyMain; }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = DS.borderLight; e.currentTarget.style.color = DS.textSecondary; }}
-        >
-          <Icon name="eye" size={11} />
-          Szczeg.
-        </button>
       </div>
     </div>
     {/* Expanded children area */}
@@ -198,7 +338,7 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
                       {/* Szczegóły link for child */}
                       <div style={{ width: 70, padding: "6px 4px", textAlign: "right", flexShrink: 0 }}>
                         <span onClick={(e) => { e.stopPropagation(); if (child.fileName) setFilePreview(child); }}
-                          style={{ ...typo.labelSmall, color: DS.accentUmowyMain, cursor: "pointer", fontWeight: 500, fontSize: 11 }}>
+                          style={{ ...typo.labelSmall, color: DS.primaryLight, cursor: "pointer", fontWeight: 500, fontSize: 11 }}>
                           {child.fileName ? "Podgląd" : "Szczeg."}
                         </span>
                       </div>

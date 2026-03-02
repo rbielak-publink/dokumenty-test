@@ -6,12 +6,12 @@ const Checkbox = ({ checked, onChange, indeterminate }) => {
   useEffect(() => { if (ref.current) ref.current.indeterminate = indeterminate; }, [indeterminate]);
   return (
     <input ref={ref} type="checkbox" checked={checked} onChange={onChange} style={{
-      width: 16, height: 16, cursor: "pointer", accentColor: DS.accentUmowyMain,
+      width: 16, height: 16, cursor: "pointer", accentColor: DS.primaryLight,
     }} />
   );
 };
 
-const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSort, selectedIds, onToggleSelect, onSelectAll, onOpenExport, onOpenFolders, visibleColumns, multiSelectMode, onToggleMultiSelect }) => {
+const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSort, selectedIds, onToggleSelect, onSelectAll, onOpenExport, onOpenFolders, visibleColumns, multiSelectMode, onToggleMultiSelect, onUpdateDoc }) => {
   const [titleColWidth, setTitleColWidth] = useState(null);
   const titleDragRef = useRef(null);
   const handleTitleResize = useCallback((e) => {
@@ -96,9 +96,11 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
     return { width: col.w, minWidth: col.w, flex: "0 0 auto" };
   };
 
+  const totalGrossValue = useMemo(() => docs.reduce((s, d) => s + (d.grossValue || 0), 0), [docs]);
+
   const SortIcon = ({ colKey }) => {
     if (sortConfig.key !== colKey) return <Icon name="arrowUpDown" size={11} color={DS.neutralMain} style={{ opacity: 0.4 }} />;
-    return <Icon name={sortConfig.dir === "asc" ? "chevronDown" : "chevronDown"} size={11} color={DS.accentUmowyMain}
+    return <Icon name={sortConfig.dir === "asc" ? "chevronDown" : "chevronDown"} size={11} color={DS.primaryLight}
       style={{ transform: sortConfig.dir === "asc" ? "rotate(180deg)" : "none" }} />;
   };
 
@@ -106,7 +108,7 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
   const someSelected = docs.some(d => selectedIds.has(d.id)) && !allSelected;
 
   /* shared props for DocTableRow */
-  const rowProps = { selectedId, selectedIds, visibleColumns, multiSelectMode, expandedRows, toggleExpand, hoveredRow, setHoveredRow, setFilePreview, onToggleSelect, onSelectDoc, colStyle };
+  const rowProps = { selectedId, selectedIds, visibleColumns, multiSelectMode, expandedRows, toggleExpand, hoveredRow, setHoveredRow, setFilePreview, onToggleSelect, onSelectDoc, colStyle, onUpdateDoc };
 
   return (
     <div style={{ flex: 1, ...S.col, overflow: "hidden" }}>
@@ -114,10 +116,10 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
       {selectedIds.size > 0 && (
         <div style={{
           ...S.row, gap: 12, padding: "8px 20px",
-          background: DS.accentUmowyLighter, borderBottom: `1px solid ${DS.accentUmowyLight}`,
+          background: DS.primaryLighter, borderBottom: `1px solid ${DS.primaryLight}`,
           animation: "slideDown 0.15s ease",
         }}>
-          <span style={{ ...typo.labelMedium, color: DS.accentUmowyDark }}>
+          <span style={{ ...typo.labelMedium, color: DS.primaryDark }}>
             Zaznaczono: {selectedIds.size}
           </span>
           <Btn variant="secondary" icon="edit" small>Zmień status</Btn>
@@ -135,27 +137,27 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
         borderBottom: `1px solid ${DS.borderLight}`, background: DS.neutralLighter,
       }}>
         <span style={{ ...typo.labelSmall, color: DS.textSecondary, marginRight: 4 }}>Widok:</span>
-        <button onClick={() => { setGroupBy(null); }} style={{
+        <button onClick={onToggleMultiSelect} style={{
           ...S.row, gap: 4, padding: "3px 10px", borderRadius: 6,
-          border: `1px solid ${!groupBy ? DS.accentUmowyMain : DS.borderLight}`,
-          background: !groupBy ? DS.accentUmowyLighter : DS.neutralWhite,
-          color: !groupBy ? DS.accentUmowyDark : DS.textSecondary,
+          border: `1px solid ${multiSelectMode ? DS.primaryLight : DS.borderLight}`,
+          background: multiSelectMode ? DS.primaryLighter : DS.neutralWhite,
+          color: multiSelectMode ? DS.primaryDark : DS.textSecondary,
           cursor: "pointer", ...typo.labelSmall, fontFamily: DS.fontFamily, transition: "all 0.15s",
         }}>
-          <Icon name="list" size={12} color={!groupBy ? DS.accentUmowyMain : DS.textDisabled} />
-          Lista
+          <Icon name="check" size={12} color={multiSelectMode ? DS.primaryLight : DS.textDisabled} />
+          Zaznacz wiele
         </button>
         <div style={{ position: "relative" }} ref={groupByRef}>
           <button onClick={() => setShowGroupMenu(p => !p)} style={{
             ...S.row, gap: 4, padding: "3px 10px", borderRadius: 6,
-            border: `1px solid ${groupBy ? DS.accentUmowyMain : DS.borderLight}`,
-            background: groupBy ? DS.accentUmowyLighter : DS.neutralWhite,
-            color: groupBy ? DS.accentUmowyDark : DS.textSecondary,
+            border: `1px solid ${groupBy ? DS.primaryLight : DS.borderLight}`,
+            background: groupBy ? DS.primaryLighter : DS.neutralWhite,
+            color: groupBy ? DS.primaryDark : DS.textSecondary,
             cursor: "pointer", ...typo.labelSmall, fontFamily: DS.fontFamily, transition: "all 0.15s",
           }}>
-            <Icon name="layers" size={12} color={groupBy ? DS.accentUmowyMain : DS.textDisabled} />
+            <Icon name="layers" size={12} color={groupBy ? DS.primaryLight : DS.textDisabled} />
             {groupBy ? ("Grupuj: " + (GROUP_BY_OPTIONS.find(o => o.id === groupBy)?.label || "")) : "Grupuj"}
-            <Icon name="chevronDown" size={10} color={groupBy ? DS.accentUmowyMain : DS.textDisabled} />
+            <Icon name="chevronDown" size={10} color={groupBy ? DS.primaryLight : DS.textDisabled} />
           </button>
           {showGroupMenu && <div style={{
             position: "absolute", top: "100%", left: 0, marginTop: 4, zIndex: 100,
@@ -165,15 +167,15 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
             {GROUP_BY_OPTIONS.map(opt => (
               <div key={opt.id} onClick={() => { setGroupBy(opt.id); setShowGroupMenu(false); }} style={{
                 ...S.row, gap: 8, padding: "8px 14px", cursor: "pointer",
-                background: groupBy === opt.id ? DS.accentUmowyLighter : "transparent",
+                background: groupBy === opt.id ? DS.primaryLighter : "transparent",
                 transition: "background 0.1s",
               }}
               onMouseEnter={e => e.currentTarget.style.background = DS.neutralLighter}
-              onMouseLeave={e => e.currentTarget.style.background = groupBy === opt.id ? DS.accentUmowyLighter : "transparent"}
+              onMouseLeave={e => e.currentTarget.style.background = groupBy === opt.id ? DS.primaryLighter : "transparent"}
               >
-                <Icon name={opt.icon} size={13} color={groupBy === opt.id ? DS.accentUmowyMain : DS.textSecondary} />
-                <span style={{ ...typo.bodySmall, color: groupBy === opt.id ? DS.accentUmowyDark : DS.textPrimary }}>{opt.label}</span>
-                {groupBy === opt.id && <Icon name="check" size={12} color={DS.accentUmowyMain} style={{ marginLeft: "auto" }} />}
+                <Icon name={opt.icon} size={13} color={groupBy === opt.id ? DS.primaryLight : DS.textSecondary} />
+                <span style={{ ...typo.bodySmall, color: groupBy === opt.id ? DS.primaryDark : DS.textPrimary }}>{opt.label}</span>
+                {groupBy === opt.id && <Icon name="check" size={12} color={DS.primaryLight} style={{ marginLeft: "auto" }} />}
               </div>
             ))}
             {groupBy && <>
@@ -191,22 +193,12 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
           </div>}
         </div>
         <div style={{ flex: 1 }} />
-        <button onClick={onToggleMultiSelect} style={{
-          ...S.row, gap: 4, padding: "3px 10px", borderRadius: 6,
-          border: `1px solid ${multiSelectMode ? DS.accentUmowyMain : DS.borderLight}`,
-          background: multiSelectMode ? DS.accentUmowyLighter : DS.neutralWhite,
-          color: multiSelectMode ? DS.accentUmowyDark : DS.textSecondary,
-          cursor: "pointer", ...typo.labelSmall, fontFamily: DS.fontFamily, transition: "all 0.15s",
-        }}>
-          <Icon name="check" size={12} color={multiSelectMode ? DS.accentUmowyMain : DS.textDisabled} />
-          Zaznacz wiele
-        </button>
         <span style={{ ...typo.labelSmall, color: DS.textDisabled }}>{docs.length} dok.</span>
       </div>
 
       {/* Table header + body with horizontal scroll */}
       <div style={{ flex: 1, overflowX: "auto", overflowY: "auto" }}>
-      <div style={{ minWidth: filteredCols.reduce((s, c) => s + (c.w || c.min || 100), 0) + 40 + 28 + 120 }}>
+      <div style={{ minWidth: filteredCols.reduce((s, c) => s + (c.w || c.min || 100), 0) + 40 + 28 + 60 }}>
       <div style={{
         ...S.row, padding: "0 20px",
         borderBottom: `2px solid ${DS.borderLight}`, background: DS.neutralWhite,
@@ -219,18 +211,26 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
         </div>}
         {filteredCols.map(col => (
           <div key={col.key} style={{
-            ...colStyle(col), padding: "8px 6px", position: "relative",
-            ...S.row, gap: 4, cursor: "pointer", userSelect: "none",
+            ...colStyle(col), padding: col.key === "grossValue" ? "4px 6px" : "8px 6px", position: "relative",
+            ...(col.key === "grossValue" ? { ...S.col, alignItems: "flex-end", justifyContent: "center", cursor: "pointer", userSelect: "none" } : { ...S.row, gap: 4, cursor: "pointer", userSelect: "none" }),
           }} onClick={() => onSort(col.key)}>
-            <span style={{ ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>{col.label}</span>
-            <SortIcon colKey={col.key} />
+            {col.key === "grossValue" ? <>
+              <div style={{ ...S.row, gap: 4 }}>
+                <span style={{ ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>{col.label}</span>
+                <SortIcon colKey={col.key} />
+              </div>
+              <span style={{ ...typo.labelSmall, color: DS.primaryMain, fontWeight: 600, fontSize: 11, fontVariantNumeric: "tabular-nums" }}>{formatCurrency(totalGrossValue)}</span>
+            </> : <>
+              <span style={{ ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>{col.label}</span>
+              <SortIcon colKey={col.key} />
+            </>}
             {col.key === "title" && <div ref={titleDragRef} onMouseDown={handleTitleResize} onClick={e => e.stopPropagation()}
               style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 5, cursor: "col-resize", background: "transparent", zIndex: 3 }}
-              onMouseEnter={e => e.currentTarget.style.background = DS.accentUmowyMain + "40"}
+              onMouseEnter={e => e.currentTarget.style.background = DS.primaryLight + "40"}
               onMouseLeave={e => e.currentTarget.style.background = "transparent"} />}
           </div>
         ))}
-        <div style={{ width: 120, minWidth: 120, flex: "0 0 auto", padding: "8px 6px" }} />
+        <div style={{ width: 60, minWidth: 60, flex: "0 0 auto", padding: "8px 6px" }} />
       </div>
 
       {/* Table body — rows via DocTableRow */}
@@ -266,16 +266,16 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
       <div onClick={onInlineAdd} style={{
         ...S.row, padding: "0 20px",
         minHeight: 44, cursor: "pointer", transition: "background 0.1s",
-        background: DS.neutralWhite, borderTop: `1px dashed ${DS.accentUmowyLight}`,
+        background: DS.neutralWhite, borderTop: `1px dashed ${DS.primaryLight}`,
         flexShrink: 0,
       }}
-        onMouseEnter={e => e.currentTarget.style.background = DS.accentUmowyLighter}
+        onMouseEnter={e => e.currentTarget.style.background = DS.primaryLighter}
         onMouseLeave={e => e.currentTarget.style.background = DS.neutralWhite}
       >
         {multiSelectMode && <div style={{ width: 36 }} />}
         <div style={{ ...S.row, gap: 8, padding: "8px 8px" }}>
-          <Icon name="plus" size={15} color={DS.accentUmowyMain} />
-          <span style={{ ...typo.bodySmall, color: DS.accentUmowyMain, fontWeight: 500 }}>Dodaj dokument</span>
+          <Icon name="plus" size={15} color={DS.primaryLight} />
+          <span style={{ ...typo.bodySmall, color: DS.primaryLight, fontWeight: 500 }}>Dodaj dokument</span>
         </div>
       </div>
       </div>{/* close minWidth wrapper */}
@@ -310,7 +310,7 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
                   <div style={{ ...S.row, gap: 8, marginTop: 8 }}>
                     <button style={{
                       ...S.row, gap: 6, padding: "8px 20px", borderRadius: 8,
-                      background: DS.accentUmowyMain, color: "#fff", border: "none",
+                      background: DS.primaryLight, color: "#fff", border: "none",
                       cursor: "pointer", ...typo.labelMedium, fontFamily: DS.fontFamily, fontWeight: 600,
                     }}>
                       <Icon name="eye" size={14} color="#fff" /> Otwórz

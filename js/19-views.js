@@ -121,7 +121,7 @@ const AppTopBar = () => {
       <div style={{ ...S.row, gap: 10 }}>
         <div style={{
           width: 28, height: 28, borderRadius: 8,
-          background: `linear-gradient(135deg, ${DS.primaryMain}, ${DS.accentUmowyMain})`,
+          background: `linear-gradient(135deg, ${DS.primaryMain}, ${DS.primaryLight})`,
           ...S.row, justifyContent: "center", alignItems: "center", flexShrink: 0,
         }}>
           <span style={{ fontSize: 10, fontWeight: 700, color: "#fff" }}>eP</span>
@@ -160,11 +160,11 @@ const AppTopBar = () => {
         </button>
         <div style={{
           width: 28, height: 28, borderRadius: "50%",
-          background: DS.accentUmowyLighter, ...S.row,
+          background: DS.primaryLighter, ...S.row,
           justifyContent: "center", alignItems: "center",
           marginLeft: 4,
         }} title="Jan Kowalski">
-          <span style={{ fontSize: 11, fontWeight: 600, color: DS.accentUmowyDark }}>JK</span>
+          <span style={{ fontSize: 11, fontWeight: 600, color: DS.primaryDark }}>JK</span>
         </div>
       </div>
     </div>

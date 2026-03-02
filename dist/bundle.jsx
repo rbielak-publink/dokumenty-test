@@ -121,7 +121,7 @@ const Icon = ({ name, size = 16, color = "currentColor", style = {} }) => (
    DATA DEFINITIONS
    ═══════════════════════════════════════════════════════════════ */
 const DOC_TYPES = {
-  umowa: { label: "Umowa", color: DS.accentUmowyMain, bg: DS.accentUmowyLighter, icon: "file" },
+  umowa: { label: "Umowa", color: DS.primaryLight, bg: DS.primaryLighter, icon: "file" },
   faktura: { label: "Faktura", color: "#0A7BE5", bg: "#E0EEFF", icon: "receipt" },
   zlecenie: { label: "Zlecenie", color: "#E5850A", bg: "#FFF4E0", icon: "zap" },
   aneks: { label: "Aneks", color: "#7C3AED", bg: "#F0E7FF", icon: "gitBranch" },
@@ -183,7 +183,7 @@ const CLASSIFICATIONS = [
 
 const TAGS = [
   { id: "pilne", label: "Pilne", color: DS.errorMain },
-  { id: "inwestycja", label: "Inwestycja", color: DS.accentUmowyMain },
+  { id: "inwestycja", label: "Inwestycja", color: DS.primaryLight },
   { id: "dotacja", label: "Dotacja", color: DS.successMain },
   { id: "przetarg", label: "Przetarg", color: DS.infoMain },
   { id: "ksef", label: "KSeF", color: "#7C3AED" },
@@ -508,7 +508,7 @@ const Avatar = ({ name, size = 28 }) => {
 
 const Btn = ({ children, variant = "secondary", icon, onClick, style = {}, small, disabled, title }) => {
   const styles = {
-    accent: { bg: DS.accentUmowyMain, color: "#fff", hoverBg: DS.accentUmowyDark, border: "none" },
+    accent: { bg: DS.primaryLight, color: "#fff", hoverBg: DS.primaryDark, border: "none" },
     primary: { bg: DS.primaryMain, color: "#fff", hoverBg: DS.primaryDark, border: "none" },
     secondary: { bg: DS.neutralWhite, color: DS.textPrimary, hoverBg: DS.neutralLighter, border: `1px solid ${DS.borderLight}` },
     ghost: { bg: "transparent", color: DS.textSecondary, hoverBg: DS.neutralLighter, border: "none" },
@@ -615,7 +615,7 @@ const Sidebar = ({ activeView, onViewChange, onOpenCmd, collapsed, onToggle }) =
             background: DS.neutralLighter, cursor: "pointer",
             color: DS.textDisabled, fontSize: 12, fontFamily: DS.fontFamily,
           }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = DS.accentUmowyLight}
+            onMouseEnter={e => e.currentTarget.style.borderColor = DS.primaryLight}
             onMouseLeave={e => e.currentTarget.style.borderColor = DS.borderLight}
           >
             <Icon name="search" size={14} color={DS.textDisabled} />
@@ -632,7 +632,7 @@ const Sidebar = ({ activeView, onViewChange, onOpenCmd, collapsed, onToggle }) =
             width: 34, height: 34, borderRadius: 8, border: `1px solid ${DS.borderLight}`,
             background: DS.neutralLighter, cursor: "pointer", ...S.row, justifyContent: "center", padding: 0,
           }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = DS.accentUmowyLight}
+            onMouseEnter={e => e.currentTarget.style.borderColor = DS.primaryLight}
             onMouseLeave={e => e.currentTarget.style.borderColor = DS.borderLight}
           >
             <Icon name="search" size={14} color={DS.textDisabled} />
@@ -688,7 +688,7 @@ const ViewTabs = ({ activeTab, onTabChange, tabs, onAddTab, onRemoveTab }) => (
         <button key={tab.id} onClick={() => onTabChange(tab.id)} style={{
           display: "inline-flex", alignItems: "center", gap: 6,
           padding: "8px 14px", border: "none", borderRadius: 0,
-          borderBottom: active ? `2px solid ${DS.accentUmowyMain}` : "2px solid transparent",
+          borderBottom: active ? `2px solid ${DS.primaryLight}` : "2px solid transparent",
           background: "transparent", cursor: "pointer", fontFamily: DS.fontFamily,
           fontSize: 13, fontWeight: active ? 600 : 400,
           color: active ? DS.primaryMain : DS.textSecondary,
@@ -701,8 +701,8 @@ const ViewTabs = ({ activeTab, onTabChange, tabs, onAddTab, onRemoveTab }) => (
           {tab.count !== undefined && (
             <span style={{
               ...typo.labelSmall, padding: "0 5px", ...S.pill,
-              background: active ? DS.accentUmowyLighter : DS.neutralLighter,
-              color: active ? DS.accentUmowyDark : DS.textDisabled,
+              background: active ? DS.primaryLighter : DS.neutralLighter,
+              color: active ? DS.primaryDark : DS.textDisabled,
             }}>{tab.count}</span>
           )}
           {tab.removable && active && (
@@ -725,7 +725,7 @@ const ViewTabs = ({ activeTab, onTabChange, tabs, onAddTab, onRemoveTab }) => (
       background: "transparent", cursor: "pointer", fontFamily: DS.fontFamily,
       fontSize: 12, color: DS.textDisabled, marginLeft: 4, transition: "all 0.15s",
     }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = DS.accentUmowyLight; e.currentTarget.style.color = DS.accentUmowyMain; }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = DS.primaryLight; e.currentTarget.style.color = DS.primaryLight; }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = DS.borderLight; e.currentTarget.style.color = DS.textDisabled; }}
     >
       <Icon name="plus" size={12} />Dodaj widok
@@ -753,7 +753,7 @@ const MultiSelect = ({ values, onChange, options, placeholder, style }) => {
   return (
     <div ref={ref} style={{ position: "relative", ...style }}>
       <div onClick={() => setOpen(p => !p)} style={{
-        padding: "7px 10px", border: `1px solid ${open ? DS.accentUmowyMain : DS.borderLight}`,
+        padding: "7px 10px", border: `1px solid ${open ? DS.primaryLight : DS.borderLight}`,
         borderRadius: 8, ...S.row, gap: 6, cursor: "pointer", background: DS.neutralWhite,
         fontSize: 13, fontFamily: DS.fontFamily, color: values.length > 0 ? DS.textPrimary : DS.textDisabled,
         transition: "border-color 0.15s", minHeight: 34,
@@ -772,15 +772,15 @@ const MultiSelect = ({ values, onChange, options, placeholder, style }) => {
             return (
               <div key={opt.value} onClick={() => toggle(opt.value)} style={{
                 padding: "6px 12px", ...S.row, gap: 8, cursor: "pointer",
-                background: checked ? DS.accentUmowyLighter : "transparent",
+                background: checked ? DS.primaryLighter : "transparent",
               }}
                 onMouseEnter={e => { if (!checked) e.currentTarget.style.background = DS.neutralLighter; }}
-                onMouseLeave={e => e.currentTarget.style.background = checked ? DS.accentUmowyLighter : "transparent"}
+                onMouseLeave={e => e.currentTarget.style.background = checked ? DS.primaryLighter : "transparent"}
               >
                 <div style={{
                   width: 14, height: 14, borderRadius: 3,
-                  border: `1.5px solid ${checked ? DS.accentUmowyMain : DS.borderLight}`,
-                  background: checked ? DS.accentUmowyMain : "transparent",
+                  border: `1.5px solid ${checked ? DS.primaryLight : DS.borderLight}`,
+                  background: checked ? DS.primaryLight : "transparent",
                   ...S.row, justifyContent: "center", alignItems: "center", flexShrink: 0,
                 }}>
                   {checked && <Icon name="check" size={9} color="#fff" />}
@@ -852,7 +852,7 @@ const FilterSummary = ({ filters, typeFilter }) => {
       <Icon name="filter" size={12} color={DS.textDisabled} />
       <span style={{ ...typo.labelSmall, color: DS.textDisabled }}>Filtry:</span>
       {badges.map(b => (
-        <Badge key={b.key} color={DS.accentUmowyDark} bg={DS.accentUmowyLighter} small>
+        <Badge key={b.key} color={DS.primaryDark} bg={DS.primaryLighter} small>
           {b.label}
         </Badge>
       ))}
@@ -889,8 +889,8 @@ const ColumnSelector = ({ allColumns, visibleColumns, onChange, open, onToggle }
           >
             <div style={{
               width: 16, height: 16, borderRadius: 4,
-              border: `1.5px solid ${checked ? DS.accentUmowyMain : DS.borderLight}`,
-              background: checked ? DS.accentUmowyMain : "transparent",
+              border: `1.5px solid ${checked ? DS.primaryLight : DS.borderLight}`,
+              background: checked ? DS.primaryLight : "transparent",
               ...S.row, justifyContent: "center", alignItems: "center", flexShrink: 0,
             }}>
               {checked && <Icon name="check" size={10} color="#fff" />}
@@ -936,13 +936,13 @@ const DocTypeFilterBar = ({ activeType, onTypeChange, filterCount, onToggleFilte
           return (
             <button key={tab.key} onClick={() => onTypeChange(tab.key)} style={{
               padding: "5px 12px", border: "none", borderRadius: 6,
-              background: active ? DS.accentUmowyLighter : "transparent",
-              color: active ? DS.accentUmowyDark : DS.textSecondary,
+              background: active ? DS.primaryLighter : "transparent",
+              color: active ? DS.primaryDark : DS.textSecondary,
               fontFamily: DS.fontFamily, fontSize: 12, fontWeight: active ? 600 : 400,
               cursor: "pointer", transition: "all 0.12s", whiteSpace: "nowrap",
             }}
               onMouseEnter={e => { if (!active) e.currentTarget.style.background = DS.neutralLighter; }}
-              onMouseLeave={e => { if (!active) e.currentTarget.style.background = active ? DS.accentUmowyLighter : "transparent"; }}
+              onMouseLeave={e => { if (!active) e.currentTarget.style.background = active ? DS.primaryLighter : "transparent"; }}
             >{tab.label}</button>
           );
         })}
@@ -991,7 +991,7 @@ const SaveViewModal = ({ open, onClose, onSave, filters, visibleColumns, allColu
               width: "100%", padding: "8px 12px", border: `1px solid ${DS.borderLight}`,
               borderRadius: 8, fontFamily: DS.fontFamily, fontSize: 13, outline: "none", boxSizing: "border-box",
             }}
-              onFocus={e => e.target.style.borderColor = DS.accentUmowyMain}
+              onFocus={e => e.target.style.borderColor = DS.primaryLight}
               onBlur={e => e.target.style.borderColor = DS.borderLight}
             />
           </Field>
@@ -1000,7 +1000,7 @@ const SaveViewModal = ({ open, onClose, onSave, filters, visibleColumns, allColu
             {activeFilters.length > 0 ? (
               <div style={{ ...S.row, gap: 6, flexWrap: "wrap" }}>
                 {activeFilters.map(([key, val]) => (
-                  <Badge key={key} color={DS.accentUmowyDark} bg={DS.accentUmowyLighter} small>
+                  <Badge key={key} color={DS.primaryDark} bg={DS.primaryLighter} small>
                     {filterLabels[key]?.(val) || val}
                   </Badge>
                 ))}
@@ -1032,12 +1032,12 @@ const Checkbox = ({ checked, onChange, indeterminate }) => {
   useEffect(() => { if (ref.current) ref.current.indeterminate = indeterminate; }, [indeterminate]);
   return (
     <input ref={ref} type="checkbox" checked={checked} onChange={onChange} style={{
-      width: 16, height: 16, cursor: "pointer", accentColor: DS.accentUmowyMain,
+      width: 16, height: 16, cursor: "pointer", accentColor: DS.primaryLight,
     }} />
   );
 };
 
-const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSort, selectedIds, onToggleSelect, onSelectAll, onOpenExport, onOpenFolders, visibleColumns, multiSelectMode, onToggleMultiSelect }) => {
+const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSort, selectedIds, onToggleSelect, onSelectAll, onOpenExport, onOpenFolders, visibleColumns, multiSelectMode, onToggleMultiSelect, onUpdateDoc }) => {
   const [titleColWidth, setTitleColWidth] = useState(null);
   const titleDragRef = useRef(null);
   const handleTitleResize = useCallback((e) => {
@@ -1122,9 +1122,11 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
     return { width: col.w, minWidth: col.w, flex: "0 0 auto" };
   };
 
+  const totalGrossValue = useMemo(() => docs.reduce((s, d) => s + (d.grossValue || 0), 0), [docs]);
+
   const SortIcon = ({ colKey }) => {
     if (sortConfig.key !== colKey) return <Icon name="arrowUpDown" size={11} color={DS.neutralMain} style={{ opacity: 0.4 }} />;
-    return <Icon name={sortConfig.dir === "asc" ? "chevronDown" : "chevronDown"} size={11} color={DS.accentUmowyMain}
+    return <Icon name={sortConfig.dir === "asc" ? "chevronDown" : "chevronDown"} size={11} color={DS.primaryLight}
       style={{ transform: sortConfig.dir === "asc" ? "rotate(180deg)" : "none" }} />;
   };
 
@@ -1132,7 +1134,7 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
   const someSelected = docs.some(d => selectedIds.has(d.id)) && !allSelected;
 
   /* shared props for DocTableRow */
-  const rowProps = { selectedId, selectedIds, visibleColumns, multiSelectMode, expandedRows, toggleExpand, hoveredRow, setHoveredRow, setFilePreview, onToggleSelect, onSelectDoc, colStyle };
+  const rowProps = { selectedId, selectedIds, visibleColumns, multiSelectMode, expandedRows, toggleExpand, hoveredRow, setHoveredRow, setFilePreview, onToggleSelect, onSelectDoc, colStyle, onUpdateDoc };
 
   return (
     <div style={{ flex: 1, ...S.col, overflow: "hidden" }}>
@@ -1140,10 +1142,10 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
       {selectedIds.size > 0 && (
         <div style={{
           ...S.row, gap: 12, padding: "8px 20px",
-          background: DS.accentUmowyLighter, borderBottom: `1px solid ${DS.accentUmowyLight}`,
+          background: DS.primaryLighter, borderBottom: `1px solid ${DS.primaryLight}`,
           animation: "slideDown 0.15s ease",
         }}>
-          <span style={{ ...typo.labelMedium, color: DS.accentUmowyDark }}>
+          <span style={{ ...typo.labelMedium, color: DS.primaryDark }}>
             Zaznaczono: {selectedIds.size}
           </span>
           <Btn variant="secondary" icon="edit" small>Zmień status</Btn>
@@ -1161,27 +1163,27 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
         borderBottom: `1px solid ${DS.borderLight}`, background: DS.neutralLighter,
       }}>
         <span style={{ ...typo.labelSmall, color: DS.textSecondary, marginRight: 4 }}>Widok:</span>
-        <button onClick={() => { setGroupBy(null); }} style={{
+        <button onClick={onToggleMultiSelect} style={{
           ...S.row, gap: 4, padding: "3px 10px", borderRadius: 6,
-          border: `1px solid ${!groupBy ? DS.accentUmowyMain : DS.borderLight}`,
-          background: !groupBy ? DS.accentUmowyLighter : DS.neutralWhite,
-          color: !groupBy ? DS.accentUmowyDark : DS.textSecondary,
+          border: `1px solid ${multiSelectMode ? DS.primaryLight : DS.borderLight}`,
+          background: multiSelectMode ? DS.primaryLighter : DS.neutralWhite,
+          color: multiSelectMode ? DS.primaryDark : DS.textSecondary,
           cursor: "pointer", ...typo.labelSmall, fontFamily: DS.fontFamily, transition: "all 0.15s",
         }}>
-          <Icon name="list" size={12} color={!groupBy ? DS.accentUmowyMain : DS.textDisabled} />
-          Lista
+          <Icon name="check" size={12} color={multiSelectMode ? DS.primaryLight : DS.textDisabled} />
+          Zaznacz wiele
         </button>
         <div style={{ position: "relative" }} ref={groupByRef}>
           <button onClick={() => setShowGroupMenu(p => !p)} style={{
             ...S.row, gap: 4, padding: "3px 10px", borderRadius: 6,
-            border: `1px solid ${groupBy ? DS.accentUmowyMain : DS.borderLight}`,
-            background: groupBy ? DS.accentUmowyLighter : DS.neutralWhite,
-            color: groupBy ? DS.accentUmowyDark : DS.textSecondary,
+            border: `1px solid ${groupBy ? DS.primaryLight : DS.borderLight}`,
+            background: groupBy ? DS.primaryLighter : DS.neutralWhite,
+            color: groupBy ? DS.primaryDark : DS.textSecondary,
             cursor: "pointer", ...typo.labelSmall, fontFamily: DS.fontFamily, transition: "all 0.15s",
           }}>
-            <Icon name="layers" size={12} color={groupBy ? DS.accentUmowyMain : DS.textDisabled} />
+            <Icon name="layers" size={12} color={groupBy ? DS.primaryLight : DS.textDisabled} />
             {groupBy ? ("Grupuj: " + (GROUP_BY_OPTIONS.find(o => o.id === groupBy)?.label || "")) : "Grupuj"}
-            <Icon name="chevronDown" size={10} color={groupBy ? DS.accentUmowyMain : DS.textDisabled} />
+            <Icon name="chevronDown" size={10} color={groupBy ? DS.primaryLight : DS.textDisabled} />
           </button>
           {showGroupMenu && <div style={{
             position: "absolute", top: "100%", left: 0, marginTop: 4, zIndex: 100,
@@ -1191,15 +1193,15 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
             {GROUP_BY_OPTIONS.map(opt => (
               <div key={opt.id} onClick={() => { setGroupBy(opt.id); setShowGroupMenu(false); }} style={{
                 ...S.row, gap: 8, padding: "8px 14px", cursor: "pointer",
-                background: groupBy === opt.id ? DS.accentUmowyLighter : "transparent",
+                background: groupBy === opt.id ? DS.primaryLighter : "transparent",
                 transition: "background 0.1s",
               }}
               onMouseEnter={e => e.currentTarget.style.background = DS.neutralLighter}
-              onMouseLeave={e => e.currentTarget.style.background = groupBy === opt.id ? DS.accentUmowyLighter : "transparent"}
+              onMouseLeave={e => e.currentTarget.style.background = groupBy === opt.id ? DS.primaryLighter : "transparent"}
               >
-                <Icon name={opt.icon} size={13} color={groupBy === opt.id ? DS.accentUmowyMain : DS.textSecondary} />
-                <span style={{ ...typo.bodySmall, color: groupBy === opt.id ? DS.accentUmowyDark : DS.textPrimary }}>{opt.label}</span>
-                {groupBy === opt.id && <Icon name="check" size={12} color={DS.accentUmowyMain} style={{ marginLeft: "auto" }} />}
+                <Icon name={opt.icon} size={13} color={groupBy === opt.id ? DS.primaryLight : DS.textSecondary} />
+                <span style={{ ...typo.bodySmall, color: groupBy === opt.id ? DS.primaryDark : DS.textPrimary }}>{opt.label}</span>
+                {groupBy === opt.id && <Icon name="check" size={12} color={DS.primaryLight} style={{ marginLeft: "auto" }} />}
               </div>
             ))}
             {groupBy && <>
@@ -1217,22 +1219,12 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
           </div>}
         </div>
         <div style={{ flex: 1 }} />
-        <button onClick={onToggleMultiSelect} style={{
-          ...S.row, gap: 4, padding: "3px 10px", borderRadius: 6,
-          border: `1px solid ${multiSelectMode ? DS.accentUmowyMain : DS.borderLight}`,
-          background: multiSelectMode ? DS.accentUmowyLighter : DS.neutralWhite,
-          color: multiSelectMode ? DS.accentUmowyDark : DS.textSecondary,
-          cursor: "pointer", ...typo.labelSmall, fontFamily: DS.fontFamily, transition: "all 0.15s",
-        }}>
-          <Icon name="check" size={12} color={multiSelectMode ? DS.accentUmowyMain : DS.textDisabled} />
-          Zaznacz wiele
-        </button>
         <span style={{ ...typo.labelSmall, color: DS.textDisabled }}>{docs.length} dok.</span>
       </div>
 
       {/* Table header + body with horizontal scroll */}
       <div style={{ flex: 1, overflowX: "auto", overflowY: "auto" }}>
-      <div style={{ minWidth: filteredCols.reduce((s, c) => s + (c.w || c.min || 100), 0) + 40 + 28 + 120 }}>
+      <div style={{ minWidth: filteredCols.reduce((s, c) => s + (c.w || c.min || 100), 0) + 40 + 28 + 60 }}>
       <div style={{
         ...S.row, padding: "0 20px",
         borderBottom: `2px solid ${DS.borderLight}`, background: DS.neutralWhite,
@@ -1245,18 +1237,26 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
         </div>}
         {filteredCols.map(col => (
           <div key={col.key} style={{
-            ...colStyle(col), padding: "8px 6px", position: "relative",
-            ...S.row, gap: 4, cursor: "pointer", userSelect: "none",
+            ...colStyle(col), padding: col.key === "grossValue" ? "4px 6px" : "8px 6px", position: "relative",
+            ...(col.key === "grossValue" ? { ...S.col, alignItems: "flex-end", justifyContent: "center", cursor: "pointer", userSelect: "none" } : { ...S.row, gap: 4, cursor: "pointer", userSelect: "none" }),
           }} onClick={() => onSort(col.key)}>
-            <span style={{ ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>{col.label}</span>
-            <SortIcon colKey={col.key} />
+            {col.key === "grossValue" ? <>
+              <div style={{ ...S.row, gap: 4 }}>
+                <span style={{ ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>{col.label}</span>
+                <SortIcon colKey={col.key} />
+              </div>
+              <span style={{ ...typo.labelSmall, color: DS.primaryMain, fontWeight: 600, fontSize: 11, fontVariantNumeric: "tabular-nums" }}>{formatCurrency(totalGrossValue)}</span>
+            </> : <>
+              <span style={{ ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>{col.label}</span>
+              <SortIcon colKey={col.key} />
+            </>}
             {col.key === "title" && <div ref={titleDragRef} onMouseDown={handleTitleResize} onClick={e => e.stopPropagation()}
               style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 5, cursor: "col-resize", background: "transparent", zIndex: 3 }}
-              onMouseEnter={e => e.currentTarget.style.background = DS.accentUmowyMain + "40"}
+              onMouseEnter={e => e.currentTarget.style.background = DS.primaryLight + "40"}
               onMouseLeave={e => e.currentTarget.style.background = "transparent"} />}
           </div>
         ))}
-        <div style={{ width: 120, minWidth: 120, flex: "0 0 auto", padding: "8px 6px" }} />
+        <div style={{ width: 60, minWidth: 60, flex: "0 0 auto", padding: "8px 6px" }} />
       </div>
 
       {/* Table body — rows via DocTableRow */}
@@ -1292,16 +1292,16 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
       <div onClick={onInlineAdd} style={{
         ...S.row, padding: "0 20px",
         minHeight: 44, cursor: "pointer", transition: "background 0.1s",
-        background: DS.neutralWhite, borderTop: `1px dashed ${DS.accentUmowyLight}`,
+        background: DS.neutralWhite, borderTop: `1px dashed ${DS.primaryLight}`,
         flexShrink: 0,
       }}
-        onMouseEnter={e => e.currentTarget.style.background = DS.accentUmowyLighter}
+        onMouseEnter={e => e.currentTarget.style.background = DS.primaryLighter}
         onMouseLeave={e => e.currentTarget.style.background = DS.neutralWhite}
       >
         {multiSelectMode && <div style={{ width: 36 }} />}
         <div style={{ ...S.row, gap: 8, padding: "8px 8px" }}>
-          <Icon name="plus" size={15} color={DS.accentUmowyMain} />
-          <span style={{ ...typo.bodySmall, color: DS.accentUmowyMain, fontWeight: 500 }}>Dodaj dokument</span>
+          <Icon name="plus" size={15} color={DS.primaryLight} />
+          <span style={{ ...typo.bodySmall, color: DS.primaryLight, fontWeight: 500 }}>Dodaj dokument</span>
         </div>
       </div>
       </div>{/* close minWidth wrapper */}
@@ -1336,7 +1336,7 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
                   <div style={{ ...S.row, gap: 8, marginTop: 8 }}>
                     <button style={{
                       ...S.row, gap: 6, padding: "8px 20px", borderRadius: 8,
-                      background: DS.accentUmowyMain, color: "#fff", border: "none",
+                      background: DS.primaryLight, color: "#fff", border: "none",
                       cursor: "pointer", ...typo.labelMedium, fontFamily: DS.fontFamily, fontWeight: 600,
                     }}>
                       <Icon name="eye" size={14} color="#fff" /> Otwórz
@@ -1373,7 +1373,9 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
 /* ═══════════════════════════════════════════════════════════════
    DOC TABLE ROW — single row + expanded children (extracted from DocTable)
    ═══════════════════════════════════════════════════════════════ */
-const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiSelectMode, expandedRows, toggleExpand, hoveredRow, setHoveredRow, setFilePreview, onToggleSelect, onSelectDoc, colStyle }) => {
+const EDITABLE_COLS = ["type", "number", "nrEwidencyjny", "title", "contractor", "dept", "dateEnd", "grossValue", "status"];
+
+const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiSelectMode, expandedRows, toggleExpand, hoveredRow, setHoveredRow, setFilePreview, onToggleSelect, onSelectDoc, colStyle, onUpdateDoc }) => {
   const typeInfo = DOC_TYPES[doc.type] || DOC_TYPES.inne;
   const statusInfo = DOC_STATUSES[doc.status] || DOC_STATUSES.draft;
   const isSelected = selectedId === doc.id;
@@ -1390,71 +1392,221 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
   const isExpanded = expandedRows.has(doc.id);
   const isHovered = hoveredRow === doc.id;
 
+  // Inline editing state
+  const [editingCell, setEditingCell] = useState(null);
+  const [editValue, setEditValue] = useState(null);
+  const tabMovingRef = useRef(false);
+
+  const visibleEditableCols = EDITABLE_COLS.filter(k => showCol(k));
+
+  const commitEdit = useCallback((key, value) => {
+    if (onUpdateDoc && value !== doc[key]) {
+      const finalValue = key === "grossValue" ? (parseFloat(value) || 0) : value;
+      onUpdateDoc(doc.id, key, finalValue);
+    }
+  }, [doc, onUpdateDoc]);
+
+  const startEdit = useCallback((key, e) => {
+    if (e) { e.stopPropagation(); e.preventDefault(); }
+    setEditingCell(key);
+    setEditValue(key === "grossValue" ? (doc[key] || 0) : (doc[key] || ""));
+  }, [doc]);
+
+  const cancelEdit = useCallback(() => {
+    setEditingCell(null);
+    setEditValue(null);
+  }, []);
+
+  const handleKeyDown = useCallback((e, key) => {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      cancelEdit();
+      return;
+    }
+    if (e.key === "Enter") {
+      e.preventDefault();
+      commitEdit(key, editValue);
+      setEditingCell(null);
+      setEditValue(null);
+      return;
+    }
+    if (e.key === "Tab") {
+      e.preventDefault();
+      commitEdit(key, editValue);
+      const curIdx = visibleEditableCols.indexOf(key);
+      const nextIdx = e.shiftKey ? curIdx - 1 : curIdx + 1;
+      if (nextIdx >= 0 && nextIdx < visibleEditableCols.length) {
+        const nextKey = visibleEditableCols[nextIdx];
+        tabMovingRef.current = true;
+        setEditingCell(nextKey);
+        setEditValue(nextKey === "grossValue" ? (doc[nextKey] || 0) : (doc[nextKey] || ""));
+      } else {
+        setEditingCell(null);
+        setEditValue(null);
+      }
+    }
+  }, [editValue, visibleEditableCols, commitEdit, cancelEdit, doc]);
+
+  const handleBlur = useCallback((key) => {
+    // Small delay to allow Tab handler to set tabMovingRef first
+    setTimeout(() => {
+      if (tabMovingRef.current) {
+        tabMovingRef.current = false;
+        return;
+      }
+      commitEdit(key, editValue);
+      setEditingCell(null);
+      setEditValue(null);
+    }, 0);
+  }, [editValue, commitEdit]);
+
+  const inputStyle = {
+    width: "100%", padding: "2px 4px", border: `1px solid ${DS.primaryLight}`,
+    borderRadius: 4, background: DS.neutralWhite, fontFamily: DS.fontFamily,
+    fontSize: 13, color: DS.textPrimary, outline: "none", boxSizing: "border-box",
+  };
+
+  const renderEditInput = (key) => {
+    // Select for type
+    if (key === "type") {
+      return <select value={editValue} onChange={e => setEditValue(e.target.value)}
+        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
+        autoFocus style={{ ...inputStyle, cursor: "pointer" }}>
+        {Object.entries(DOC_TYPES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+      </select>;
+    }
+    // Select for contractor
+    if (key === "contractor") {
+      return <select value={editValue} onChange={e => setEditValue(e.target.value)}
+        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
+        autoFocus style={{ ...inputStyle, cursor: "pointer" }}>
+        <option value="">— brak —</option>
+        {CONTRACTORS.map(c => <option key={c} value={c}>{c}</option>)}
+      </select>;
+    }
+    // Select for dept
+    if (key === "dept") {
+      return <select value={editValue} onChange={e => setEditValue(e.target.value)}
+        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
+        autoFocus style={{ ...inputStyle, cursor: "pointer" }}>
+        <option value="">— brak —</option>
+        {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+      </select>;
+    }
+    // Select for status
+    if (key === "status") {
+      return <select value={editValue} onChange={e => setEditValue(e.target.value)}
+        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
+        autoFocus style={{ ...inputStyle, cursor: "pointer" }}>
+        {Object.entries(DOC_STATUSES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+      </select>;
+    }
+    // Date input
+    if (key === "dateEnd") {
+      return <input type="date" value={editValue || ""} onChange={e => setEditValue(e.target.value)}
+        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
+        autoFocus style={inputStyle} />;
+    }
+    // Number input
+    if (key === "grossValue") {
+      return <input type="number" value={editValue} onChange={e => setEditValue(e.target.value)}
+        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
+        autoFocus onFocus={e => e.target.select()} step="0.01" style={{ ...inputStyle, textAlign: "right" }} />;
+    }
+    // Default text input
+    return <input type="text" value={editValue} onChange={e => setEditValue(e.target.value)}
+      onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
+      autoFocus onFocus={e => e.target.select()} style={inputStyle} />;
+  };
+
+  const editableCellProps = (key) => {
+    if (!onUpdateDoc || !EDITABLE_COLS.includes(key)) return {};
+    return {
+      onDoubleClick: (e) => startEdit(key, e),
+    };
+  };
+
+  const editCellBg = DS.primaryLighter;
+
   return (
     <React.Fragment>
-    <div onClick={hasChildren ? (e) => toggleExpand(doc.id, e) : undefined}
+    <div onClick={() => onSelectDoc(doc)}
       draggable onDragStart={e => { e.dataTransfer.setData("text/plain", String(doc.id)); e.dataTransfer.effectAllowed = "move"; }}
       onMouseEnter={e => { setHoveredRow(doc.id); if (!isSelected && !isExpanded) e.currentTarget.style.background = DS.primaryLighter; }}
-      onMouseLeave={e => { setHoveredRow(null); if (!isSelected && !isExpanded) e.currentTarget.style.background = isChecked ? `${DS.accentUmowyMain}08` : isZebra ? DS.neutralLighter : DS.neutralWhite; }}
+      onMouseLeave={e => { setHoveredRow(null); if (!isSelected && !isExpanded) e.currentTarget.style.background = isChecked ? `${DS.primaryLight}08` : isZebra ? DS.neutralLighter : DS.neutralWhite; }}
       style={{
       ...S.row, padding: "0 20px", position: "relative",
-      minHeight: 48, cursor: hasChildren ? "pointer" : "default", transition: "background 0.1s",
-      background: isSelected ? DS.accentUmowyLighter : isExpanded ? `${DS.primaryMain}06` : isChecked ? `${DS.accentUmowyMain}08` : isZebra ? DS.neutralLighter : DS.neutralWhite,
+      minHeight: 48, cursor: "pointer", transition: "background 0.1s",
+      background: isSelected ? DS.primaryLighter : isExpanded ? `${DS.primaryMain}06` : isChecked ? `${DS.primaryLight}08` : isZebra ? DS.neutralLighter : DS.neutralWhite,
       borderBottom: `1px solid ${DS.borderLight}`,
-      borderLeft: isSelected ? `3px solid ${DS.accentUmowyMain}` : isExpanded ? `3px solid ${DS.primaryMain}40` : "3px solid transparent",
+      borderLeft: isSelected ? `3px solid ${DS.primaryLight}` : isExpanded ? `3px solid ${DS.primaryMain}40` : "3px solid transparent",
     }}
     >
         {/* Expand chevron column */}
       <div style={{ width: 28, minWidth: 28, flex: "0 0 auto", padding: "8px 2px 8px 0", ...S.row, justifyContent: "center" }}>
         {hasChildren && (
-          <Icon name={isExpanded ? "chevronDown" : "chevronRight"} size={13} color={DS.primaryMain} style={{ transition: "transform 0.15s" }} />
+          <div onClick={(e) => { e.stopPropagation(); toggleExpand(doc.id, e); }}
+            onMouseEnter={e => { e.currentTarget.style.background = DS.primaryLighter; e.currentTarget.style.border = `1px solid ${DS.primaryLight}`; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.border = "1px solid transparent"; }}
+            style={{ width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", borderRadius: 4, border: "1px solid transparent", transition: "all 0.15s" }}>
+            <Icon name={isExpanded ? "chevronDown" : "chevronRight"} size={13} color={DS.primaryMain} style={{ transition: "transform 0.15s" }} />
+          </div>
         )}
       </div>
       {multiSelectMode && <div style={{ width: 36, padding: "8px 6px" }} onClick={e => e.stopPropagation()}>
         <Checkbox checked={isChecked} onChange={() => onToggleSelect(doc.id)} />
       </div>}
-      {showCol("type") && <div style={{ ...colStyle("type"), padding: "8px 6px", ...S.row, gap: 4 }}>
-        <Icon name={typeInfo.icon} size={14} color={DS.neutralMain} />
-        <span style={{ ...typo.bodySmall, color: DS.textSecondary, ...S.truncate }}>{typeInfo.label}</span>
+      {showCol("type") && <div style={{ ...colStyle("type"), padding: "8px 6px", ...S.row, gap: 4, background: editingCell === "type" ? editCellBg : undefined }} {...editableCellProps("type")}>
+        {editingCell === "type" ? renderEditInput("type") : <>
+          <Icon name={typeInfo.icon} size={14} color={DS.neutralMain} />
+          <span style={{ ...typo.bodySmall, color: DS.textSecondary, ...S.truncate }}>{typeInfo.label}</span>
+        </>}
       </div>}
       {showCol("alerts") && <div style={{ ...colStyle("alerts"), padding: "8px 4px", ...S.row, gap: 3, justifyContent: "center" }}>
         {docAlerts.length > 0 ? docAlerts.map(code => <AlertBadge key={code} code={code} />) : <span style={{ color: DS.textDisabled }}>—</span>}
       </div>}
-      {showCol("number") && <div style={{ ...colStyle("number"), padding: "8px 6px" }}>
-        <span style={{ ...typo.bodySmall, color: DS.textSecondary, fontFamily: "monospace", ...S.truncate, display: "block", fontSize: 12 }}>{doc.number || "—"}</span>
+      {showCol("number") && <div style={{ ...colStyle("number"), padding: "8px 6px", background: editingCell === "number" ? editCellBg : undefined }} {...editableCellProps("number")}>
+        {editingCell === "number" ? renderEditInput("number") :
+          <span style={{ ...typo.bodySmall, color: DS.textSecondary, fontFamily: "monospace", ...S.truncate, display: "block", fontSize: 12 }}>{doc.number || "—"}</span>}
       </div>}
-      {showCol("nrEwidencyjny") && <div style={{ ...colStyle("nrEwidencyjny"), padding: "8px 6px" }}>
-        <span style={{ ...typo.bodySmall, color: doc.nrEwidencyjny ? DS.accentUmowyDark : DS.textDisabled, fontFamily: "monospace", ...S.truncate, display: "block", fontSize: 11, fontWeight: doc.nrEwidencyjny ? 600 : 400 }}>{doc.nrEwidencyjny || "—"}</span>
+      {showCol("nrEwidencyjny") && <div style={{ ...colStyle("nrEwidencyjny"), padding: "8px 6px", background: editingCell === "nrEwidencyjny" ? editCellBg : undefined }} {...editableCellProps("nrEwidencyjny")}>
+        {editingCell === "nrEwidencyjny" ? renderEditInput("nrEwidencyjny") :
+          <span style={{ ...typo.bodySmall, color: doc.nrEwidencyjny ? DS.primaryDark : DS.textDisabled, fontFamily: "monospace", ...S.truncate, display: "block", fontSize: 11, fontWeight: doc.nrEwidencyjny ? 600 : 400 }}>{doc.nrEwidencyjny || "—"}</span>}
       </div>}
-      {showCol("title") && <div style={{ ...colStyle("title"), padding: "8px 6px" }}>
-        <span style={{ ...typo.bodySmall, fontWeight: 500, color: DS.textPrimary, ...S.truncate, display: "block" }}>
-          {doc.title || "Bez tytułu"}
-        </span>
+      {showCol("title") && <div style={{ ...colStyle("title"), padding: "8px 6px", background: editingCell === "title" ? editCellBg : undefined }} {...editableCellProps("title")}>
+        {editingCell === "title" ? renderEditInput("title") :
+          <span style={{ ...typo.bodySmall, fontWeight: 500, color: DS.textPrimary, ...S.truncate, display: "block" }}>
+            {doc.title || "Bez tytułu"}
+          </span>}
       </div>}
-      {showCol("contractor") && <div style={{ ...colStyle("contractor"), padding: "8px 6px" }}>
-        <span style={{ ...typo.bodySmall, color: DS.textSecondary, ...S.truncate, display: "block" }}>
-          {doc.contractor || "—"}
-        </span>
+      {showCol("contractor") && <div style={{ ...colStyle("contractor"), padding: "8px 6px", background: editingCell === "contractor" ? editCellBg : undefined }} {...editableCellProps("contractor")}>
+        {editingCell === "contractor" ? renderEditInput("contractor") :
+          <span style={{ ...typo.bodySmall, color: DS.textSecondary, ...S.truncate, display: "block" }}>
+            {doc.contractor || "—"}
+          </span>}
       </div>}
       {showCol("assignee") && <div style={{ ...colStyle("assignee"), padding: "8px 4px", ...S.row, justifyContent: "center" }}>
         {(() => { const u = USERS_LIST.find(u => u.id === doc.assignee); return u ? (
-          <div title={u.name} style={{ width: 26, height: 26, borderRadius: "50%", background: DS.accentUmowyLighter, ...S.row, justifyContent: "center", alignItems: "center" }}>
-            <span style={{ ...typo.labelSmall, color: DS.accentUmowyDark, fontWeight: 600, fontSize: 10 }}>{u.initials}</span>
+          <div title={u.name} style={{ width: 26, height: 26, borderRadius: "50%", background: DS.primaryLighter, ...S.row, justifyContent: "center", alignItems: "center" }}>
+            <span style={{ ...typo.labelSmall, color: DS.primaryDark, fontWeight: 600, fontSize: 10 }}>{u.initials}</span>
           </div>
         ) : <span style={{ ...typo.labelSmall, color: DS.textDisabled }}>—</span>; })()}
       </div>}
-      {showCol("dept") && <div style={{ ...colStyle("dept"), padding: "8px 6px" }}>
-        <span style={{ ...typo.bodySmall, color: DS.textSecondary, ...S.truncate, display: "block" }}>
-          {doc.dept}
-        </span>
+      {showCol("dept") && <div style={{ ...colStyle("dept"), padding: "8px 6px", background: editingCell === "dept" ? editCellBg : undefined }} {...editableCellProps("dept")}>
+        {editingCell === "dept" ? renderEditInput("dept") :
+          <span style={{ ...typo.bodySmall, color: DS.textSecondary, ...S.truncate, display: "block" }}>
+            {doc.dept}
+          </span>}
       </div>}
-      {showCol("dateEnd") && <div style={{ ...colStyle("dateEnd"), padding: "8px 6px" }}>
-        <span style={{ ...typo.bodySmall, color: DS.textSecondary }}>{doc.dateEnd ? formatDate(doc.dateEnd) : "—"}</span>
+      {showCol("dateEnd") && <div style={{ ...colStyle("dateEnd"), padding: "8px 6px", background: editingCell === "dateEnd" ? editCellBg : undefined }} {...editableCellProps("dateEnd")}>
+        {editingCell === "dateEnd" ? renderEditInput("dateEnd") :
+          <span style={{ ...typo.bodySmall, color: DS.textSecondary }}>{doc.dateEnd ? formatDate(doc.dateEnd) : "—"}</span>}
       </div>}
-      {showCol("grossValue") && <div style={{ ...colStyle("grossValue"), padding: "8px 6px", textAlign: "right" }}>
-        <span style={{ ...typo.bodySmall, fontWeight: 500, color: DS.textPrimary, fontVariantNumeric: "tabular-nums" }}>
-          {doc.grossValue ? formatCurrency(doc.grossValue) : "—"}
-        </span>
+      {showCol("grossValue") && <div style={{ ...colStyle("grossValue"), padding: "8px 6px", textAlign: "right", background: editingCell === "grossValue" ? editCellBg : undefined }} {...editableCellProps("grossValue")}>
+        {editingCell === "grossValue" ? renderEditInput("grossValue") :
+          <span style={{ ...typo.bodySmall, fontWeight: 500, color: DS.textPrimary, fontVariantNumeric: "tabular-nums" }}>
+            {doc.grossValue ? formatCurrency(doc.grossValue) : "—"}
+          </span>}
       </div>}
       {showCol("classification") && <div style={{ ...colStyle("classification"), padding: "8px 6px" }}>
         <span style={{ ...typo.labelSmall, color: DS.textSecondary, ...S.truncate, display: "block" }}>
@@ -1467,11 +1619,12 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
         ))}
         {extraTags > 0 && <span style={{ ...typo.labelSmall, color: DS.textDisabled, fontWeight: 500 }}>+{extraTags}</span>}
       </div>}
-      {showCol("status") && <div style={{ ...colStyle("status"), padding: "8px 6px" }}>
-        <Badge color={statusInfo.color} bg={statusInfo.bg}>{statusInfo.label}</Badge>
+      {showCol("status") && <div style={{ ...colStyle("status"), padding: "8px 6px", background: editingCell === "status" ? editCellBg : undefined }} {...editableCellProps("status")}>
+        {editingCell === "status" ? renderEditInput("status") :
+          <Badge color={statusInfo.color} bg={statusInfo.bg}>{statusInfo.label}</Badge>}
       </div>}
-      {/* Actions column — children counter + Szczegóły button */}
-      <div style={{ width: 120, minWidth: 120, flex: "0 0 auto", padding: "8px 6px", ...S.row, gap: 6, justifyContent: "flex-end" }}>
+      {/* Actions column — children counter only */}
+      <div style={{ width: 60, minWidth: 60, flex: "0 0 auto", padding: "8px 6px", ...S.row, gap: 6, justifyContent: "flex-end" }}>
         {hasChildren && !isExpanded && (
           <span style={{
             ...typo.labelSmall, color: DS.primaryMain, fontWeight: 500,
@@ -1482,19 +1635,6 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
             {children.length}
           </span>
         )}
-        <button onClick={(e) => { e.stopPropagation(); onSelectDoc(doc); }} style={{
-          ...S.row, gap: 3, padding: "3px 10px", borderRadius: 5,
-          border: `1px solid ${DS.borderLight}`, background: DS.neutralWhite,
-          color: DS.textSecondary, cursor: "pointer", ...typo.labelSmall,
-          fontFamily: DS.fontFamily, fontWeight: 500, whiteSpace: "nowrap",
-          fontSize: 11, transition: "all 0.15s",
-        }}
-        onMouseEnter={e => { e.currentTarget.style.borderColor = DS.accentUmowyMain; e.currentTarget.style.color = DS.accentUmowyMain; }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = DS.borderLight; e.currentTarget.style.color = DS.textSecondary; }}
-        >
-          <Icon name="eye" size={11} />
-          Szczeg.
-        </button>
       </div>
     </div>
     {/* Expanded children area */}
@@ -1570,7 +1710,7 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
                       {/* Szczegóły link for child */}
                       <div style={{ width: 70, padding: "6px 4px", textAlign: "right", flexShrink: 0 }}>
                         <span onClick={(e) => { e.stopPropagation(); if (child.fileName) setFilePreview(child); }}
-                          style={{ ...typo.labelSmall, color: DS.accentUmowyMain, cursor: "pointer", fontWeight: 500, fontSize: 11 }}>
+                          style={{ ...typo.labelSmall, color: DS.primaryLight, cursor: "pointer", fontWeight: 500, fontSize: 11 }}>
                           {child.fileName ? "Podgląd" : "Szczeg."}
                         </span>
                       </div>
@@ -1589,19 +1729,17 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
 
 // ──── 09-drawer-detail.js ────
 /* ═══════════════════════════════════════════════════════════════
-   DRAWER DETAIL — dual mode: preview (read-only) vs edit
-   with 4 tabs: Szczegóły / Faktury / Załączniki / Zaangażowanie (P3)
+   DRAWER DETAIL — inline side panel with tabs
+   Szczegóły | Faktury | Załączniki | Zaangażowanie
    ═══════════════════════════════════════════════════════════════ */
-const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) => {
+const DrawerDetail = ({ doc, onClose, onSave }) => {
   const [mode, setMode] = useState("preview"); // preview | edit
   const [activeTab, setActiveTab] = useState("details");
-  const [rightTab, setRightTab] = useState("budget"); // budget | preview
   const [form, setForm] = useState(null);
 
   useEffect(() => {
     setMode("preview");
     setActiveTab("details");
-    setRightTab("budget");
     if (doc) setForm({ ...doc });
   }, [doc?.id]);
 
@@ -1621,6 +1759,10 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
   const docAlerts = computeAlerts(doc);
   const children = CHILD_DOCS[doc.id] || [];
 
+  // Categorize children
+  const childFaktury = children.filter(c => c.childType === "faktura");
+  const childZalaczniki = children.filter(c => c.childType === "zalacznik" || c.childType === "plik");
+
   const set = (key, val) => setForm(prev => {
     const next = { ...prev, [key]: val };
     if (key === "netValue") next.grossValue = Math.round(val * 1.23 * 100) / 100;
@@ -1633,17 +1775,25 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
   };
 
   /* ---- Field row helper ---- */
-  const FieldRow = ({ label, value, icon }) => (
+  const FieldRow = ({ label, value }) => (
     <div style={{ display: "flex", gap: 10, padding: "9px 0", borderBottom: `1px solid ${DS.borderLight}` }}>
-      <div style={{ width: 150, flexShrink: 0 }}>
+      <div style={{ width: 140, flexShrink: 0 }}>
         <span style={{ ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>{label}</span>
       </div>
       <div style={{ flex: 1, ...typo.bodySmall, color: DS.textPrimary }}>{value || "—"}</div>
     </div>
   );
 
-  /* ---- Budget sidebar ---- */
-  const BudgetSidebar = () => {
+  /* ---- Tabs definition ---- */
+  const tabs = [
+    { id: "details", label: "Szczegóły" },
+    { id: "faktury", label: "Faktury", count: childFaktury.length },
+    { id: "zalaczniki", label: "Załączniki", count: childZalaczniki.length },
+    { id: "zaangazowanie", label: "Zaangażowanie" },
+  ];
+
+  /* ---- Budget / Zaangażowanie content ---- */
+  const BudgetContent = () => {
     if (!cls) return (
       <div style={{ textAlign: "center", padding: "40px 20px" }}>
         <Icon name="dollarSign" size={36} color={DS.neutralLight} style={{ margin: "0 auto 12px", display: "block" }} />
@@ -1697,75 +1847,117 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
     );
   };
 
+  /* ---- Child list helper ---- */
+  const ChildList = ({ items, emptyIcon, emptyLabel }) => {
+    if (items.length === 0) return (
+      <div style={{ textAlign: "center", padding: "40px 20px" }}>
+        <Icon name={emptyIcon} size={36} color={DS.neutralLight} style={{ margin: "0 auto 12px", display: "block" }} />
+        <div style={{ ...typo.bodySmall, color: DS.textDisabled }}>{emptyLabel}</div>
+      </div>
+    );
+    return items.map(ch => {
+      const ctInfo = CHILD_TYPE_LABELS[ch.childType] || { label: ch.childType, icon: "file", color: DS.neutralDark };
+      const childStatus = DOC_STATUSES[ch.status] || null;
+      return (
+        <div key={ch.id} style={{
+          ...S.row, gap: 10, padding: "10px 0", borderBottom: `1px solid ${DS.borderLight}`,
+        }}>
+          <Icon name={ctInfo.icon} size={13} color={ctInfo.color} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <span style={{ ...typo.bodySmall, color: DS.textPrimary, ...S.truncate, display: "block" }}>{ch.title}</span>
+            {ch.number && <span style={{ ...typo.labelSmall, color: DS.textDisabled, fontFamily: "monospace", fontSize: 10 }}>{ch.number}</span>}
+          </div>
+          {ch.grossValue > 0 && <span style={{ ...typo.labelSmall, fontWeight: 500, color: DS.textPrimary, fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>{formatCurrency(ch.grossValue)}</span>}
+          {ch.fileName && <span style={{ ...typo.labelSmall, color: DS.textDisabled, flexShrink: 0 }}>{ch.fileName}</span>}
+          {childStatus && <Badge color={childStatus.color} bg={childStatus.bg} small>{childStatus.label}</Badge>}
+        </div>
+      );
+    });
+  };
+
   return (
-    <div style={{ ...S.overlay, zIndex: 100, background: "rgba(15,23,74,0.35)", backdropFilter: "blur(2px)" }} onClick={onClose}>
-    <div onClick={e => e.stopPropagation()} style={{
-      position: "absolute", top: 0, right: 0, bottom: 0,
-      width: "min(1100px, 85vw)", background: DS.neutralWhite, ...S.col,
-      boxShadow: "-8px 0 30px rgba(0,0,0,0.12)", overflow: "hidden",
+    <div style={{
+      width: 480, minWidth: 480, ...S.col, borderLeft: `1px solid ${DS.borderLight}`,
+      background: DS.neutralWhite, overflow: "hidden",
+      animation: "slideIn 0.2s ease-out",
     }}>
       {/* ===== Header ===== */}
       <div style={{
-        padding: "16px 24px", borderBottom: `1px solid ${DS.borderLight}`,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "14px 20px", borderBottom: `1px solid ${DS.borderLight}`,
+        display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0,
       }}>
-        <div style={{ ...S.row, gap: 12, flex: 1, minWidth: 0 }}>
+        <div style={{ ...S.row, gap: 10, flex: 1, minWidth: 0 }}>
           <div style={{
-            width: 36, height: 36, borderRadius: 8, background: DS.accentUmowyLighter,
+            width: 32, height: 32, borderRadius: 8, background: DS.primaryLighter,
             ...S.row, justifyContent: "center", alignItems: "center", flexShrink: 0,
           }}>
-            <Icon name={typeInfo.icon} size={18} color={DS.accentUmowyMain} />
+            <Icon name={typeInfo.icon} size={16} color={DS.primaryLight} />
           </div>
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ ...S.row, gap: 8 }}>
-              <span style={{ ...typo.titleSmall, color: DS.primaryMain, fontWeight: 700, fontSize: 16 }}>{doc.number || "Bez numeru"}</span>
+            <div style={{ ...S.row, gap: 6 }}>
+              <span style={{ ...typo.titleSmall, color: DS.primaryMain, fontWeight: 700, fontSize: 14, ...S.truncate }}>{doc.number || "Bez numeru"}</span>
               <Badge color={statusInfo.color} bg={statusInfo.bg}>{statusInfo.label}</Badge>
-              {docAlerts.map(a => <AlertBadge key={a} code={a} />)}
             </div>
-            <div style={{ ...typo.bodySmall, color: DS.textSecondary, marginTop: 2 }}>
+            <div style={{ ...typo.bodySmall, color: DS.textSecondary, fontSize: 11, marginTop: 1, ...S.truncate }}>
               {typeInfo.label} &bull; {doc.contractor || "Brak kontrahenta"}
             </div>
           </div>
         </div>
-        <div style={{ ...S.row, gap: 4, flexShrink: 0, marginLeft: 16 }}>
-          <Btn variant="ghost" icon="chevronLeft" small disabled={!hasPrev} onClick={() => onNavigate(-1)} title="Poprzedni" />
-          <Btn variant="ghost" icon="chevronRight" small disabled={!hasNext} onClick={() => onNavigate(1)} title="Następny" />
-          <div style={{ width: 1, height: 20, background: DS.borderLight, margin: "0 4px" }} />
-          <Btn variant="ghost" icon="x" small onClick={onClose} title="Zamknij" />
-        </div>
+        <Btn variant="ghost" icon="x" small onClick={onClose} title="Zamknij" style={{ flexShrink: 0, marginLeft: 8 }} />
       </div>
 
-      {/* ===== Two-column body ===== */}
-      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+      {/* ===== Tabs ===== */}
+      <div style={{ padding: "0 20px", borderBottom: `1px solid ${DS.borderLight}`, ...S.row, flexShrink: 0, overflowX: "auto" }}>
+        {tabs.map(t => (
+          <button key={t.id} onClick={() => setActiveTab(t.id)} style={{
+            padding: "9px 12px", border: "none", background: "transparent", cursor: "pointer",
+            fontFamily: DS.fontFamily, fontSize: 12, fontWeight: activeTab === t.id ? 600 : 400,
+            color: activeTab === t.id ? DS.primaryMain : DS.textSecondary,
+            borderBottom: activeTab === t.id ? `2px solid ${DS.primaryLight}` : "2px solid transparent",
+            transition: "all 0.15s", whiteSpace: "nowrap", ...S.row, gap: 4,
+          }}>
+            {t.label}
+            {t.count != null && t.count > 0 && (
+              <span style={{
+                ...typo.labelSmall, fontSize: 10, fontWeight: 600,
+                background: activeTab === t.id ? DS.primaryLighter : DS.neutralLighter,
+                color: activeTab === t.id ? DS.primaryLight : DS.textDisabled,
+                padding: "1px 5px", borderRadius: 8, marginLeft: 2,
+              }}>{t.count}</span>
+            )}
+          </button>
+        ))}
+      </div>
 
-        {/* ---- LEFT: Dane dokumentu ---- */}
-        <div style={{ flex: 1, ...S.col, borderRight: `1px solid ${DS.borderLight}`, overflow: "hidden" }}>
-          {/* Left header label */}
-          <div style={{ padding: "10px 24px", borderBottom: `1px solid ${DS.borderLight}`, ...S.row, gap: 8 }}>
-            <span style={{ ...typo.labelMedium, color: DS.primaryMain, fontWeight: 600 }}>Dane dokumentu</span>
+      {/* ===== Tab content ===== */}
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
+
+        {/* --- Szczegóły tab --- */}
+        {activeTab === "details" && (
+          <>
+            {/* Edit/Save bar */}
             {mode === "preview" && (
-              <button onClick={() => setMode("edit")} style={{
-                marginLeft: "auto", ...S.row, gap: 4, padding: "3px 10px", borderRadius: 5,
-                border: `1px solid ${DS.borderLight}`, background: DS.neutralWhite,
-                color: DS.textSecondary, cursor: "pointer", ...typo.labelSmall,
-                fontFamily: DS.fontFamily, fontWeight: 500, fontSize: 11,
-              }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = DS.accentUmowyMain; e.currentTarget.style.color = DS.accentUmowyMain; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = DS.borderLight; e.currentTarget.style.color = DS.textSecondary; }}
-              >
-                <Icon name="edit" size={11} /> Edytuj
-              </button>
+              <div style={{ ...S.row, justifyContent: "flex-end", marginBottom: 12 }}>
+                <button onClick={() => setMode("edit")} style={{
+                  ...S.row, gap: 4, padding: "4px 12px", borderRadius: 6,
+                  border: `1px solid ${DS.borderLight}`, background: DS.neutralWhite,
+                  color: DS.textSecondary, cursor: "pointer", ...typo.labelSmall,
+                  fontFamily: DS.fontFamily, fontWeight: 500, fontSize: 11, transition: "all 0.15s",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = DS.primaryLight; e.currentTarget.style.color = DS.primaryLight; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = DS.borderLight; e.currentTarget.style.color = DS.textSecondary; }}
+                >
+                  <Icon name="edit" size={11} /> Edytuj
+                </button>
+              </div>
             )}
             {mode === "edit" && (
-              <div style={{ marginLeft: "auto", ...S.row, gap: 6 }}>
+              <div style={{ ...S.row, justifyContent: "flex-end", gap: 6, marginBottom: 12 }}>
                 <Btn variant="accent" icon="check" onClick={handleSaveEdit} small>Zapisz</Btn>
                 <Btn variant="ghost" onClick={() => setMode("preview")} small>Anuluj</Btn>
               </div>
             )}
-          </div>
 
-          {/* Left scrollable content */}
-          <div style={{ flex: 1, overflowY: "auto", padding: "16px 24px" }}>
             {mode === "preview" && (
               <>
                 {/* Alerts box */}
@@ -1785,7 +1977,7 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
                   </div>
                 )}
 
-                {/* Field rows — form-like layout */}
+                {/* Field rows */}
                 <FieldRow label="Numer" value={doc.number} />
                 <FieldRow label="Typ" value={typeInfo.label} />
                 <FieldRow label="Kontrahent" value={doc.contractor} />
@@ -1794,9 +1986,9 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
                 <FieldRow label="Kwota netto" value={doc.netValue ? formatCurrency(doc.netValue) : "—"} />
                 <FieldRow label="Data" value={formatDate(doc.dateCreated)} />
                 <FieldRow label="Okres" value={doc.dateStart ? `${formatDate(doc.dateStart)} — ${formatDate(doc.dateEnd)}` : "—"} />
-                <FieldRow label="Klasyfikacja budżetowa" value={cls ? `${cls.code} — ${cls.label}` : "—"} />
+                <FieldRow label="Klasyfikacja" value={cls ? `${cls.code} — ${cls.label}` : "—"} />
                 <FieldRow label="Wydział" value={doc.dept} />
-                <FieldRow label="Osoba odpowiedzialna" value={user?.name} />
+                <FieldRow label="Osoba odpow." value={user?.name} />
                 <FieldRow label="Status" value={<Badge color={statusInfo.color} bg={statusInfo.bg}>{statusInfo.label}</Badge>} />
 
                 {/* Tags */}
@@ -1813,27 +2005,6 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
                   <div style={{ marginTop: 8, padding: 12, background: DS.neutralLighter, borderRadius: 8, ...typo.bodySmall, color: DS.textPrimary }}>{doc.notes}</div>
                 )}
 
-                {/* Podpięte dokumenty (children) */}
-                {children.length > 0 && (
-                  <div style={{ marginTop: 20, paddingTop: 16, borderTop: `1px solid ${DS.borderLight}` }}>
-                    <div style={{ ...S.row, gap: 6, marginBottom: 10 }}>
-                      <Icon name="layers" size={14} color={DS.primaryMain} />
-                      <span style={{ ...typo.labelMedium, color: DS.primaryMain, fontWeight: 600 }}>Podpięte dokumenty ({children.length})</span>
-                    </div>
-                    {children.map(ch => {
-                      const ctInfo = CHILD_TYPE_LABELS[ch.childType] || { label: ch.childType, icon: "file", color: DS.neutralDark };
-                      return (
-                        <div key={ch.id} style={{ ...S.row, gap: 10, padding: "8px 0", borderBottom: `1px solid ${DS.borderLight}` }}>
-                          <Icon name={ctInfo.icon} size={13} color={ctInfo.color} />
-                          <span style={{ ...typo.bodySmall, color: DS.textPrimary, flex: 1 }}>{ch.title}</span>
-                          {ch.grossValue > 0 && <span style={{ ...typo.labelSmall, fontWeight: 500, color: DS.textPrimary, fontVariantNumeric: "tabular-nums" }}>{formatCurrency(ch.grossValue)}</span>}
-                          {ch.fileName && <span style={{ ...typo.labelSmall, color: DS.textDisabled }}>{ch.fileName}</span>}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
                 {/* Historia */}
                 {doc.history && doc.history.length > 0 && (
                   <div style={{ marginTop: 20, paddingTop: 16, borderTop: `1px solid ${DS.borderLight}` }}>
@@ -1845,7 +2016,7 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
                       <div style={{ position: "absolute", left: 7, top: 8, bottom: 8, width: 2, background: DS.borderLight, borderRadius: 1 }} />
                       {doc.history.slice().reverse().map((entry, idx) => (
                         <div key={idx} style={{ position: "relative", paddingBottom: 14, paddingLeft: 16 }}>
-                          <div style={{ position: "absolute", left: -17, top: 6, width: 10, height: 10, borderRadius: "50%", background: idx === 0 ? DS.accentUmowyMain : DS.neutralMain, border: `2px solid ${DS.neutralWhite}` }} />
+                          <div style={{ position: "absolute", left: -17, top: 6, width: 10, height: 10, borderRadius: "50%", background: idx === 0 ? DS.primaryLight : DS.neutralMain, border: `2px solid ${DS.neutralWhite}` }} />
                           <div style={{ ...S.row, justifyContent: "space-between", alignItems: "flex-start" }}>
                             <div>
                               <span style={{ ...typo.bodySmall, fontWeight: 500, color: DS.textPrimary }}>{entry.user}</span>
@@ -1907,41 +2078,24 @@ const DrawerDetail = ({ doc, onClose, onSave, onNavigate, hasPrev, hasNext }) =>
                 </Section>
               </>
             )}
-          </div>
-        </div>
+          </>
+        )}
 
-        {/* ---- RIGHT: Context panel ---- */}
-        <div style={{ width: 380, minWidth: 380, ...S.col, overflow: "hidden", background: DS.neutralWhite }}>
-          {/* Right tabs */}
-          <div style={{ padding: "0 16px", borderBottom: `1px solid ${DS.borderLight}`, ...S.row }}>
-            {[
-              { id: "budget", label: "Kontekst budżetowy" },
-              { id: "preview", label: "Podgląd załącznika" },
-            ].map(t => (
-              <button key={t.id} onClick={() => setRightTab(t.id)} style={{
-                padding: "10px 14px", border: "none", background: "transparent", cursor: "pointer",
-                fontFamily: DS.fontFamily, fontSize: 12, fontWeight: rightTab === t.id ? 600 : 400,
-                color: rightTab === t.id ? DS.primaryMain : DS.textSecondary,
-                borderBottom: rightTab === t.id ? `2px solid ${DS.accentUmowyMain}` : "2px solid transparent",
-                transition: "all 0.15s",
-              }}>{t.label}</button>
-            ))}
-          </div>
-          {/* Right content */}
-          <div style={{ flex: 1, overflowY: "auto", padding: 16 }}>
-            {rightTab === "budget" && <BudgetSidebar />}
-            {rightTab === "preview" && (
-              <div style={{ textAlign: "center", padding: "40px 16px" }}>
-                <Icon name="file" size={40} color={DS.neutralLight} style={{ margin: "0 auto 12px", display: "block" }} />
-                <div style={{ ...typo.titleSmall, color: DS.textSecondary, marginBottom: 4 }}>Podgląd pliku</div>
-                <div style={{ ...typo.bodySmall, color: DS.textDisabled }}>Wybierz załącznik aby zobaczyć podgląd</div>
-              </div>
-            )}
-          </div>
-        </div>
+        {/* --- Faktury tab --- */}
+        {activeTab === "faktury" && (
+          <ChildList items={childFaktury} emptyIcon="file" emptyLabel="Brak podpiętych faktur" />
+        )}
 
+        {/* --- Załączniki tab --- */}
+        {activeTab === "zalaczniki" && (
+          <ChildList items={childZalaczniki} emptyIcon="paperclip" emptyLabel="Brak załączników" />
+        )}
+
+        {/* --- Zaangażowanie tab --- */}
+        {activeTab === "zaangazowanie" && (
+          <BudgetContent />
+        )}
       </div>
-    </div>
     </div>
   );
 };
@@ -2100,7 +2254,7 @@ const DocFormStepBasic = ({ form, set, docs, ocrStep, setOcrStep }) => {
           <Section title="Plik dokumentu">
             {form.uploadedFile ? (
               <div style={{ ...S.row, gap: 10, padding: "12px 14px", borderRadius: 10, background: DS.neutralLighter, border: `1px solid ${DS.borderLight}` }}>
-                <Icon name="file" size={20} color={DS.accentUmowyMain} />
+                <Icon name="file" size={20} color={DS.primaryLight} />
                 <div style={{ flex: 1 }}>
                   <div style={{ ...typo.bodySmall, fontWeight: 600, color: DS.textPrimary }}>{form.uploadedFile}</div>
                   <div style={{ ...typo.labelSmall, color: DS.textDisabled }}>PDF • 2.4 MB</div>
@@ -2111,7 +2265,7 @@ const DocFormStepBasic = ({ form, set, docs, ocrStep, setOcrStep }) => {
               </div>
             ) : ocrStep === "processing" ? (
               <div style={{ textAlign: "center", padding: "20px 0" }}>
-                <div style={{ width: 36, height: 36, borderRadius: "50%", margin: "0 auto 12px", border: `3px solid ${DS.borderLight}`, borderTopColor: DS.accentUmowyMain, animation: "spin 1s linear infinite" }} />
+                <div style={{ width: 36, height: 36, borderRadius: "50%", margin: "0 auto 12px", border: `3px solid ${DS.borderLight}`, borderTopColor: DS.primaryLight, animation: "spin 1s linear infinite" }} />
                 <div style={{ ...typo.bodySmall, color: DS.textPrimary }}>Rozpoznawanie tekstu...</div>
                 <div style={{ ...typo.labelSmall, color: DS.textDisabled }}>{ocrFile}</div>
               </div>
@@ -2122,7 +2276,7 @@ const DocFormStepBasic = ({ form, set, docs, ocrStep, setOcrStep }) => {
                   <span style={{ ...typo.bodySmall, color: DS.successDark, fontWeight: 600 }}>Rozpoznano {ocrResults.confidence}% pól</span>
                 </div>
                 <div style={{ ...S.row, gap: 10, padding: "10px 14px", borderRadius: 10, background: DS.neutralLighter, marginBottom: 10 }}>
-                  <Icon name="file" size={18} color={DS.accentUmowyMain} />
+                  <Icon name="file" size={18} color={DS.primaryLight} />
                   <div style={{ flex: 1 }}>
                     <div style={{ ...typo.bodySmall, fontWeight: 600, color: DS.textPrimary }}>{ocrFile}</div>
                     <div style={{ ...typo.labelSmall, color: DS.textDisabled }}>PDF • 2.4 MB</div>
@@ -2148,7 +2302,7 @@ const DocFormStepBasic = ({ form, set, docs, ocrStep, setOcrStep }) => {
                 border: `2px dashed ${DS.borderLight}`, borderRadius: 10, padding: "20px", textAlign: "center",
                 cursor: "pointer", transition: "all 0.15s", background: DS.neutralWhite,
               }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = DS.accentUmowyMain; e.currentTarget.style.background = DS.neutralLighter; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = DS.primaryLight; e.currentTarget.style.background = DS.neutralLighter; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = DS.borderLight; e.currentTarget.style.background = DS.neutralWhite; }}
               >
                 <Icon name="upload" size={20} color={DS.textDisabled} />
@@ -2156,8 +2310,8 @@ const DocFormStepBasic = ({ form, set, docs, ocrStep, setOcrStep }) => {
                 <div style={{ ...typo.labelSmall, color: DS.textDisabled }}>PDF, JPG, PNG, DOCX • max 10 MB</div>
                 {curMeta.hasOcr && (
                   <div style={{ ...S.row, gap: 6, justifyContent: "center", marginTop: 8 }}>
-                    <Icon name="sparkles" size={12} color={DS.accentUmowyMain} />
-                    <span style={{ ...typo.labelSmall, color: DS.accentUmowyMain }}>Autouzupełnianie dostępne</span>
+                    <Icon name="sparkles" size={12} color={DS.primaryLight} />
+                    <span style={{ ...typo.labelSmall, color: DS.primaryLight }}>Autouzupełnianie dostępne</span>
                   </div>
                 )}
               </div>
@@ -2236,11 +2390,11 @@ const DocFormStepBasic = ({ form, set, docs, ocrStep, setOcrStep }) => {
                   </div>
                   {REGISTRY_PREFIXES[form.type] && (
                     <button onClick={() => set("nrEwidencyjny", getNextNrEwidencyjny(form.type))} title="Nadaj kolejny numer ewidencyjny" style={{
-                      padding: "8px 12px", borderRadius: 8, border: `1px solid ${DS.accentUmowyMain}`,
-                      background: DS.accentUmowyLighter, cursor: "pointer", ...S.row, gap: 4,
-                      fontFamily: DS.fontFamily, ...typo.labelSmall, color: DS.accentUmowyDark, fontWeight: 600, whiteSpace: "nowrap",
+                      padding: "8px 12px", borderRadius: 8, border: `1px solid ${DS.primaryLight}`,
+                      background: DS.primaryLighter, cursor: "pointer", ...S.row, gap: 4,
+                      fontFamily: DS.fontFamily, ...typo.labelSmall, color: DS.primaryDark, fontWeight: 600, whiteSpace: "nowrap",
                     }}>
-                      <Icon name="zap" size={12} color={DS.accentUmowyMain} />
+                      <Icon name="zap" size={12} color={DS.primaryLight} />
                       Nadaj
                     </button>
                   )}
@@ -2328,10 +2482,10 @@ const DocFormStepClassification = ({ form, set }) => {
     <div>
       {/* AI suggestions banner */}
       {hasSuggestions && (
-        <div style={{ padding: "16px", borderRadius: 12, background: `linear-gradient(135deg, ${DS.accentUmowyLighter}, ${DS.secondaryLighter})`, border: `1px solid ${DS.accentUmowyLight}`, marginBottom: 16 }}>
+        <div style={{ padding: "16px", borderRadius: 12, background: `linear-gradient(135deg, ${DS.primaryLighter}, ${DS.secondaryLighter})`, border: `1px solid ${DS.primaryLight}`, marginBottom: 16 }}>
           <div style={{ ...S.row, gap: 8, marginBottom: 12 }}>
-            <Icon name="sparkles" size={16} color={DS.accentUmowyMain} />
-            <span style={{ ...typo.bodySmall, fontWeight: 600, color: DS.accentUmowyDark }}>Na podstawie danych dokumentu — prawdopodobnie pasują:</span>
+            <Icon name="sparkles" size={16} color={DS.primaryLight} />
+            <span style={{ ...typo.bodySmall, fontWeight: 600, color: DS.primaryDark }}>Na podstawie danych dokumentu — prawdopodobnie pasują:</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {suggestions.map(sg => {
@@ -2340,8 +2494,8 @@ const DocFormStepClassification = ({ form, set }) => {
               return (
                 <div key={sg.code} onClick={() => set("classification", sg.code)} style={{
                   padding: "12px 14px", borderRadius: 10, cursor: "pointer", transition: "all 0.15s",
-                  border: `1.5px solid ${form.classification === sg.code ? DS.accentUmowyMain : DS.borderLight}`,
-                  background: form.classification === sg.code ? DS.accentUmowyLighter : DS.neutralWhite,
+                  border: `1.5px solid ${form.classification === sg.code ? DS.primaryLight : DS.borderLight}`,
+                  background: form.classification === sg.code ? DS.primaryLighter : DS.neutralWhite,
                 }}>
                   <div style={{ ...S.rowBetween }}>
                     <div>
@@ -2369,17 +2523,17 @@ const DocFormStepClassification = ({ form, set }) => {
           const isSelected = form.classification === c.code;
           const pct = Math.round((c.used / c.budget) * 100);
           const free = c.budget - c.used;
-          const barColor = pct >= 85 ? DS.errorMain : pct >= 60 ? DS.warningMain : DS.accentUmowyMain;
+          const barColor = pct >= 85 ? DS.errorMain : pct >= 60 ? DS.warningMain : DS.primaryLight;
           return (
             <div key={c.code} onClick={() => set("classification", c.code)} style={{
               padding: "14px 16px", borderRadius: 12, cursor: "pointer", transition: "all 0.15s",
-              border: `2px solid ${isSelected ? DS.accentUmowyMain : DS.borderLight}`,
-              background: isSelected ? DS.accentUmowyLighter : DS.neutralWhite,
+              border: `2px solid ${isSelected ? DS.primaryLight : DS.borderLight}`,
+              background: isSelected ? DS.primaryLighter : DS.neutralWhite,
             }}>
               <div style={{ ...S.rowBetween, marginBottom: 6 }}>
                 <div>
                   <span style={{ ...typo.bodySmall, fontWeight: 700, color: DS.textPrimary }}>{c.code}</span>
-                  {isSelected && <Icon name="check" size={14} color={DS.accentUmowyMain} style={{ marginLeft: 8 }} />}
+                  {isSelected && <Icon name="check" size={14} color={DS.primaryLight} style={{ marginLeft: 8 }} />}
                 </div>
               </div>
               <div style={{ ...typo.bodySmall, color: DS.textSecondary, marginBottom: 8 }}>{c.label}</div>
@@ -2468,13 +2622,13 @@ const DocFormStepFormalities = ({ form, set }) => {
       {(form.type === "umowa" || form.type === "zlecenie") && (
         <Section title="Zamówienia publiczne i dofinansowanie">
           <label style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: 12, borderRadius: 10,
-            border: `2px solid ${form.zamowieniePubliczne ? DS.accentUmowyMain : DS.borderLight}`,
-            background: form.zamowieniePubliczne ? DS.accentUmowyLighter : DS.neutralWhite, cursor: "pointer",
+            border: `2px solid ${form.zamowieniePubliczne ? DS.primaryLight : DS.borderLight}`,
+            background: form.zamowieniePubliczne ? DS.primaryLighter : DS.neutralWhite, cursor: "pointer",
             borderBottomLeftRadius: form.zamowieniePubliczne ? 0 : 10, borderBottomRightRadius: form.zamowieniePubliczne ? 0 : 10,
           }}>
             <div style={{ width: 16, height: 16, borderRadius: 4, marginTop: 2, flexShrink: 0,
-              border: `2px solid ${form.zamowieniePubliczne ? DS.accentUmowyMain : DS.borderLight}`,
-              background: form.zamowieniePubliczne ? DS.accentUmowyMain : "#fff",
+              border: `2px solid ${form.zamowieniePubliczne ? DS.primaryLight : DS.borderLight}`,
+              background: form.zamowieniePubliczne ? DS.primaryLight : "#fff",
               ...S.row, justifyContent: "center",
             }}>
               {form.zamowieniePubliczne && <Icon name="check" size={10} color="#fff" />}
@@ -2486,19 +2640,19 @@ const DocFormStepFormalities = ({ form, set }) => {
             </div>
           </label>
           {form.zamowieniePubliczne && (
-            <div style={{ border: `2px solid ${DS.accentUmowyMain}`, borderTop: "none", borderRadius: "0 0 10px 10px", padding: 14, background: DS.neutralLighter, display: "flex", flexDirection: "column", gap: 8 }}>
+            <div style={{ border: `2px solid ${DS.primaryLight}`, borderTop: "none", borderRadius: "0 0 10px 10px", padding: 14, background: DS.neutralLighter, display: "flex", flexDirection: "column", gap: 8 }}>
               <div style={{ ...typo.labelSmall, fontWeight: 600, color: DS.textSecondary, marginBottom: 2 }}>Tryb zamówienia</div>
               {TRYBY_PZP.map(t => (
                 <button key={t.id} onClick={() => set("tryb_pzp", t.id)} style={{
                   textAlign: "left", padding: "9px 12px", borderRadius: 8, width: "100%", fontFamily: DS.fontFamily,
-                  border: `1.5px solid ${form.tryb_pzp === t.id ? DS.accentUmowyMain : DS.borderLight}`,
-                  background: form.tryb_pzp === t.id ? DS.accentUmowyLighter : DS.neutralWhite, cursor: "pointer", transition: "all 0.15s",
+                  border: `1.5px solid ${form.tryb_pzp === t.id ? DS.primaryLight : DS.borderLight}`,
+                  background: form.tryb_pzp === t.id ? DS.primaryLighter : DS.neutralWhite, cursor: "pointer", transition: "all 0.15s",
                 }}>
                   <div style={{ ...S.rowBetween }}>
-                    <span style={{ ...typo.bodySmall, fontWeight: 600, color: form.tryb_pzp === t.id ? DS.accentUmowyDark : DS.textPrimary }}>{t.label}</span>
+                    <span style={{ ...typo.bodySmall, fontWeight: 600, color: form.tryb_pzp === t.id ? DS.primaryDark : DS.textPrimary }}>{t.label}</span>
                     <span style={{ ...typo.labelSmall, fontSize: 9, padding: "2px 7px", borderRadius: 999,
-                      background: t.threshold.includes("poniżej") ? DS.successLighter : t.threshold.includes("wymaga") ? DS.warningLighter : DS.accentUmowyLighter,
-                      color: t.threshold.includes("poniżej") ? DS.successDark : t.threshold.includes("wymaga") ? DS.warningDark : DS.accentUmowyDark,
+                      background: t.threshold.includes("poniżej") ? DS.successLighter : t.threshold.includes("wymaga") ? DS.warningLighter : DS.primaryLighter,
+                      color: t.threshold.includes("poniżej") ? DS.successDark : t.threshold.includes("wymaga") ? DS.warningDark : DS.primaryDark,
                       fontWeight: 600,
                     }}>{t.threshold}</span>
                   </div>
@@ -2513,12 +2667,12 @@ const DocFormStepFormalities = ({ form, set }) => {
 
           <div style={{ marginTop: 10 }}>
             <label style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: 12, borderRadius: 10,
-              border: `2px solid ${form.dofinansowanie ? DS.accentUmowyMain : DS.borderLight}`,
-              background: form.dofinansowanie ? DS.accentUmowyLighter : DS.neutralWhite, cursor: "pointer",
+              border: `2px solid ${form.dofinansowanie ? DS.primaryLight : DS.borderLight}`,
+              background: form.dofinansowanie ? DS.primaryLighter : DS.neutralWhite, cursor: "pointer",
             }}>
               <div style={{ width: 16, height: 16, borderRadius: 4, marginTop: 2, flexShrink: 0,
-                border: `2px solid ${form.dofinansowanie ? DS.accentUmowyMain : DS.borderLight}`,
-                background: form.dofinansowanie ? DS.accentUmowyMain : "#fff",
+                border: `2px solid ${form.dofinansowanie ? DS.primaryLight : DS.borderLight}`,
+                background: form.dofinansowanie ? DS.primaryLight : "#fff",
                 ...S.row, justifyContent: "center",
               }}>
                 {form.dofinansowanie && <Icon name="check" size={10} color="#fff" />}
@@ -2530,7 +2684,7 @@ const DocFormStepFormalities = ({ form, set }) => {
               </div>
             </label>
             {form.dofinansowanie && (
-              <div style={{ padding: "10px 14px", marginTop: -2, borderRadius: "0 0 10px 10px", border: `2px solid ${DS.accentUmowyMain}`, borderTop: "none", background: DS.neutralLighter }}>
+              <div style={{ padding: "10px 14px", marginTop: -2, borderRadius: "0 0 10px 10px", border: `2px solid ${DS.primaryLight}`, borderTop: "none", background: DS.neutralLighter }}>
                 <Field label="Źródło dofinansowania">
                   <Input value={form.zrodloDofinansowania || ""} onChange={v => set("zrodloDofinansowania", v)} placeholder="np. Program Regionalny, PROW, dotacja celowa..." />
                 </Field>
@@ -2678,11 +2832,11 @@ const DocFormModal = ({ onClose, onSave, docs, editDoc }) => {
         <div style={{
           padding: "16px 20px", ...S.row, gap: 10,
           borderBottom: `1px solid ${DS.borderLight}`,
-          background: `linear-gradient(135deg, ${DS.accentUmowyLighter}, ${DS.neutralWhite})`,
+          background: `linear-gradient(135deg, ${DS.primaryLighter}, ${DS.neutralWhite})`,
         }}>
           <div style={{
             width: 36, height: 36, borderRadius: 10, ...S.row, justifyContent: "center",
-            background: `linear-gradient(135deg, ${DS.accentUmowyMain}, ${DS.accentUmowyDark})`,
+            background: `linear-gradient(135deg, ${DS.primaryLight}, ${DS.primaryDark})`,
           }}>
             <Icon name={isEdit ? "edit" : "plus"} size={18} color="#fff" />
           </div>
@@ -2704,12 +2858,12 @@ const DocFormModal = ({ onClose, onSave, docs, editDoc }) => {
             const circleSize = 28;
             return (
               <React.Fragment key={i}>
-                {i > 0 && <div style={{ flex: 1, height: 2, background: isDone || isCurrent ? DS.accentUmowyMain : DS.borderLight, transition: "background 0.3s" }} />}
+                {i > 0 && <div style={{ flex: 1, height: 2, background: isDone || isCurrent ? DS.primaryLight : DS.borderLight, transition: "background 0.3s" }} />}
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flexShrink: 0 }}>
                   <div style={{
                     width: circleSize, height: circleSize, borderRadius: "50%",
-                    background: isDone ? DS.successMain : isCurrent ? DS.accentUmowyMain : DS.neutralWhite,
-                    border: `2px solid ${isDone ? DS.successMain : isCurrent ? DS.accentUmowyMain : DS.borderLight}`,
+                    background: isDone ? DS.successMain : isCurrent ? DS.primaryLight : DS.neutralWhite,
+                    border: `2px solid ${isDone ? DS.successMain : isCurrent ? DS.primaryLight : DS.borderLight}`,
                     display: "flex", alignItems: "center", justifyContent: "center",
                     transition: "all 0.3s",
                   }}>
@@ -2717,7 +2871,7 @@ const DocFormModal = ({ onClose, onSave, docs, editDoc }) => {
                       <span style={{ ...typo.labelSmall, fontWeight: 700, color: isCurrent ? "#fff" : DS.textDisabled }}>{i + 1}</span>}
                   </div>
                   <span style={{
-                    ...typo.labelSmall, fontSize: 9, color: isDone ? DS.successDark : isCurrent ? DS.accentUmowyDark : DS.textDisabled,
+                    ...typo.labelSmall, fontSize: 9, color: isDone ? DS.successDark : isCurrent ? DS.primaryDark : DS.textDisabled,
                     maxWidth: 64, textAlign: "center", lineHeight: "1.2",
                     whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
                   }}>{label}</span>
@@ -2970,12 +3124,12 @@ const AiSuggestionBanner = ({ title, contractor, onAccept }) => {
   return (
     <div style={{
       ...S.row, gap: 10, padding: "10px 14px",
-      background: `linear-gradient(135deg, ${DS.accentUmowyLighter}, ${DS.secondaryLighter})`,
-      borderRadius: 10, border: `1px solid ${DS.accentUmowyLight}`, marginBottom: 14,
+      background: `linear-gradient(135deg, ${DS.primaryLighter}, ${DS.secondaryLighter})`,
+      borderRadius: 10, border: `1px solid ${DS.primaryLight}`, marginBottom: 14,
     }}>
-      <Icon name="sparkles" size={16} color={DS.accentUmowyMain} />
+      <Icon name="sparkles" size={16} color={DS.primaryLight} />
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ ...typo.labelSmall, color: DS.accentUmowyDark, fontWeight: 600 }}>
+        <div style={{ ...typo.labelSmall, color: DS.primaryDark, fontWeight: 600 }}>
           Sugestia AI · {suggestion.confidence}% pewności
         </div>
         <div style={{ ...typo.bodySmall, color: DS.textPrimary, marginTop: 2 }}>
@@ -3039,11 +3193,11 @@ const OcrWizard = ({ visible, onClose, onPrefill }) => {
         <div style={{
           padding: "16px 20px", ...S.row, gap: 10,
           borderBottom: `1px solid ${DS.borderLight}`,
-          background: `linear-gradient(135deg, ${DS.accentUmowyLighter}, ${DS.neutralWhite})`,
+          background: `linear-gradient(135deg, ${DS.primaryLighter}, ${DS.neutralWhite})`,
         }}>
           <div style={{
             width: 36, height: 36, borderRadius: 10, ...S.row, justifyContent: "center",
-            background: `linear-gradient(135deg, ${DS.accentUmowyMain}, ${DS.accentUmowyDark})`,
+            background: `linear-gradient(135deg, ${DS.primaryLight}, ${DS.primaryDark})`,
           }}>
             <Icon name="camera" size={18} color="#fff" />
           </div>
@@ -3061,10 +3215,10 @@ const OcrWizard = ({ visible, onClose, onPrefill }) => {
             <div key={i} style={{ flex: 1, textAlign: "center" }}>
               <div style={{
                 height: 4, borderRadius: 2, marginBottom: 6,
-                background: i <= step ? DS.accentUmowyMain : DS.borderLight,
+                background: i <= step ? DS.primaryLight : DS.borderLight,
                 transition: "background 0.3s",
               }} />
-              <span style={{ ...typo.labelSmall, color: i <= step ? DS.accentUmowyDark : DS.textDisabled }}>{label}</span>
+              <span style={{ ...typo.labelSmall, color: i <= step ? DS.primaryDark : DS.textDisabled }}>{label}</span>
             </div>
           ))}
         </div>
@@ -3074,14 +3228,14 @@ const OcrWizard = ({ visible, onClose, onPrefill }) => {
           {step === 0 && (
             <div style={{ textAlign: "center", padding: "24px 0" }}>
               <div onClick={handleUpload} style={{
-                border: `2px dashed ${DS.accentUmowyLight}`, borderRadius: 12, padding: "32px 24px",
+                border: `2px dashed ${DS.primaryLight}`, borderRadius: 12, padding: "32px 24px",
                 cursor: "pointer", transition: "all 0.15s",
                 background: DS.neutralLighter,
               }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = DS.accentUmowyMain; e.currentTarget.style.background = DS.accentUmowyLighter; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = DS.accentUmowyLight; e.currentTarget.style.background = DS.neutralLighter; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = DS.primaryLight; e.currentTarget.style.background = DS.primaryLighter; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = DS.primaryLight; e.currentTarget.style.background = DS.neutralLighter; }}
               >
-                <Icon name="upload" size={32} color={DS.accentUmowyMain} style={{ marginBottom: 12 }} />
+                <Icon name="upload" size={32} color={DS.primaryLight} style={{ marginBottom: 12 }} />
                 <div style={{ ...typo.bodyMedium, color: DS.textPrimary, marginBottom: 4 }}>Przeciągnij plik lub kliknij</div>
                 <div style={{ ...typo.bodySmall, color: DS.textDisabled }}>PDF, JPG, PNG • max 10 MB</div>
               </div>
@@ -3092,7 +3246,7 @@ const OcrWizard = ({ visible, onClose, onPrefill }) => {
             <div style={{ textAlign: "center", padding: "32px 0" }}>
               <div style={{
                 width: 48, height: 48, borderRadius: "50%", margin: "0 auto 16px",
-                border: `3px solid ${DS.borderLight}`, borderTopColor: DS.accentUmowyMain,
+                border: `3px solid ${DS.borderLight}`, borderTopColor: DS.primaryLight,
                 animation: "spin 1s linear infinite",
               }} />
               <div style={{ ...typo.bodyMedium, color: DS.textPrimary, marginBottom: 4 }}>Rozpoznawanie tekstu...</div>
@@ -3164,7 +3318,7 @@ const SkarbnikSummary = ({ docs, onSelectDoc, onNavigateFiltered }) => {
 
   /* ── KPI config ── */
   const kpis = [
-    { label: "Aktywne umowy", value: activeUmowy.length, sub: formatCurrency(umowyVal), icon: "file", color: DS.accentUmowyMainUmowyMain, bg: DS.accentUmowyMainUmowyLighter,
+    { label: "Aktywne umowy", value: activeUmowy.length, sub: formatCurrency(umowyVal), icon: "file", color: DS.primaryLightUmowyMain, bg: DS.primaryLightUmowyLighter,
       onClick: () => onNavigateFiltered("umowa", { status: ["aktywny"] }) },
     { label: "Faktury", value: fakturyAll.length, sub: formatCurrency(fakturyVal), icon: "receipt", color: "#0A7BE5", bg: "#E0EEFF",
       onClick: () => onNavigateFiltered("faktura", { status: ["zatwierdzony"] }) },
@@ -3177,7 +3331,7 @@ const SkarbnikSummary = ({ docs, onSelectDoc, onNavigateFiltered }) => {
   /* ── toggle switch helper ── */
   const Toggle = ({ on, onToggle, label }) => (
     <div style={{ ...S.row, gap: 6, cursor: "pointer", userSelect: "none" }} onClick={onToggle}>
-      <div style={{ width: 32, height: 18, borderRadius: 9, background: on ? DS.accentUmowyMainUmowyMain : DS.neutralMain, transition: "background 0.2s", position: "relative", flexShrink: 0 }}>
+      <div style={{ width: 32, height: 18, borderRadius: 9, background: on ? DS.primaryLightUmowyMain : DS.neutralMain, transition: "background 0.2s", position: "relative", flexShrink: 0 }}>
         <div style={{ width: 14, height: 14, borderRadius: 7, background: DS.neutralWhite, position: "absolute", top: 2, left: on ? 16 : 2, transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
       </div>
       <span style={{ ...typo.labelSmall, color: DS.textSecondary }}>{label}</span>
@@ -3401,7 +3555,7 @@ const ExportModal = ({ visible, onClose, docs, selectedIds }) => {
       }}>
         <div style={{ padding: "20px 24px", borderBottom: `1px solid ${DS.borderLight}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ ...S.row, gap: 8 }}>
-            <Icon name="download" size={18} color={DS.accentUmowyMain} />
+            <Icon name="download" size={18} color={DS.primaryLight} />
             <span style={{ fontSize: 16, fontWeight: 700, color: DS.textPrimary }}>Eksport dokumentów</span>
           </div>
           <Btn variant="ghost" icon="x" onClick={handleClose} small />
@@ -3431,8 +3585,8 @@ const ExportModal = ({ visible, onClose, docs, selectedIds }) => {
                   ].map(f => (
                     <div key={f.id} onClick={() => setFormat(f.id)} style={{
                       flex: 1, padding: 12, borderRadius: 8, cursor: "pointer",
-                      border: `2px solid ${format === f.id ? DS.accentUmowyMain : DS.borderLight}`,
-                      background: format === f.id ? DS.accentUmowyMain + "08" : DS.neutralWhite,
+                      border: `2px solid ${format === f.id ? DS.primaryLight : DS.borderLight}`,
+                      background: format === f.id ? DS.primaryLight + "08" : DS.neutralWhite,
                     }}>
                       <div style={{ fontWeight: 600, fontSize: 14, color: DS.textPrimary }}>{f.label}</div>
                       <div style={{ fontSize: 12, color: DS.textSecondary, marginTop: 2 }}>{f.desc}</div>
@@ -3453,7 +3607,7 @@ const ExportModal = ({ visible, onClose, docs, selectedIds }) => {
                     opacity: s.disabled ? 0.4 : 1,
                   }}>
                     <input type="radio" name="scope" checked={scope === s.id} onChange={() => !s.disabled && setScope(s.id)}
-                      style={{ accentColor: DS.accentUmowyMain }} disabled={s.disabled} />
+                      style={{ accentColor: DS.primaryLight }} disabled={s.disabled} />
                     <span style={{ fontSize: 13, color: DS.textPrimary }}>{s.label}</span>
                   </label>
                 ))}
@@ -3467,7 +3621,7 @@ const ExportModal = ({ visible, onClose, docs, selectedIds }) => {
                   { id: "classification", label: "Klasyfikacja budżetowa", checked: includeClassification, set: setIncludeClassification },
                 ].map(opt => (
                   <label key={opt.id} style={{ ...S.row, gap: 8, padding: "4px 0", cursor: "pointer" }}>
-                    <input type="checkbox" checked={opt.checked} onChange={() => opt.set(!opt.checked)} style={{ accentColor: DS.accentUmowyMain }} />
+                    <input type="checkbox" checked={opt.checked} onChange={() => opt.set(!opt.checked)} style={{ accentColor: DS.primaryLight }} />
                     <span style={{ fontSize: 13, color: DS.textPrimary }}>{opt.label}</span>
                   </label>
                 ))}
@@ -3543,8 +3697,8 @@ const FoldersView = ({ folders, setFolders, docs, onSelectDoc, activeFolderId, s
         {/* Folder detail header */}
         <div style={{ padding: "16px 24px", borderBottom: `1px solid ${DS.borderLight}`, background: DS.neutralWhite }}>
           <div style={{ ...S.row, gap: 10, marginBottom: 10 }}>
-            <button onClick={() => { setActiveFolderId(null); setFolderDocSearch(""); }} style={{ ...S.row, gap: 4, border: "none", background: "none", cursor: "pointer", color: DS.accentUmowyMain, fontSize: 13, fontWeight: 500, fontFamily: DS.fontFamily, padding: 0 }}>
-              <Icon name="chevronLeft" size={14} color={DS.accentUmowyMain} /> Foldery
+            <button onClick={() => { setActiveFolderId(null); setFolderDocSearch(""); }} style={{ ...S.row, gap: 4, border: "none", background: "none", cursor: "pointer", color: DS.primaryLight, fontSize: 13, fontWeight: 500, fontFamily: DS.fontFamily, padding: 0 }}>
+              <Icon name="chevronLeft" size={14} color={DS.primaryLight} /> Foldery
             </button>
           </div>
           <div style={{ ...S.row, gap: 12, justifyContent: "space-between" }}>
@@ -3557,7 +3711,7 @@ const FoldersView = ({ folders, setFolders, docs, onSelectDoc, activeFolderId, s
                   <div style={{ ...S.row, gap: 6 }}>
                     <input value={editName} onChange={e => setEditName(e.target.value)} autoFocus
                       onKeyDown={e => { if (e.key === "Enter") renameFolder(activeFolder.id); if (e.key === "Escape") setEditingId(null); }}
-                      style={{ ...typo.titleMedium, color: DS.textPrimary, border: `1px solid ${DS.accentUmowyMain}`, borderRadius: 6, padding: "2px 8px", outline: "none", fontFamily: DS.fontFamily, width: 300 }} />
+                      style={{ ...typo.titleMedium, color: DS.textPrimary, border: `1px solid ${DS.primaryLight}`, borderRadius: 6, padding: "2px 8px", outline: "none", fontFamily: DS.fontFamily, width: 300 }} />
                     <Btn variant="primary" icon="check" onClick={() => renameFolder(activeFolder.id)} small>OK</Btn>
                   </div>
                 ) : (
@@ -3565,7 +3719,7 @@ const FoldersView = ({ folders, setFolders, docs, onSelectDoc, activeFolderId, s
                 )}
                 {activeFolder.description && <div style={{ ...typo.bodySmall, color: DS.textSecondary, marginTop: 2 }}>{activeFolder.description}</div>}
               </div>
-              <Badge color={DS.accentUmowyDark} bg={DS.accentUmowyLighter} small>{activeFolder.docIds.length} dok.</Badge>
+              <Badge color={DS.primaryDark} bg={DS.primaryLighter} small>{activeFolder.docIds.length} dok.</Badge>
             </div>
             <div style={{ ...S.row, gap: 6 }}>
               <Btn variant="ghost" icon="edit" small onClick={() => { setEditingId(activeFolder.id); setEditName(activeFolder.name); }}>Zmień nazwę</Btn>
@@ -3663,10 +3817,10 @@ const FoldersView = ({ folders, setFolders, docs, onSelectDoc, activeFolderId, s
             {[{ id: "tiles", icon: "grid" }, { id: "list", icon: "list" }].map(v => (
               <button key={v.id} onClick={() => setViewMode(v.id)} style={{
                 padding: "6px 10px", border: "none", cursor: "pointer",
-                background: viewMode === v.id ? DS.accentUmowyLighter : DS.neutralWhite,
-                color: viewMode === v.id ? DS.accentUmowyDark : DS.textSecondary,
+                background: viewMode === v.id ? DS.primaryLighter : DS.neutralWhite,
+                color: viewMode === v.id ? DS.primaryDark : DS.textSecondary,
               }}>
-                <Icon name={v.icon} size={14} color={viewMode === v.id ? DS.accentUmowyMain : DS.textDisabled} />
+                <Icon name={v.icon} size={14} color={viewMode === v.id ? DS.primaryLight : DS.textDisabled} />
               </button>
             ))}
           </div>
@@ -3768,7 +3922,7 @@ const FoldersView = ({ folders, setFolders, docs, onSelectDoc, activeFolderId, s
                   {folder.description && <div style={{ ...typo.labelSmall, color: DS.textDisabled, ...S.truncate, marginTop: 1 }}>{folder.description}</div>}
                 </div>
                 <div style={{ width: 80, textAlign: "center" }}>
-                  <Badge color={DS.accentUmowyDark} bg={DS.accentUmowyLighter} small>{folder.docIds.length}</Badge>
+                  <Badge color={DS.primaryDark} bg={DS.primaryLighter} small>{folder.docIds.length}</Badge>
                 </div>
                 <div style={{ width: 100, ...typo.labelSmall, color: DS.textSecondary }}>{folder.createdAt ? formatDate(folder.createdAt) : "—"}</div>
                 <div style={{ width: 80, ...S.row, gap: 4, justifyContent: "flex-end" }}>
@@ -3821,9 +3975,9 @@ const FolderPickerModal = ({ visible, folders, setFolders, selectedIds, onConfir
         {/* Header */}
         <div style={{ padding: "16px 20px", borderBottom: `1px solid ${DS.borderLight}`, ...S.row, justifyContent: "space-between" }}>
           <div style={{ ...S.row, gap: 8 }}>
-            <Icon name="folder" size={18} color={DS.accentUmowyMain} />
+            <Icon name="folder" size={18} color={DS.primaryLight} />
             <span style={{ ...typo.titleSmall, color: DS.textPrimary }}>Dodaj do folderu</span>
-            <Badge color={DS.accentUmowyDark} bg={DS.accentUmowyLighter} small>{selectedIds.size} dok.</Badge>
+            <Badge color={DS.primaryDark} bg={DS.primaryLighter} small>{selectedIds.size} dok.</Badge>
           </div>
           <button onClick={onClose} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
             <Icon name="x" size={16} color={DS.textSecondary} />
@@ -3836,8 +3990,8 @@ const FolderPickerModal = ({ visible, folders, setFolders, selectedIds, onConfir
             <div key={f.id} onClick={() => setPickedFolderId(f.id)}
               style={{
                 ...S.row, gap: 10, padding: "10px 12px", borderRadius: 8, cursor: "pointer",
-                background: pickedFolderId === f.id ? DS.accentUmowyLighter : "transparent",
-                border: `1px solid ${pickedFolderId === f.id ? DS.accentUmowyLight : "transparent"}`,
+                background: pickedFolderId === f.id ? DS.primaryLighter : "transparent",
+                border: `1px solid ${pickedFolderId === f.id ? DS.primaryLight : "transparent"}`,
                 transition: "all 0.1s", marginBottom: 2,
               }}
               onMouseEnter={e => { if (pickedFolderId !== f.id) e.currentTarget.style.background = DS.neutralLighter; }}
@@ -3849,8 +4003,8 @@ const FolderPickerModal = ({ visible, folders, setFolders, selectedIds, onConfir
                 <div style={{ ...typo.bodySmall, color: DS.textPrimary, fontWeight: 500 }}>{f.name}</div>
                 <div style={{ ...typo.labelSmall, color: DS.textDisabled }}>{f.docIds.length} dok.</div>
               </div>
-              <div style={{ width: 20, height: 20, borderRadius: "50%", border: `2px solid ${pickedFolderId === f.id ? DS.accentUmowyMain : DS.borderMedium}`, ...S.row, justifyContent: "center" }}>
-                {pickedFolderId === f.id && <div style={{ width: 10, height: 10, borderRadius: "50%", background: DS.accentUmowyMain }} />}
+              <div style={{ width: 20, height: 20, borderRadius: "50%", border: `2px solid ${pickedFolderId === f.id ? DS.primaryLight : DS.borderMedium}`, ...S.row, justifyContent: "center" }}>
+                {pickedFolderId === f.id && <div style={{ width: 10, height: 10, borderRadius: "50%", background: DS.primaryLight }} />}
               </div>
             </div>
           ))}
@@ -3977,7 +4131,7 @@ const KsefView = ({ invoices, setInvoices, onSelectInvoice }) => {
             <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
               display: "inline-flex", alignItems: "center", gap: 6,
               padding: "8px 14px", border: "none", borderRadius: 0,
-              borderBottom: active ? `2px solid ${DS.accentUmowyMain}` : "2px solid transparent",
+              borderBottom: active ? `2px solid ${DS.primaryLight}` : "2px solid transparent",
               background: "transparent", cursor: "pointer", fontFamily: DS.fontFamily,
               fontSize: 13, fontWeight: active ? 600 : 400,
               color: active ? DS.primaryMain : DS.textSecondary,
@@ -3989,8 +4143,8 @@ const KsefView = ({ invoices, setInvoices, onSelectInvoice }) => {
               {tab.label}
               <span style={{
                 ...typo.labelSmall, padding: "0 5px", ...S.pill,
-                background: active ? DS.accentUmowyLighter : DS.neutralLighter,
-                color: active ? DS.accentUmowyDark : DS.textDisabled,
+                background: active ? DS.primaryLighter : DS.neutralLighter,
+                color: active ? DS.primaryDark : DS.textDisabled,
               }}>{tab.count}</span>
             </button>
           );
@@ -4062,7 +4216,7 @@ const KsefView = ({ invoices, setInvoices, onSelectInvoice }) => {
                   background: DS.neutralWhite, cursor: "pointer", ...typo.labelSmall, color: DS.textSecondary,
                   fontWeight: 500, fontSize: 11, transition: "all 0.15s", whiteSpace: "nowrap",
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = DS.accentUmowyMain; e.currentTarget.style.color = DS.accentUmowyMain; }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = DS.primaryLight; e.currentTarget.style.color = DS.primaryLight; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = DS.borderLight; e.currentTarget.style.color = DS.textSecondary; }}
                 >
                   <Icon name="eye" size={11} /> Szczegóły
@@ -4535,7 +4689,7 @@ const AppTopBar = () => {
       <div style={{ ...S.row, gap: 10 }}>
         <div style={{
           width: 28, height: 28, borderRadius: 8,
-          background: `linear-gradient(135deg, ${DS.primaryMain}, ${DS.accentUmowyMain})`,
+          background: `linear-gradient(135deg, ${DS.primaryMain}, ${DS.primaryLight})`,
           ...S.row, justifyContent: "center", alignItems: "center", flexShrink: 0,
         }}>
           <span style={{ fontSize: 10, fontWeight: 700, color: "#fff" }}>eP</span>
@@ -4574,11 +4728,11 @@ const AppTopBar = () => {
         </button>
         <div style={{
           width: 28, height: 28, borderRadius: "50%",
-          background: DS.accentUmowyLighter, ...S.row,
+          background: DS.primaryLighter, ...S.row,
           justifyContent: "center", alignItems: "center",
           marginLeft: 4,
         }} title="Jan Kowalski">
-          <span style={{ fontSize: 11, fontWeight: 600, color: DS.accentUmowyDark }}>JK</span>
+          <span style={{ fontSize: 11, fontWeight: 600, color: DS.primaryDark }}>JK</span>
         </div>
       </div>
     </div>
@@ -4722,6 +4876,10 @@ const App = () => {
 
   const handleSort = (key) => setSortConfig(prev => ({ key, dir: prev.key === key && prev.dir === "asc" ? "desc" : "asc" }));
 
+  const handleUpdateDoc = (docId, key, value) => {
+    setDocs(prev => prev.map(d => d.id === docId ? { ...d, [key]: value } : d));
+  };
+
   const handleSave = (formData) => {
     if (formData.id) {
       setDocs(prev => prev.map(d => d.id === formData.id ? { ...d, ...formData } : d));
@@ -4741,13 +4899,6 @@ const App = () => {
 
   const handleSelectAll = (select) => {
     setSelectedIds(select ? new Set(filteredDocs.map(d => d.id)) : new Set());
-  };
-
-  const handleNavigate = (dir) => {
-    if (!selectedDoc) return;
-    const idx = filteredDocs.findIndex(d => d.id === selectedDoc.id);
-    const next = filteredDocs[idx + dir];
-    if (next) setSelectedDoc(next);
   };
 
   const handleAddTab = () => { setShowSaveView(true); };
@@ -4810,7 +4961,7 @@ const App = () => {
             border: `1px solid ${DS.borderLight}`, borderRadius: 8, width: 260,
             cursor: "pointer", background: DS.neutralWhite, transition: "border-color 0.15s",
           }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = DS.accentUmowyLight}
+            onMouseEnter={e => e.currentTarget.style.borderColor = DS.primaryLight}
             onMouseLeave={e => e.currentTarget.style.borderColor = DS.borderLight}
           >
             <Icon name="search" size={14} color={DS.textDisabled} />
@@ -4903,23 +5054,19 @@ const App = () => {
                 visibleColumns={visibleColumns}
                 multiSelectMode={multiSelectMode}
                 onToggleMultiSelect={() => { setMultiSelectMode(m => !m); if (multiSelectMode) setSelectedIds(new Set()); }}
+                onUpdateDoc={handleUpdateDoc}
               />
+              {selectedDoc && !showForm && (
+                <DrawerDetail
+                  doc={selectedDoc}
+                  onClose={() => setSelectedDoc(null)}
+                  onSave={handleSave}
+                />
+              )}
             </>
           )}
         </div>
       </div>
-
-      {/* Document detail drawer — full-height overlay */}
-      {selectedDoc && !showForm && (
-        <DrawerDetail
-          doc={selectedDoc}
-          onClose={() => setSelectedDoc(null)}
-          onSave={handleSave}
-          onNavigate={handleNavigate}
-          hasPrev={filteredDocs.findIndex(d => d.id === selectedDoc.id) > 0}
-          hasNext={filteredDocs.findIndex(d => d.id === selectedDoc.id) < filteredDocs.length - 1}
-        />
-      )}
 
       {/* Cmd+K Global Search (Iter 2) */}
       <GlobalSearchModal
@@ -4996,7 +5143,7 @@ const App = () => {
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: ${DS.neutralMain}; border-radius: 3px; }
         input, select, textarea, button { font-family: ${DS.fontFamily}; }
-        input:focus, select:focus, textarea:focus { border-color: ${DS.accentUmowyMain} !important; }
+        input:focus, select:focus, textarea:focus { border-color: ${DS.primaryLight} !important; }
       `}</style>
     </div>
     </div>

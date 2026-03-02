@@ -126,7 +126,7 @@ const DocFormStepBasic = ({ form, set, docs, ocrStep, setOcrStep }) => {
           <Section title="Plik dokumentu">
             {form.uploadedFile ? (
               <div style={{ ...S.row, gap: 10, padding: "12px 14px", borderRadius: 10, background: DS.neutralLighter, border: `1px solid ${DS.borderLight}` }}>
-                <Icon name="file" size={20} color={DS.accentUmowyMain} />
+                <Icon name="file" size={20} color={DS.primaryLight} />
                 <div style={{ flex: 1 }}>
                   <div style={{ ...typo.bodySmall, fontWeight: 600, color: DS.textPrimary }}>{form.uploadedFile}</div>
                   <div style={{ ...typo.labelSmall, color: DS.textDisabled }}>PDF • 2.4 MB</div>
@@ -137,7 +137,7 @@ const DocFormStepBasic = ({ form, set, docs, ocrStep, setOcrStep }) => {
               </div>
             ) : ocrStep === "processing" ? (
               <div style={{ textAlign: "center", padding: "20px 0" }}>
-                <div style={{ width: 36, height: 36, borderRadius: "50%", margin: "0 auto 12px", border: `3px solid ${DS.borderLight}`, borderTopColor: DS.accentUmowyMain, animation: "spin 1s linear infinite" }} />
+                <div style={{ width: 36, height: 36, borderRadius: "50%", margin: "0 auto 12px", border: `3px solid ${DS.borderLight}`, borderTopColor: DS.primaryLight, animation: "spin 1s linear infinite" }} />
                 <div style={{ ...typo.bodySmall, color: DS.textPrimary }}>Rozpoznawanie tekstu...</div>
                 <div style={{ ...typo.labelSmall, color: DS.textDisabled }}>{ocrFile}</div>
               </div>
@@ -148,7 +148,7 @@ const DocFormStepBasic = ({ form, set, docs, ocrStep, setOcrStep }) => {
                   <span style={{ ...typo.bodySmall, color: DS.successDark, fontWeight: 600 }}>Rozpoznano {ocrResults.confidence}% pól</span>
                 </div>
                 <div style={{ ...S.row, gap: 10, padding: "10px 14px", borderRadius: 10, background: DS.neutralLighter, marginBottom: 10 }}>
-                  <Icon name="file" size={18} color={DS.accentUmowyMain} />
+                  <Icon name="file" size={18} color={DS.primaryLight} />
                   <div style={{ flex: 1 }}>
                     <div style={{ ...typo.bodySmall, fontWeight: 600, color: DS.textPrimary }}>{ocrFile}</div>
                     <div style={{ ...typo.labelSmall, color: DS.textDisabled }}>PDF • 2.4 MB</div>
@@ -174,7 +174,7 @@ const DocFormStepBasic = ({ form, set, docs, ocrStep, setOcrStep }) => {
                 border: `2px dashed ${DS.borderLight}`, borderRadius: 10, padding: "20px", textAlign: "center",
                 cursor: "pointer", transition: "all 0.15s", background: DS.neutralWhite,
               }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = DS.accentUmowyMain; e.currentTarget.style.background = DS.neutralLighter; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = DS.primaryLight; e.currentTarget.style.background = DS.neutralLighter; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = DS.borderLight; e.currentTarget.style.background = DS.neutralWhite; }}
               >
                 <Icon name="upload" size={20} color={DS.textDisabled} />
@@ -182,8 +182,8 @@ const DocFormStepBasic = ({ form, set, docs, ocrStep, setOcrStep }) => {
                 <div style={{ ...typo.labelSmall, color: DS.textDisabled }}>PDF, JPG, PNG, DOCX • max 10 MB</div>
                 {curMeta.hasOcr && (
                   <div style={{ ...S.row, gap: 6, justifyContent: "center", marginTop: 8 }}>
-                    <Icon name="sparkles" size={12} color={DS.accentUmowyMain} />
-                    <span style={{ ...typo.labelSmall, color: DS.accentUmowyMain }}>Autouzupełnianie dostępne</span>
+                    <Icon name="sparkles" size={12} color={DS.primaryLight} />
+                    <span style={{ ...typo.labelSmall, color: DS.primaryLight }}>Autouzupełnianie dostępne</span>
                   </div>
                 )}
               </div>
@@ -262,11 +262,11 @@ const DocFormStepBasic = ({ form, set, docs, ocrStep, setOcrStep }) => {
                   </div>
                   {REGISTRY_PREFIXES[form.type] && (
                     <button onClick={() => set("nrEwidencyjny", getNextNrEwidencyjny(form.type))} title="Nadaj kolejny numer ewidencyjny" style={{
-                      padding: "8px 12px", borderRadius: 8, border: `1px solid ${DS.accentUmowyMain}`,
-                      background: DS.accentUmowyLighter, cursor: "pointer", ...S.row, gap: 4,
-                      fontFamily: DS.fontFamily, ...typo.labelSmall, color: DS.accentUmowyDark, fontWeight: 600, whiteSpace: "nowrap",
+                      padding: "8px 12px", borderRadius: 8, border: `1px solid ${DS.primaryLight}`,
+                      background: DS.primaryLighter, cursor: "pointer", ...S.row, gap: 4,
+                      fontFamily: DS.fontFamily, ...typo.labelSmall, color: DS.primaryDark, fontWeight: 600, whiteSpace: "nowrap",
                     }}>
-                      <Icon name="zap" size={12} color={DS.accentUmowyMain} />
+                      <Icon name="zap" size={12} color={DS.primaryLight} />
                       Nadaj
                     </button>
                   )}

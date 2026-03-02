@@ -60,7 +60,7 @@ const Avatar = ({ name, size = 28 }) => {
 
 const Btn = ({ children, variant = "secondary", icon, onClick, style = {}, small, disabled, title }) => {
   const styles = {
-    accent: { bg: DS.accentUmowyMain, color: "#fff", hoverBg: DS.accentUmowyDark, border: "none" },
+    accent: { bg: DS.primaryLight, color: "#fff", hoverBg: DS.primaryDark, border: "none" },
     primary: { bg: DS.primaryMain, color: "#fff", hoverBg: DS.primaryDark, border: "none" },
     secondary: { bg: DS.neutralWhite, color: DS.textPrimary, hoverBg: DS.neutralLighter, border: `1px solid ${DS.borderLight}` },
     ghost: { bg: "transparent", color: DS.textSecondary, hoverBg: DS.neutralLighter, border: "none" },
@@ -167,7 +167,7 @@ const Sidebar = ({ activeView, onViewChange, onOpenCmd, collapsed, onToggle }) =
             background: DS.neutralLighter, cursor: "pointer",
             color: DS.textDisabled, fontSize: 12, fontFamily: DS.fontFamily,
           }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = DS.accentUmowyLight}
+            onMouseEnter={e => e.currentTarget.style.borderColor = DS.primaryLight}
             onMouseLeave={e => e.currentTarget.style.borderColor = DS.borderLight}
           >
             <Icon name="search" size={14} color={DS.textDisabled} />
@@ -184,7 +184,7 @@ const Sidebar = ({ activeView, onViewChange, onOpenCmd, collapsed, onToggle }) =
             width: 34, height: 34, borderRadius: 8, border: `1px solid ${DS.borderLight}`,
             background: DS.neutralLighter, cursor: "pointer", ...S.row, justifyContent: "center", padding: 0,
           }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = DS.accentUmowyLight}
+            onMouseEnter={e => e.currentTarget.style.borderColor = DS.primaryLight}
             onMouseLeave={e => e.currentTarget.style.borderColor = DS.borderLight}
           >
             <Icon name="search" size={14} color={DS.textDisabled} />

@@ -20,7 +20,7 @@ const SkarbnikSummary = ({ docs, onSelectDoc, onNavigateFiltered }) => {
 
   /* ── KPI config ── */
   const kpis = [
-    { label: "Aktywne umowy", value: activeUmowy.length, sub: formatCurrency(umowyVal), icon: "file", color: DS.accentUmowyMainUmowyMain, bg: DS.accentUmowyMainUmowyLighter,
+    { label: "Aktywne umowy", value: activeUmowy.length, sub: formatCurrency(umowyVal), icon: "file", color: DS.primaryLightUmowyMain, bg: DS.primaryLightUmowyLighter,
       onClick: () => onNavigateFiltered("umowa", { status: ["aktywny"] }) },
     { label: "Faktury", value: fakturyAll.length, sub: formatCurrency(fakturyVal), icon: "receipt", color: "#0A7BE5", bg: "#E0EEFF",
       onClick: () => onNavigateFiltered("faktura", { status: ["zatwierdzony"] }) },
@@ -33,7 +33,7 @@ const SkarbnikSummary = ({ docs, onSelectDoc, onNavigateFiltered }) => {
   /* ── toggle switch helper ── */
   const Toggle = ({ on, onToggle, label }) => (
     <div style={{ ...S.row, gap: 6, cursor: "pointer", userSelect: "none" }} onClick={onToggle}>
-      <div style={{ width: 32, height: 18, borderRadius: 9, background: on ? DS.accentUmowyMainUmowyMain : DS.neutralMain, transition: "background 0.2s", position: "relative", flexShrink: 0 }}>
+      <div style={{ width: 32, height: 18, borderRadius: 9, background: on ? DS.primaryLightUmowyMain : DS.neutralMain, transition: "background 0.2s", position: "relative", flexShrink: 0 }}>
         <div style={{ width: 14, height: 14, borderRadius: 7, background: DS.neutralWhite, position: "absolute", top: 2, left: on ? 16 : 2, transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
       </div>
       <span style={{ ...typo.labelSmall, color: DS.textSecondary }}>{label}</span>
@@ -257,7 +257,7 @@ const ExportModal = ({ visible, onClose, docs, selectedIds }) => {
       }}>
         <div style={{ padding: "20px 24px", borderBottom: `1px solid ${DS.borderLight}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ ...S.row, gap: 8 }}>
-            <Icon name="download" size={18} color={DS.accentUmowyMain} />
+            <Icon name="download" size={18} color={DS.primaryLight} />
             <span style={{ fontSize: 16, fontWeight: 700, color: DS.textPrimary }}>Eksport dokumentów</span>
           </div>
           <Btn variant="ghost" icon="x" onClick={handleClose} small />
@@ -287,8 +287,8 @@ const ExportModal = ({ visible, onClose, docs, selectedIds }) => {
                   ].map(f => (
                     <div key={f.id} onClick={() => setFormat(f.id)} style={{
                       flex: 1, padding: 12, borderRadius: 8, cursor: "pointer",
-                      border: `2px solid ${format === f.id ? DS.accentUmowyMain : DS.borderLight}`,
-                      background: format === f.id ? DS.accentUmowyMain + "08" : DS.neutralWhite,
+                      border: `2px solid ${format === f.id ? DS.primaryLight : DS.borderLight}`,
+                      background: format === f.id ? DS.primaryLight + "08" : DS.neutralWhite,
                     }}>
                       <div style={{ fontWeight: 600, fontSize: 14, color: DS.textPrimary }}>{f.label}</div>
                       <div style={{ fontSize: 12, color: DS.textSecondary, marginTop: 2 }}>{f.desc}</div>
@@ -309,7 +309,7 @@ const ExportModal = ({ visible, onClose, docs, selectedIds }) => {
                     opacity: s.disabled ? 0.4 : 1,
                   }}>
                     <input type="radio" name="scope" checked={scope === s.id} onChange={() => !s.disabled && setScope(s.id)}
-                      style={{ accentColor: DS.accentUmowyMain }} disabled={s.disabled} />
+                      style={{ accentColor: DS.primaryLight }} disabled={s.disabled} />
                     <span style={{ fontSize: 13, color: DS.textPrimary }}>{s.label}</span>
                   </label>
                 ))}
@@ -323,7 +323,7 @@ const ExportModal = ({ visible, onClose, docs, selectedIds }) => {
                   { id: "classification", label: "Klasyfikacja budżetowa", checked: includeClassification, set: setIncludeClassification },
                 ].map(opt => (
                   <label key={opt.id} style={{ ...S.row, gap: 8, padding: "4px 0", cursor: "pointer" }}>
-                    <input type="checkbox" checked={opt.checked} onChange={() => opt.set(!opt.checked)} style={{ accentColor: DS.accentUmowyMain }} />
+                    <input type="checkbox" checked={opt.checked} onChange={() => opt.set(!opt.checked)} style={{ accentColor: DS.primaryLight }} />
                     <span style={{ fontSize: 13, color: DS.textPrimary }}>{opt.label}</span>
                   </label>
                 ))}

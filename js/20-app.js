@@ -134,6 +134,10 @@ const App = () => {
 
   const handleSort = (key) => setSortConfig(prev => ({ key, dir: prev.key === key && prev.dir === "asc" ? "desc" : "asc" }));
 
+  const handleUpdateDoc = (docId, key, value) => {
+    setDocs(prev => prev.map(d => d.id === docId ? { ...d, [key]: value } : d));
+  };
+
   const handleSave = (formData) => {
     if (formData.id) {
       setDocs(prev => prev.map(d => d.id === formData.id ? { ...d, ...formData } : d));
@@ -153,13 +157,6 @@ const App = () => {
 
   const handleSelectAll = (select) => {
     setSelectedIds(select ? new Set(filteredDocs.map(d => d.id)) : new Set());
-  };
-
-  const handleNavigate = (dir) => {
-    if (!selectedDoc) return;
-    const idx = filteredDocs.findIndex(d => d.id === selectedDoc.id);
-    const next = filteredDocs[idx + dir];
-    if (next) setSelectedDoc(next);
   };
 
   const handleAddTab = () => { setShowSaveView(true); };
@@ -222,7 +219,7 @@ const App = () => {
             border: `1px solid ${DS.borderLight}`, borderRadius: 8, width: 260,
             cursor: "pointer", background: DS.neutralWhite, transition: "border-color 0.15s",
           }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = DS.accentUmowyLight}
+            onMouseEnter={e => e.currentTarget.style.borderColor = DS.primaryLight}
             onMouseLeave={e => e.currentTarget.style.borderColor = DS.borderLight}
           >
             <Icon name="search" size={14} color={DS.textDisabled} />
@@ -315,23 +312,19 @@ const App = () => {
                 visibleColumns={visibleColumns}
                 multiSelectMode={multiSelectMode}
                 onToggleMultiSelect={() => { setMultiSelectMode(m => !m); if (multiSelectMode) setSelectedIds(new Set()); }}
+                onUpdateDoc={handleUpdateDoc}
               />
+              {selectedDoc && !showForm && (
+                <DrawerDetail
+                  doc={selectedDoc}
+                  onClose={() => setSelectedDoc(null)}
+                  onSave={handleSave}
+                />
+              )}
             </>
           )}
         </div>
       </div>
-
-      {/* Document detail drawer — full-height overlay */}
-      {selectedDoc && !showForm && (
-        <DrawerDetail
-          doc={selectedDoc}
-          onClose={() => setSelectedDoc(null)}
-          onSave={handleSave}
-          onNavigate={handleNavigate}
-          hasPrev={filteredDocs.findIndex(d => d.id === selectedDoc.id) > 0}
-          hasNext={filteredDocs.findIndex(d => d.id === selectedDoc.id) < filteredDocs.length - 1}
-        />
-      )}
 
       {/* Cmd+K Global Search (Iter 2) */}
       <GlobalSearchModal
@@ -408,7 +401,7 @@ const App = () => {
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: ${DS.neutralMain}; border-radius: 3px; }
         input, select, textarea, button { font-family: ${DS.fontFamily}; }
-        input:focus, select:focus, textarea:focus { border-color: ${DS.accentUmowyMain} !important; }
+        input:focus, select:focus, textarea:focus { border-color: ${DS.primaryLight} !important; }
       `}</style>
     </div>
     </div>

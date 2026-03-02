@@ -26,10 +26,10 @@ const DocFormStepClassification = ({ form, set }) => {
     <div>
       {/* AI suggestions banner */}
       {hasSuggestions && (
-        <div style={{ padding: "16px", borderRadius: 12, background: `linear-gradient(135deg, ${DS.accentUmowyLighter}, ${DS.secondaryLighter})`, border: `1px solid ${DS.accentUmowyLight}`, marginBottom: 16 }}>
+        <div style={{ padding: "16px", borderRadius: 12, background: `linear-gradient(135deg, ${DS.primaryLighter}, ${DS.secondaryLighter})`, border: `1px solid ${DS.primaryLight}`, marginBottom: 16 }}>
           <div style={{ ...S.row, gap: 8, marginBottom: 12 }}>
-            <Icon name="sparkles" size={16} color={DS.accentUmowyMain} />
-            <span style={{ ...typo.bodySmall, fontWeight: 600, color: DS.accentUmowyDark }}>Na podstawie danych dokumentu — prawdopodobnie pasują:</span>
+            <Icon name="sparkles" size={16} color={DS.primaryLight} />
+            <span style={{ ...typo.bodySmall, fontWeight: 600, color: DS.primaryDark }}>Na podstawie danych dokumentu — prawdopodobnie pasują:</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {suggestions.map(sg => {
@@ -38,8 +38,8 @@ const DocFormStepClassification = ({ form, set }) => {
               return (
                 <div key={sg.code} onClick={() => set("classification", sg.code)} style={{
                   padding: "12px 14px", borderRadius: 10, cursor: "pointer", transition: "all 0.15s",
-                  border: `1.5px solid ${form.classification === sg.code ? DS.accentUmowyMain : DS.borderLight}`,
-                  background: form.classification === sg.code ? DS.accentUmowyLighter : DS.neutralWhite,
+                  border: `1.5px solid ${form.classification === sg.code ? DS.primaryLight : DS.borderLight}`,
+                  background: form.classification === sg.code ? DS.primaryLighter : DS.neutralWhite,
                 }}>
                   <div style={{ ...S.rowBetween }}>
                     <div>
@@ -67,17 +67,17 @@ const DocFormStepClassification = ({ form, set }) => {
           const isSelected = form.classification === c.code;
           const pct = Math.round((c.used / c.budget) * 100);
           const free = c.budget - c.used;
-          const barColor = pct >= 85 ? DS.errorMain : pct >= 60 ? DS.warningMain : DS.accentUmowyMain;
+          const barColor = pct >= 85 ? DS.errorMain : pct >= 60 ? DS.warningMain : DS.primaryLight;
           return (
             <div key={c.code} onClick={() => set("classification", c.code)} style={{
               padding: "14px 16px", borderRadius: 12, cursor: "pointer", transition: "all 0.15s",
-              border: `2px solid ${isSelected ? DS.accentUmowyMain : DS.borderLight}`,
-              background: isSelected ? DS.accentUmowyLighter : DS.neutralWhite,
+              border: `2px solid ${isSelected ? DS.primaryLight : DS.borderLight}`,
+              background: isSelected ? DS.primaryLighter : DS.neutralWhite,
             }}>
               <div style={{ ...S.rowBetween, marginBottom: 6 }}>
                 <div>
                   <span style={{ ...typo.bodySmall, fontWeight: 700, color: DS.textPrimary }}>{c.code}</span>
-                  {isSelected && <Icon name="check" size={14} color={DS.accentUmowyMain} style={{ marginLeft: 8 }} />}
+                  {isSelected && <Icon name="check" size={14} color={DS.primaryLight} style={{ marginLeft: 8 }} />}
                 </div>
               </div>
               <div style={{ ...typo.bodySmall, color: DS.textSecondary, marginBottom: 8 }}>{c.label}</div>
@@ -166,13 +166,13 @@ const DocFormStepFormalities = ({ form, set }) => {
       {(form.type === "umowa" || form.type === "zlecenie") && (
         <Section title="Zamówienia publiczne i dofinansowanie">
           <label style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: 12, borderRadius: 10,
-            border: `2px solid ${form.zamowieniePubliczne ? DS.accentUmowyMain : DS.borderLight}`,
-            background: form.zamowieniePubliczne ? DS.accentUmowyLighter : DS.neutralWhite, cursor: "pointer",
+            border: `2px solid ${form.zamowieniePubliczne ? DS.primaryLight : DS.borderLight}`,
+            background: form.zamowieniePubliczne ? DS.primaryLighter : DS.neutralWhite, cursor: "pointer",
             borderBottomLeftRadius: form.zamowieniePubliczne ? 0 : 10, borderBottomRightRadius: form.zamowieniePubliczne ? 0 : 10,
           }}>
             <div style={{ width: 16, height: 16, borderRadius: 4, marginTop: 2, flexShrink: 0,
-              border: `2px solid ${form.zamowieniePubliczne ? DS.accentUmowyMain : DS.borderLight}`,
-              background: form.zamowieniePubliczne ? DS.accentUmowyMain : "#fff",
+              border: `2px solid ${form.zamowieniePubliczne ? DS.primaryLight : DS.borderLight}`,
+              background: form.zamowieniePubliczne ? DS.primaryLight : "#fff",
               ...S.row, justifyContent: "center",
             }}>
               {form.zamowieniePubliczne && <Icon name="check" size={10} color="#fff" />}
@@ -184,19 +184,19 @@ const DocFormStepFormalities = ({ form, set }) => {
             </div>
           </label>
           {form.zamowieniePubliczne && (
-            <div style={{ border: `2px solid ${DS.accentUmowyMain}`, borderTop: "none", borderRadius: "0 0 10px 10px", padding: 14, background: DS.neutralLighter, display: "flex", flexDirection: "column", gap: 8 }}>
+            <div style={{ border: `2px solid ${DS.primaryLight}`, borderTop: "none", borderRadius: "0 0 10px 10px", padding: 14, background: DS.neutralLighter, display: "flex", flexDirection: "column", gap: 8 }}>
               <div style={{ ...typo.labelSmall, fontWeight: 600, color: DS.textSecondary, marginBottom: 2 }}>Tryb zamówienia</div>
               {TRYBY_PZP.map(t => (
                 <button key={t.id} onClick={() => set("tryb_pzp", t.id)} style={{
                   textAlign: "left", padding: "9px 12px", borderRadius: 8, width: "100%", fontFamily: DS.fontFamily,
-                  border: `1.5px solid ${form.tryb_pzp === t.id ? DS.accentUmowyMain : DS.borderLight}`,
-                  background: form.tryb_pzp === t.id ? DS.accentUmowyLighter : DS.neutralWhite, cursor: "pointer", transition: "all 0.15s",
+                  border: `1.5px solid ${form.tryb_pzp === t.id ? DS.primaryLight : DS.borderLight}`,
+                  background: form.tryb_pzp === t.id ? DS.primaryLighter : DS.neutralWhite, cursor: "pointer", transition: "all 0.15s",
                 }}>
                   <div style={{ ...S.rowBetween }}>
-                    <span style={{ ...typo.bodySmall, fontWeight: 600, color: form.tryb_pzp === t.id ? DS.accentUmowyDark : DS.textPrimary }}>{t.label}</span>
+                    <span style={{ ...typo.bodySmall, fontWeight: 600, color: form.tryb_pzp === t.id ? DS.primaryDark : DS.textPrimary }}>{t.label}</span>
                     <span style={{ ...typo.labelSmall, fontSize: 9, padding: "2px 7px", borderRadius: 999,
-                      background: t.threshold.includes("poniżej") ? DS.successLighter : t.threshold.includes("wymaga") ? DS.warningLighter : DS.accentUmowyLighter,
-                      color: t.threshold.includes("poniżej") ? DS.successDark : t.threshold.includes("wymaga") ? DS.warningDark : DS.accentUmowyDark,
+                      background: t.threshold.includes("poniżej") ? DS.successLighter : t.threshold.includes("wymaga") ? DS.warningLighter : DS.primaryLighter,
+                      color: t.threshold.includes("poniżej") ? DS.successDark : t.threshold.includes("wymaga") ? DS.warningDark : DS.primaryDark,
                       fontWeight: 600,
                     }}>{t.threshold}</span>
                   </div>
@@ -211,12 +211,12 @@ const DocFormStepFormalities = ({ form, set }) => {
 
           <div style={{ marginTop: 10 }}>
             <label style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: 12, borderRadius: 10,
-              border: `2px solid ${form.dofinansowanie ? DS.accentUmowyMain : DS.borderLight}`,
-              background: form.dofinansowanie ? DS.accentUmowyLighter : DS.neutralWhite, cursor: "pointer",
+              border: `2px solid ${form.dofinansowanie ? DS.primaryLight : DS.borderLight}`,
+              background: form.dofinansowanie ? DS.primaryLighter : DS.neutralWhite, cursor: "pointer",
             }}>
               <div style={{ width: 16, height: 16, borderRadius: 4, marginTop: 2, flexShrink: 0,
-                border: `2px solid ${form.dofinansowanie ? DS.accentUmowyMain : DS.borderLight}`,
-                background: form.dofinansowanie ? DS.accentUmowyMain : "#fff",
+                border: `2px solid ${form.dofinansowanie ? DS.primaryLight : DS.borderLight}`,
+                background: form.dofinansowanie ? DS.primaryLight : "#fff",
                 ...S.row, justifyContent: "center",
               }}>
                 {form.dofinansowanie && <Icon name="check" size={10} color="#fff" />}
@@ -228,7 +228,7 @@ const DocFormStepFormalities = ({ form, set }) => {
               </div>
             </label>
             {form.dofinansowanie && (
-              <div style={{ padding: "10px 14px", marginTop: -2, borderRadius: "0 0 10px 10px", border: `2px solid ${DS.accentUmowyMain}`, borderTop: "none", background: DS.neutralLighter }}>
+              <div style={{ padding: "10px 14px", marginTop: -2, borderRadius: "0 0 10px 10px", border: `2px solid ${DS.primaryLight}`, borderTop: "none", background: DS.neutralLighter }}>
                 <Field label="Źródło dofinansowania">
                   <Input value={form.zrodloDofinansowania || ""} onChange={v => set("zrodloDofinansowania", v)} placeholder="np. Program Regionalny, PROW, dotacja celowa..." />
                 </Field>

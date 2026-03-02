@@ -13,7 +13,7 @@ const ViewTabs = ({ activeTab, onTabChange, tabs, onAddTab, onRemoveTab }) => (
         <button key={tab.id} onClick={() => onTabChange(tab.id)} style={{
           display: "inline-flex", alignItems: "center", gap: 6,
           padding: "8px 14px", border: "none", borderRadius: 0,
-          borderBottom: active ? `2px solid ${DS.accentUmowyMain}` : "2px solid transparent",
+          borderBottom: active ? `2px solid ${DS.primaryLight}` : "2px solid transparent",
           background: "transparent", cursor: "pointer", fontFamily: DS.fontFamily,
           fontSize: 13, fontWeight: active ? 600 : 400,
           color: active ? DS.primaryMain : DS.textSecondary,
@@ -26,8 +26,8 @@ const ViewTabs = ({ activeTab, onTabChange, tabs, onAddTab, onRemoveTab }) => (
           {tab.count !== undefined && (
             <span style={{
               ...typo.labelSmall, padding: "0 5px", ...S.pill,
-              background: active ? DS.accentUmowyLighter : DS.neutralLighter,
-              color: active ? DS.accentUmowyDark : DS.textDisabled,
+              background: active ? DS.primaryLighter : DS.neutralLighter,
+              color: active ? DS.primaryDark : DS.textDisabled,
             }}>{tab.count}</span>
           )}
           {tab.removable && active && (
@@ -50,7 +50,7 @@ const ViewTabs = ({ activeTab, onTabChange, tabs, onAddTab, onRemoveTab }) => (
       background: "transparent", cursor: "pointer", fontFamily: DS.fontFamily,
       fontSize: 12, color: DS.textDisabled, marginLeft: 4, transition: "all 0.15s",
     }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = DS.accentUmowyLight; e.currentTarget.style.color = DS.accentUmowyMain; }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = DS.primaryLight; e.currentTarget.style.color = DS.primaryLight; }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = DS.borderLight; e.currentTarget.style.color = DS.textDisabled; }}
     >
       <Icon name="plus" size={12} />Dodaj widok
@@ -78,7 +78,7 @@ const MultiSelect = ({ values, onChange, options, placeholder, style }) => {
   return (
     <div ref={ref} style={{ position: "relative", ...style }}>
       <div onClick={() => setOpen(p => !p)} style={{
-        padding: "7px 10px", border: `1px solid ${open ? DS.accentUmowyMain : DS.borderLight}`,
+        padding: "7px 10px", border: `1px solid ${open ? DS.primaryLight : DS.borderLight}`,
         borderRadius: 8, ...S.row, gap: 6, cursor: "pointer", background: DS.neutralWhite,
         fontSize: 13, fontFamily: DS.fontFamily, color: values.length > 0 ? DS.textPrimary : DS.textDisabled,
         transition: "border-color 0.15s", minHeight: 34,
@@ -97,15 +97,15 @@ const MultiSelect = ({ values, onChange, options, placeholder, style }) => {
             return (
               <div key={opt.value} onClick={() => toggle(opt.value)} style={{
                 padding: "6px 12px", ...S.row, gap: 8, cursor: "pointer",
-                background: checked ? DS.accentUmowyLighter : "transparent",
+                background: checked ? DS.primaryLighter : "transparent",
               }}
                 onMouseEnter={e => { if (!checked) e.currentTarget.style.background = DS.neutralLighter; }}
-                onMouseLeave={e => e.currentTarget.style.background = checked ? DS.accentUmowyLighter : "transparent"}
+                onMouseLeave={e => e.currentTarget.style.background = checked ? DS.primaryLighter : "transparent"}
               >
                 <div style={{
                   width: 14, height: 14, borderRadius: 3,
-                  border: `1.5px solid ${checked ? DS.accentUmowyMain : DS.borderLight}`,
-                  background: checked ? DS.accentUmowyMain : "transparent",
+                  border: `1.5px solid ${checked ? DS.primaryLight : DS.borderLight}`,
+                  background: checked ? DS.primaryLight : "transparent",
                   ...S.row, justifyContent: "center", alignItems: "center", flexShrink: 0,
                 }}>
                   {checked && <Icon name="check" size={9} color="#fff" />}
@@ -177,7 +177,7 @@ const FilterSummary = ({ filters, typeFilter }) => {
       <Icon name="filter" size={12} color={DS.textDisabled} />
       <span style={{ ...typo.labelSmall, color: DS.textDisabled }}>Filtry:</span>
       {badges.map(b => (
-        <Badge key={b.key} color={DS.accentUmowyDark} bg={DS.accentUmowyLighter} small>
+        <Badge key={b.key} color={DS.primaryDark} bg={DS.primaryLighter} small>
           {b.label}
         </Badge>
       ))}
