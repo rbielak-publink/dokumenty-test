@@ -5143,32 +5143,30 @@ const App = () => {
               <div style={{ ...typo.bodySmall, color: DS.textDisabled }}>Moduł w przygotowaniu</div>
             </div>
           ) : (
-            <>
-              <DocTable
-                docs={filteredDocs}
-                onSelectDoc={doc => { setSelectedDoc(doc); setShowForm(false); }}
-                onInlineAdd={() => setShowForm(true)}
-                selectedId={selectedDoc?.id}
-                sortConfig={sortConfig}
-                onSort={handleSort}
-                selectedIds={selectedIds}
-                onToggleSelect={handleToggleSelect}
-                onSelectAll={handleSelectAll}
-                onOpenExport={() => setShowExport(true)}
-                onOpenFolders={() => setShowFolderPicker(true)}
-                visibleColumns={visibleColumns}
-                multiSelectMode={multiSelectMode}
-                onToggleMultiSelect={() => { setMultiSelectMode(m => !m); if (multiSelectMode) setSelectedIds(new Set()); }}
-                onUpdateDoc={handleUpdateDoc}
-              />
-              {selectedDoc && !showForm && (
-                <DrawerDetail
-                  doc={selectedDoc}
-                  onClose={() => setSelectedDoc(null)}
-                  onSave={handleSave}
-                />
-              )}
-            </>
+            <DocTable
+              docs={filteredDocs}
+              onSelectDoc={doc => { setSelectedDoc(doc); setShowForm(false); }}
+              onInlineAdd={() => setShowForm(true)}
+              selectedId={selectedDoc?.id}
+              sortConfig={sortConfig}
+              onSort={handleSort}
+              selectedIds={selectedIds}
+              onToggleSelect={handleToggleSelect}
+              onSelectAll={handleSelectAll}
+              onOpenExport={() => setShowExport(true)}
+              onOpenFolders={() => setShowFolderPicker(true)}
+              visibleColumns={visibleColumns}
+              multiSelectMode={multiSelectMode}
+              onToggleMultiSelect={() => { setMultiSelectMode(m => !m); if (multiSelectMode) setSelectedIds(new Set()); }}
+              onUpdateDoc={handleUpdateDoc}
+            />
+          )}
+          {selectedDoc && !showForm && (
+            <DrawerDetail
+              doc={selectedDoc}
+              onClose={() => setSelectedDoc(null)}
+              onSave={handleSave}
+            />
           )}
         </div>
       </div>
