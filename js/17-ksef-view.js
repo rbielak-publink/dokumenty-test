@@ -112,12 +112,12 @@ const KsefView = ({ invoices, setInvoices, onSelectInvoice }) => {
         {/* Table header */}
         <div style={{
           display: "grid", gridTemplateColumns: "1.4fr 1fr 1.1fr 0.8fr 0.7fr 0.8fr 1.2fr",
-          padding: "0 20px", minHeight: 38, alignItems: "center",
-          borderBottom: `2px solid ${DS.borderLight}`, background: DS.neutralWhite,
+          padding: "0 20px", minHeight: 36, alignItems: "center",
+          borderBottom: `1px solid ${DS.borderMedium}`, background: DS.tableHeaderBg,
           position: "sticky", top: 0, zIndex: 2,
         }}>
-          {["Sprzedawca", "NIP sprzedawcy", "Nr faktury", "Data wyst.", "Netto", "Brutto", "Akcje"].map(h => (
-            <div key={h} style={{ padding: "8px 6px", ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>{h}</div>
+          {["Sprzedawca", "NIP sprzedawcy", "Nr faktury", "Data wyst.", "Netto", "Brutto", "Akcje"].map((h, i) => (
+            <div key={h} style={{ padding: "6px 8px", ...typo.labelSmall, color: DS.neutralDark, textTransform: "uppercase", letterSpacing: 0.5, fontSize: 10, fontWeight: 600, borderRight: i < 6 ? `1px solid ${DS.borderLight}` : "none" }}>{h}</div>
           ))}
         </div>
 
@@ -133,16 +133,16 @@ const KsefView = ({ invoices, setInvoices, onSelectInvoice }) => {
           return (
             <div key={inv.id} style={{
               display: "grid", gridTemplateColumns: "1.4fr 1fr 1.1fr 0.8fr 0.7fr 0.8fr 1.2fr",
-              padding: "0 20px", minHeight: 48, alignItems: "center",
-              borderBottom: `1px solid ${DS.borderLight}`,
-              transition: "background 0.1s",
-              background: isZebra ? DS.neutralLighter : DS.neutralWhite,
+              padding: "0 20px", minHeight: 44, alignItems: "center",
+              borderBottom: `1px solid ${DS.borderLightLight}`,
+              transition: "background 0.08s",
+              background: DS.neutralWhite,
               borderLeft: inv.isCorrection ? `3px solid ${DS.warningMain}` : "3px solid transparent",
             }}
-              onMouseEnter={e => e.currentTarget.style.background = DS.primaryLighter}
-              onMouseLeave={e => e.currentTarget.style.background = isZebra ? DS.neutralLighter : DS.neutralWhite}
+              onMouseEnter={e => e.currentTarget.style.background = "#F5F7FC"}
+              onMouseLeave={e => e.currentTarget.style.background = DS.neutralWhite}
             >
-              <div style={{ padding: "8px 6px" }}>
+              <div style={{ padding: "6px 8px", borderRight: `1px solid ${DS.borderLightLight}` }}>
                 <span style={{ ...typo.bodySmall, fontWeight: 500, color: DS.textPrimary, ...S.truncate, display: "block" }}>{inv.seller.name}</span>
                 {inv.isCorrection && (
                   <span style={{
@@ -151,19 +151,19 @@ const KsefView = ({ invoices, setInvoices, onSelectInvoice }) => {
                   }}>KOREKTA</span>
                 )}
               </div>
-              <div style={{ padding: "8px 6px" }}>
+              <div style={{ padding: "6px 8px", borderRight: `1px solid ${DS.borderLightLight}` }}>
                 <span style={{ ...typo.bodySmall, color: DS.textSecondary, fontVariantNumeric: "tabular-nums", ...S.truncate, display: "block" }}>{inv.seller.nip}</span>
               </div>
-              <div style={{ padding: "8px 6px" }}>
+              <div style={{ padding: "6px 8px", borderRight: `1px solid ${DS.borderLightLight}` }}>
                 <span style={{ ...typo.bodySmall, color: DS.textSecondary, fontFamily: "monospace", fontSize: 12, ...S.truncate, display: "block" }}>{inv.invoiceNumber}</span>
               </div>
-              <div style={{ padding: "8px 6px" }}>
+              <div style={{ padding: "6px 8px", borderRight: `1px solid ${DS.borderLightLight}` }}>
                 <span style={{ ...typo.bodySmall, color: DS.textSecondary }}>{formatDate(inv.issueDate)}</span>
               </div>
-              <div style={{ padding: "8px 6px", textAlign: "right" }}>
+              <div style={{ padding: "6px 8px", textAlign: "right", borderRight: `1px solid ${DS.borderLightLight}` }}>
                 <span style={{ ...typo.bodySmall, color: DS.textSecondary, fontVariantNumeric: "tabular-nums" }}>{formatCurrency(inv.netTotal)}</span>
               </div>
-              <div style={{ padding: "8px 6px", textAlign: "right" }}>
+              <div style={{ padding: "6px 8px", textAlign: "right", borderRight: `1px solid ${DS.borderLightLight}` }}>
                 <span style={{ ...typo.bodySmall, fontWeight: 500, color: inv.grossTotal < 0 ? DS.errorMain : DS.textPrimary, fontVariantNumeric: "tabular-nums" }}>{formatCurrency(inv.grossTotal)}</span>
               </div>
               <div style={{ ...S.row, gap: 6, justifyContent: "flex-end" }}>

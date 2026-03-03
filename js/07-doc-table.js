@@ -86,22 +86,29 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
   const filteredCols = cols.filter(c => !visibleColumns || visibleColumns.includes(c.key));
   const colMap = {};
   cols.forEach(c => { colMap[c.key] = c; });
+  const cellBorder = `1px solid ${DS.borderLightLight || "#EDF0F5"}`;
   const colStyle = (colOrKey) => {
     const col = typeof colOrKey === "string" ? colMap[colOrKey] : colOrKey;
     if (!col) return {};
+    const base = { borderRight: cellBorder };
     if (col.flex) {
-      if (titleColWidth) return { width: titleColWidth, minWidth: 180, flex: `0 0 ${titleColWidth}px` };
-      return { flex: "1 1 180px", minWidth: 180 };
+      if (titleColWidth) return { ...base, width: titleColWidth, minWidth: 180, flex: `0 0 ${titleColWidth}px` };
+      return { ...base, flex: "1 1 180px", minWidth: 180 };
     }
-    return { width: col.w, minWidth: col.w, flex: "0 0 auto" };
+    return { ...base, width: col.w, minWidth: col.w, flex: "0 0 auto" };
   };
 
   const totalGrossValue = useMemo(() => docs.reduce((s, d) => s + (d.grossValue || 0), 0), [docs]);
 
   const SortIcon = ({ colKey }) => {
-    if (sortConfig.key !== colKey) return <Icon name="arrowUpDown" size={11} color={DS.neutralMain} style={{ opacity: 0.4 }} />;
-    return <Icon name={sortConfig.dir === "asc" ? "chevronDown" : "chevronDown"} size={11} color={DS.primaryLight}
-      style={{ transform: sortConfig.dir === "asc" ? "rotate(180deg)" : "none" }} />;
+    const isActive = sortConfig.key === colKey;
+    const isAsc = sortConfig.dir === "asc";
+    return (
+      <svg width={8} height={12} viewBox="0 0 8 12" style={{ flexShrink: 0, marginLeft: 2 }}>
+        <path d="M4 0L7.5 4.5H0.5Z" fill={isActive && isAsc ? DS.primaryLight : DS.neutralMain} opacity={isActive && isAsc ? 1 : 0.3} />
+        <path d="M4 12L0.5 7.5H7.5Z" fill={isActive && !isAsc ? DS.primaryLight : DS.neutralMain} opacity={isActive && !isAsc ? 1 : 0.3} />
+      </svg>
+    );
   };
 
   const allSelected = docs.length > 0 && docs.every(d => selectedIds.has(d.id));
@@ -134,7 +141,7 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
       {/* View bar with Grupuj dropdown */}
       <div style={{
         ...S.row, gap: 6, padding: "6px 20px",
-        borderBottom: `1px solid ${DS.borderLight}`, background: DS.neutralLighter,
+        borderBottom: `1px solid ${DS.borderLightLight}`, background: DS.neutralWhite,
       }}>
         <span style={{ ...typo.labelSmall, color: DS.textSecondary, marginRight: 4 }}>Widok:</span>
         <button onClick={onToggleMultiSelect} style={{
@@ -160,33 +167,34 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
             <Icon name="chevronDown" size={10} color={groupBy ? DS.primaryLight : DS.textDisabled} />
           </button>
           {showGroupMenu && <div style={{
-            position: "absolute", top: "100%", left: 0, marginTop: 4, zIndex: 100,
-            background: DS.neutralWhite, borderRadius: 8, border: `1px solid ${DS.borderLight}`,
-            boxShadow: DS.shadow2, minWidth: 200, padding: "4px 0",
+            position: "absolute", top: "calc(100% + 4px)", left: 0, zIndex: 100,
+            background: DS.neutralWhite, borderRadius: 8, border: "none",
+            boxShadow: DS.elevation3, minWidth: 220, padding: "4px 0",
+            animation: "fadeIn 0.12s ease",
           }}>
             {GROUP_BY_OPTIONS.map(opt => (
               <div key={opt.id} onClick={() => { setGroupBy(opt.id); setShowGroupMenu(false); }} style={{
-                ...S.row, gap: 8, padding: "8px 14px", cursor: "pointer",
+                ...S.row, gap: 10, padding: "9px 16px", cursor: "pointer",
                 background: groupBy === opt.id ? DS.primaryLighter : "transparent",
                 transition: "background 0.1s",
               }}
-              onMouseEnter={e => e.currentTarget.style.background = DS.neutralLighter}
+              onMouseEnter={e => { if (groupBy !== opt.id) e.currentTarget.style.background = DS.neutralLighter; }}
               onMouseLeave={e => e.currentTarget.style.background = groupBy === opt.id ? DS.primaryLighter : "transparent"}
               >
-                <Icon name={opt.icon} size={13} color={groupBy === opt.id ? DS.primaryLight : DS.textSecondary} />
-                <span style={{ ...typo.bodySmall, color: groupBy === opt.id ? DS.primaryDark : DS.textPrimary }}>{opt.label}</span>
-                {groupBy === opt.id && <Icon name="check" size={12} color={DS.primaryLight} style={{ marginLeft: "auto" }} />}
+                <Icon name={opt.icon} size={14} color={groupBy === opt.id ? DS.primaryLight : DS.neutralMain} />
+                <span style={{ ...typo.bodySmall, color: groupBy === opt.id ? DS.primaryDark : DS.textPrimary, fontWeight: groupBy === opt.id ? 600 : 400 }}>{opt.label}</span>
+                {groupBy === opt.id && <Icon name="check" size={13} color={DS.primaryLight} style={{ marginLeft: "auto" }} />}
               </div>
             ))}
             {groupBy && <>
-              <div style={{ height: 1, background: DS.borderLight, margin: "4px 0" }} />
+              <div style={{ height: 1, background: DS.borderLight, margin: "4px 8px" }} />
               <div onClick={() => { setGroupBy(null); setShowGroupMenu(false); }} style={{
-                ...S.row, gap: 8, padding: "8px 14px", cursor: "pointer", transition: "background 0.1s",
+                ...S.row, gap: 10, padding: "9px 16px", cursor: "pointer", transition: "background 0.1s",
               }}
               onMouseEnter={e => e.currentTarget.style.background = DS.neutralLighter}
               onMouseLeave={e => e.currentTarget.style.background = "transparent"}
               >
-                <Icon name="x" size={13} color={DS.textSecondary} />
+                <Icon name="x" size={14} color={DS.textSecondary} />
                 <span style={{ ...typo.bodySmall, color: DS.textSecondary }}>Wyłącz grupowanie</span>
               </div>
             </>}
@@ -201,27 +209,27 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
       <div style={{ minWidth: filteredCols.reduce((s, c) => s + (c.w || c.min || 100), 0) + 40 + 28 + 60 }}>
       <div style={{
         ...S.row, padding: "0 20px",
-        borderBottom: `2px solid ${DS.borderLight}`, background: DS.neutralWhite,
-        minHeight: 38, position: "sticky", top: 0, zIndex: 2,
+        borderBottom: `1px solid ${DS.borderMedium}`, background: DS.tableHeaderBg,
+        minHeight: 36, position: "sticky", top: 0, zIndex: 2,
       }}>
         <div style={{ width: 28, minWidth: 28, flex: "0 0 auto" }} />
-        {multiSelectMode && <div style={{ width: 36, padding: "8px 6px" }}>
+        {multiSelectMode && <div style={{ width: 36, padding: "6px 6px" }}>
           <Checkbox checked={allSelected} indeterminate={someSelected}
             onChange={() => onSelectAll(!allSelected)} />
         </div>}
-        {filteredCols.map(col => (
+        {filteredCols.map((col, ci) => (
           <div key={col.key} style={{
-            ...colStyle(col), padding: col.key === "grossValue" ? "4px 6px" : "8px 6px", position: "relative",
+            ...colStyle(col), padding: col.key === "grossValue" ? "4px 8px" : "6px 8px", position: "relative",
             ...(col.key === "grossValue" ? { ...S.col, alignItems: "flex-end", justifyContent: "center", cursor: "pointer", userSelect: "none" } : { ...S.row, gap: 4, cursor: "pointer", userSelect: "none" }),
           }} onClick={() => onSort(col.key)}>
             {col.key === "grossValue" ? <>
               <div style={{ ...S.row, gap: 4 }}>
-                <span style={{ ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>{col.label}</span>
+                <span style={{ ...typo.labelSmall, color: DS.neutralDark, textTransform: "uppercase", letterSpacing: 0.5, fontSize: 10, fontWeight: 600 }}>{col.label}</span>
                 <SortIcon colKey={col.key} />
               </div>
               <span style={{ ...typo.labelSmall, color: DS.primaryMain, fontWeight: 600, fontSize: 11, fontVariantNumeric: "tabular-nums" }}>{formatCurrency(totalGrossValue)}</span>
             </> : <>
-              <span style={{ ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>{col.label}</span>
+              <span style={{ ...typo.labelSmall, color: DS.neutralDark, textTransform: "uppercase", letterSpacing: 0.5, fontSize: 10, fontWeight: 600 }}>{col.label}</span>
               <SortIcon colKey={col.key} />
             </>}
             {col.key === "title" && <div ref={titleDragRef} onMouseDown={handleTitleResize} onClick={e => e.stopPropagation()}
@@ -230,7 +238,7 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
               onMouseLeave={e => e.currentTarget.style.background = "transparent"} />}
           </div>
         ))}
-        <div style={{ width: 60, minWidth: 60, flex: "0 0 auto", padding: "8px 6px" }} />
+        <div style={{ width: 60, minWidth: 60, flex: "0 0 auto", padding: "6px 8px" }} />
       </div>
 
       {/* Table body — rows via DocTableRow */}
@@ -265,11 +273,11 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
       {/* Inline add row */}
       <div onClick={onInlineAdd} style={{
         ...S.row, padding: "0 20px",
-        minHeight: 44, cursor: "pointer", transition: "background 0.1s",
-        background: DS.neutralWhite, borderTop: `1px dashed ${DS.primaryLight}`,
+        minHeight: 40, cursor: "pointer", transition: "background 0.08s",
+        background: DS.neutralWhite, borderTop: `1px dashed ${DS.borderMedium}`,
         flexShrink: 0,
       }}
-        onMouseEnter={e => e.currentTarget.style.background = DS.primaryLighter}
+        onMouseEnter={e => e.currentTarget.style.background = "#F5F7FC"}
         onMouseLeave={e => e.currentTarget.style.background = DS.neutralWhite}
       >
         {multiSelectMode && <div style={{ width: 36 }} />}
