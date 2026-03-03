@@ -36,10 +36,19 @@ const DS = {
   textPrimary: "#0F172A", textSecondary: "#64748B", textDisabled: "#94A3B8",
   borderLight: "#E2E8F0", borderMedium: "#CBD5E1",
   disabledMain: "#9CA3AF", disabledLighter: "#F1F5F9",
+  borderLightLight: "#EDF0F5",
+  tableHeaderBg: "#F0F3F9",
   shadowSm: "0 1px 2px rgba(0,0,0,0.05)",
+  shadow2: "0 3px 14px rgba(0,0,0,0.12), 0 1px 5px rgba(0,0,0,0.08)",
+  shadow3: "0 8px 28px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08)",
   shadowMd: "0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05)",
   shadowLg: "0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04)",
   shadowXl: "0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.06)",
+  // Material elevation
+  elevation1: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)",
+  elevation2: "0 3px 6px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.06)",
+  elevation3: "0 6px 16px rgba(0,0,0,0.12), 0 3px 6px rgba(0,0,0,0.08)",
+  elevation4: "0 10px 24px rgba(0,0,0,0.14), 0 4px 8px rgba(0,0,0,0.08)",
 };
 
 const typo = {
@@ -594,24 +603,107 @@ const Input = ({ value, onChange, placeholder, icon, style = {}, type = "text" }
     <input type={type} value={value} onChange={e => onChange(type === "number" ? (e.target.value === "" ? "" : Number(e.target.value)) : e.target.value)}
       placeholder={placeholder} style={{
         width: "100%", padding: `8px ${icon ? "12px" : "12px"} 8px ${icon ? "32px" : "12px"}`,
-        border: `1px solid ${DS.borderLight}`, borderRadius: 8,
+        border: `1px solid ${DS.borderLight}`, borderRadius: 6,
         fontSize: 13, fontFamily: DS.fontFamily, color: DS.textPrimary,
-        background: DS.neutralWhite, outline: "none", transition: "border-color 0.15s",
-      }} />
+        background: DS.neutralWhite, outline: "none", transition: "border-color 0.2s, box-shadow 0.2s",
+      }}
+      onFocus={e => { e.target.style.borderColor = DS.primaryLight; e.target.style.boxShadow = `0 0 0 3px ${DS.primaryLight}18`; }}
+      onBlur={e => { e.target.style.borderColor = DS.borderLight; e.target.style.boxShadow = "none"; }}
+    />
   </div>
 );
 
 const Select = ({ value, onChange, options, placeholder, style = {} }) => (
   <select value={value || ""} onChange={e => onChange(e.target.value)} style={{
-    width: "100%", padding: "8px 12px", border: `1px solid ${DS.borderLight}`,
-    borderRadius: 8, fontSize: 13, fontFamily: DS.fontFamily,
+    width: "100%", padding: "8px 32px 8px 12px", border: `1px solid ${DS.borderLight}`,
+    borderRadius: 6, fontSize: 13, fontFamily: DS.fontFamily,
     color: value ? DS.textPrimary : DS.textDisabled, background: DS.neutralWhite,
-    outline: "none", appearance: "auto", cursor: "pointer", ...style,
-  }}>
+    outline: "none", appearance: "none", cursor: "pointer", transition: "border-color 0.2s, box-shadow 0.2s",
+    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394A3B8' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+    backgroundRepeat: "no-repeat", backgroundPosition: "right 10px center",
+    ...style,
+  }}
+    onFocus={e => { e.target.style.borderColor = DS.primaryLight; e.target.style.boxShadow = `0 0 0 3px ${DS.primaryLight}18`; }}
+    onBlur={e => { e.target.style.borderColor = DS.borderLight; e.target.style.boxShadow = "none"; }}
+  >
     {placeholder && <option value="">{placeholder}</option>}
     {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
   </select>
 );
+
+/* ── CellDropdown — Material Design floating dropdown for inline table editing ── */
+const CellDropdown = ({ options, value, onChange, onKeyDown, onClose }) => {
+  const listRef = useRef(null);
+  const [highlight, setHighlight] = useState(() => {
+    const idx = options.findIndex(o => o.value === value);
+    return idx >= 0 ? idx : 0;
+  });
+
+  useEffect(() => {
+    if (listRef.current) listRef.current.focus();
+  }, []);
+
+  useEffect(() => {
+    const el = listRef.current?.children[highlight];
+    if (el) el.scrollIntoView({ block: "nearest" });
+  }, [highlight]);
+
+  const handleKey = (e) => {
+    if (e.key === "ArrowDown") { e.preventDefault(); setHighlight(h => Math.min(h + 1, options.length - 1)); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setHighlight(h => Math.max(h - 1, 0)); }
+    else if (e.key === "Enter") { e.preventDefault(); onChange(options[highlight].value); }
+    else if (e.key === "Escape") { e.preventDefault(); onClose(); }
+    else if (e.key === "Tab") { e.preventDefault(); onChange(options[highlight].value); if (onKeyDown) onKeyDown(e); }
+  };
+
+  return (
+    <div style={{ position: "relative", width: "100%" }}>
+      <div style={{
+        ...S.row, gap: 4, padding: "3px 6px", border: `1px solid ${DS.primaryLight}`, borderRadius: 4,
+        background: DS.neutralWhite, cursor: "pointer", minHeight: 22,
+        boxShadow: `0 0 0 2px ${DS.primaryLight}18`,
+      }}>
+        <span style={{ ...typo.bodySmall, fontSize: 12, color: DS.textPrimary, flex: 1, ...S.truncate }}>
+          {(options.find(o => o.value === value) || {}).label || "—"}
+        </span>
+        <svg width={8} height={5} viewBox="0 0 8 5" style={{ flexShrink: 0 }}>
+          <path d="M0.5 0.5L4 4L7.5 0.5" stroke={DS.primaryLight} strokeWidth="1.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+      <div ref={listRef} tabIndex={-1} onKeyDown={handleKey}
+        onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) onClose(); }}
+        style={{
+          position: "absolute", top: "calc(100% + 2px)", left: 0, minWidth: "100%", maxWidth: 320,
+          zIndex: 50, background: DS.neutralWhite, borderRadius: 6,
+          boxShadow: DS.elevation4, border: "none",
+          maxHeight: 220, overflowY: "auto", padding: "4px 0",
+          outline: "none",
+        }}>
+        {options.map((opt, i) => {
+          const isSel = opt.value === value;
+          const isHl = i === highlight;
+          return (
+            <div key={opt.value}
+              onMouseEnter={() => setHighlight(i)}
+              onClick={(e) => { e.stopPropagation(); onChange(opt.value); }}
+              style={{
+                padding: "7px 12px", cursor: "pointer",
+                background: isSel ? DS.primaryLighter : isHl ? "#F5F7FC" : "transparent",
+                borderLeft: isSel ? `3px solid ${DS.primaryLight}` : "3px solid transparent",
+                transition: "background 0.06s",
+              }}>
+              <span style={{
+                ...typo.bodySmall, fontSize: 12, whiteSpace: "nowrap",
+                color: isSel ? DS.primaryDark : DS.textPrimary,
+                fontWeight: isSel ? 600 : 400,
+              }}>{opt.label}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 const Field = ({ label, children, hint }) => (
   <div style={{ marginBottom: 14 }}>
@@ -818,9 +910,9 @@ const MultiSelect = ({ values, onChange, options, placeholder, style }) => {
       </div>
       {open && (
         <div style={{
-          position: "absolute", top: "100%", left: 0, right: 0, marginTop: 4, zIndex: 30,
-          background: DS.neutralWhite, borderRadius: 8, border: `1px solid ${DS.borderLight}`,
-          boxShadow: DS.shadowMd, maxHeight: 220, overflowY: "auto", padding: "4px 0",
+          position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 30,
+          background: DS.neutralWhite, borderRadius: 8, border: "none",
+          boxShadow: DS.elevation3, maxHeight: 220, overflowY: "auto", padding: "4px 0",
         }}>
           {options.map(opt => {
             const checked = values.includes(opt.value);
@@ -923,10 +1015,10 @@ const ColumnSelector = ({ allColumns, visibleColumns, onChange, open, onToggle }
   if (!open) return null;
   return (
     <div style={{
-      position: "absolute", top: "100%", right: 0, marginTop: 4, zIndex: 40,
-      background: DS.neutralWhite, borderRadius: 10, padding: "10px 0",
-      boxShadow: DS.shadowLg, border: `1px solid ${DS.borderLight}`, width: 220,
-      animation: "slideDown 0.12s ease",
+      position: "absolute", top: "calc(100% + 4px)", right: 0, zIndex: 40,
+      background: DS.neutralWhite, borderRadius: 8, padding: "8px 0",
+      boxShadow: DS.elevation3, border: "none", width: 220,
+      animation: "fadeIn 0.12s ease",
     }}>
       <div style={{ padding: "0 14px 8px", ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>Widoczne kolumny</div>
       {allColumns.map(col => {
@@ -1167,22 +1259,29 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
   const filteredCols = cols.filter(c => !visibleColumns || visibleColumns.includes(c.key));
   const colMap = {};
   cols.forEach(c => { colMap[c.key] = c; });
+  const cellBorder = `1px solid ${DS.borderLightLight || "#EDF0F5"}`;
   const colStyle = (colOrKey) => {
     const col = typeof colOrKey === "string" ? colMap[colOrKey] : colOrKey;
     if (!col) return {};
+    const base = { borderRight: cellBorder };
     if (col.flex) {
-      if (titleColWidth) return { width: titleColWidth, minWidth: 180, flex: `0 0 ${titleColWidth}px` };
-      return { flex: "1 1 180px", minWidth: 180 };
+      if (titleColWidth) return { ...base, width: titleColWidth, minWidth: 180, flex: `0 0 ${titleColWidth}px` };
+      return { ...base, flex: "1 1 180px", minWidth: 180 };
     }
-    return { width: col.w, minWidth: col.w, flex: "0 0 auto" };
+    return { ...base, width: col.w, minWidth: col.w, flex: "0 0 auto" };
   };
 
   const totalGrossValue = useMemo(() => docs.reduce((s, d) => s + (d.grossValue || 0), 0), [docs]);
 
   const SortIcon = ({ colKey }) => {
-    if (sortConfig.key !== colKey) return <Icon name="arrowUpDown" size={11} color={DS.neutralMain} style={{ opacity: 0.4 }} />;
-    return <Icon name={sortConfig.dir === "asc" ? "chevronDown" : "chevronDown"} size={11} color={DS.primaryLight}
-      style={{ transform: sortConfig.dir === "asc" ? "rotate(180deg)" : "none" }} />;
+    const isActive = sortConfig.key === colKey;
+    const isAsc = sortConfig.dir === "asc";
+    return (
+      <svg width={8} height={12} viewBox="0 0 8 12" style={{ flexShrink: 0, marginLeft: 2 }}>
+        <path d="M4 0L7.5 4.5H0.5Z" fill={isActive && isAsc ? DS.primaryLight : DS.neutralMain} opacity={isActive && isAsc ? 1 : 0.3} />
+        <path d="M4 12L0.5 7.5H7.5Z" fill={isActive && !isAsc ? DS.primaryLight : DS.neutralMain} opacity={isActive && !isAsc ? 1 : 0.3} />
+      </svg>
+    );
   };
 
   const allSelected = docs.length > 0 && docs.every(d => selectedIds.has(d.id));
@@ -1215,7 +1314,7 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
       {/* View bar with Grupuj dropdown */}
       <div style={{
         ...S.row, gap: 6, padding: "6px 20px",
-        borderBottom: `1px solid ${DS.borderLight}`, background: DS.neutralLighter,
+        borderBottom: `1px solid ${DS.borderLightLight}`, background: DS.neutralWhite,
       }}>
         <span style={{ ...typo.labelSmall, color: DS.textSecondary, marginRight: 4 }}>Widok:</span>
         <button onClick={onToggleMultiSelect} style={{
@@ -1241,33 +1340,34 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
             <Icon name="chevronDown" size={10} color={groupBy ? DS.primaryLight : DS.textDisabled} />
           </button>
           {showGroupMenu && <div style={{
-            position: "absolute", top: "100%", left: 0, marginTop: 4, zIndex: 100,
-            background: DS.neutralWhite, borderRadius: 8, border: `1px solid ${DS.borderLight}`,
-            boxShadow: DS.shadow2, minWidth: 200, padding: "4px 0",
+            position: "absolute", top: "calc(100% + 4px)", left: 0, zIndex: 100,
+            background: DS.neutralWhite, borderRadius: 8, border: "none",
+            boxShadow: DS.elevation3, minWidth: 220, padding: "4px 0",
+            animation: "fadeIn 0.12s ease",
           }}>
             {GROUP_BY_OPTIONS.map(opt => (
               <div key={opt.id} onClick={() => { setGroupBy(opt.id); setShowGroupMenu(false); }} style={{
-                ...S.row, gap: 8, padding: "8px 14px", cursor: "pointer",
+                ...S.row, gap: 10, padding: "9px 16px", cursor: "pointer",
                 background: groupBy === opt.id ? DS.primaryLighter : "transparent",
                 transition: "background 0.1s",
               }}
-              onMouseEnter={e => e.currentTarget.style.background = DS.neutralLighter}
+              onMouseEnter={e => { if (groupBy !== opt.id) e.currentTarget.style.background = DS.neutralLighter; }}
               onMouseLeave={e => e.currentTarget.style.background = groupBy === opt.id ? DS.primaryLighter : "transparent"}
               >
-                <Icon name={opt.icon} size={13} color={groupBy === opt.id ? DS.primaryLight : DS.textSecondary} />
-                <span style={{ ...typo.bodySmall, color: groupBy === opt.id ? DS.primaryDark : DS.textPrimary }}>{opt.label}</span>
-                {groupBy === opt.id && <Icon name="check" size={12} color={DS.primaryLight} style={{ marginLeft: "auto" }} />}
+                <Icon name={opt.icon} size={14} color={groupBy === opt.id ? DS.primaryLight : DS.neutralMain} />
+                <span style={{ ...typo.bodySmall, color: groupBy === opt.id ? DS.primaryDark : DS.textPrimary, fontWeight: groupBy === opt.id ? 600 : 400 }}>{opt.label}</span>
+                {groupBy === opt.id && <Icon name="check" size={13} color={DS.primaryLight} style={{ marginLeft: "auto" }} />}
               </div>
             ))}
             {groupBy && <>
-              <div style={{ height: 1, background: DS.borderLight, margin: "4px 0" }} />
+              <div style={{ height: 1, background: DS.borderLight, margin: "4px 8px" }} />
               <div onClick={() => { setGroupBy(null); setShowGroupMenu(false); }} style={{
-                ...S.row, gap: 8, padding: "8px 14px", cursor: "pointer", transition: "background 0.1s",
+                ...S.row, gap: 10, padding: "9px 16px", cursor: "pointer", transition: "background 0.1s",
               }}
               onMouseEnter={e => e.currentTarget.style.background = DS.neutralLighter}
               onMouseLeave={e => e.currentTarget.style.background = "transparent"}
               >
-                <Icon name="x" size={13} color={DS.textSecondary} />
+                <Icon name="x" size={14} color={DS.textSecondary} />
                 <span style={{ ...typo.bodySmall, color: DS.textSecondary }}>Wyłącz grupowanie</span>
               </div>
             </>}
@@ -1282,27 +1382,27 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
       <div style={{ minWidth: filteredCols.reduce((s, c) => s + (c.w || c.min || 100), 0) + 40 + 28 + 60 }}>
       <div style={{
         ...S.row, padding: "0 20px",
-        borderBottom: `2px solid ${DS.borderLight}`, background: DS.neutralWhite,
-        minHeight: 38, position: "sticky", top: 0, zIndex: 2,
+        borderBottom: `1px solid ${DS.borderMedium}`, background: DS.tableHeaderBg,
+        minHeight: 36, position: "sticky", top: 0, zIndex: 2,
       }}>
         <div style={{ width: 28, minWidth: 28, flex: "0 0 auto" }} />
-        {multiSelectMode && <div style={{ width: 36, padding: "8px 6px" }}>
+        {multiSelectMode && <div style={{ width: 36, padding: "6px 6px" }}>
           <Checkbox checked={allSelected} indeterminate={someSelected}
             onChange={() => onSelectAll(!allSelected)} />
         </div>}
-        {filteredCols.map(col => (
+        {filteredCols.map((col, ci) => (
           <div key={col.key} style={{
-            ...colStyle(col), padding: col.key === "grossValue" ? "4px 6px" : "8px 6px", position: "relative",
+            ...colStyle(col), padding: col.key === "grossValue" ? "4px 8px" : "6px 8px", position: "relative",
             ...(col.key === "grossValue" ? { ...S.col, alignItems: "flex-end", justifyContent: "center", cursor: "pointer", userSelect: "none" } : { ...S.row, gap: 4, cursor: "pointer", userSelect: "none" }),
           }} onClick={() => onSort(col.key)}>
             {col.key === "grossValue" ? <>
               <div style={{ ...S.row, gap: 4 }}>
-                <span style={{ ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>{col.label}</span>
+                <span style={{ ...typo.labelSmall, color: DS.neutralDark, textTransform: "uppercase", letterSpacing: 0.5, fontSize: 10, fontWeight: 600 }}>{col.label}</span>
                 <SortIcon colKey={col.key} />
               </div>
               <span style={{ ...typo.labelSmall, color: DS.primaryMain, fontWeight: 600, fontSize: 11, fontVariantNumeric: "tabular-nums" }}>{formatCurrency(totalGrossValue)}</span>
             </> : <>
-              <span style={{ ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>{col.label}</span>
+              <span style={{ ...typo.labelSmall, color: DS.neutralDark, textTransform: "uppercase", letterSpacing: 0.5, fontSize: 10, fontWeight: 600 }}>{col.label}</span>
               <SortIcon colKey={col.key} />
             </>}
             {col.key === "title" && <div ref={titleDragRef} onMouseDown={handleTitleResize} onClick={e => e.stopPropagation()}
@@ -1311,7 +1411,7 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
               onMouseLeave={e => e.currentTarget.style.background = "transparent"} />}
           </div>
         ))}
-        <div style={{ width: 60, minWidth: 60, flex: "0 0 auto", padding: "8px 6px" }} />
+        <div style={{ width: 60, minWidth: 60, flex: "0 0 auto", padding: "6px 8px" }} />
       </div>
 
       {/* Table body — rows via DocTableRow */}
@@ -1346,11 +1446,11 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
       {/* Inline add row */}
       <div onClick={onInlineAdd} style={{
         ...S.row, padding: "0 20px",
-        minHeight: 44, cursor: "pointer", transition: "background 0.1s",
-        background: DS.neutralWhite, borderTop: `1px dashed ${DS.primaryLight}`,
+        minHeight: 40, cursor: "pointer", transition: "background 0.08s",
+        background: DS.neutralWhite, borderTop: `1px dashed ${DS.borderMedium}`,
         flexShrink: 0,
       }}
-        onMouseEnter={e => e.currentTarget.style.background = DS.primaryLighter}
+        onMouseEnter={e => e.currentTarget.style.background = "#F5F7FC"}
         onMouseLeave={e => e.currentTarget.style.background = DS.neutralWhite}
       >
         {multiSelectMode && <div style={{ width: 36 }} />}
@@ -1516,47 +1616,71 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
   }, [editValue, commitEdit]);
 
   const inputStyle = {
-    width: "100%", padding: "2px 4px", border: `1px solid ${DS.primaryLight}`,
+    width: "100%", padding: "3px 6px", border: `1px solid ${DS.primaryLight}`,
     borderRadius: 4, background: DS.neutralWhite, fontFamily: DS.fontFamily,
-    fontSize: 13, color: DS.textPrimary, outline: "none", boxSizing: "border-box",
+    fontSize: 12, color: DS.textPrimary, outline: "none", boxSizing: "border-box",
+    boxShadow: `0 0 0 2px ${DS.primaryLight}18`,
   };
 
+  const handleDropdownSelect = useCallback((key, val) => {
+    commitEdit(key, val);
+    setEditingCell(null);
+    setEditValue(null);
+  }, [commitEdit]);
+
+  const handleDropdownTab = useCallback((key, e) => {
+    // simulate tab to next editable col
+    const curIdx = visibleEditableCols.indexOf(key);
+    const nextIdx = e.shiftKey ? curIdx - 1 : curIdx + 1;
+    if (nextIdx >= 0 && nextIdx < visibleEditableCols.length) {
+      const nextKey = visibleEditableCols[nextIdx];
+      tabMovingRef.current = true;
+      setEditingCell(nextKey);
+      setEditValue(nextKey === "grossValue" ? (doc[nextKey] || 0) : (doc[nextKey] || ""));
+    } else {
+      setEditingCell(null);
+      setEditValue(null);
+    }
+  }, [visibleEditableCols, doc]);
+
   const renderEditInput = (key) => {
-    // Select for type
+    // CellDropdown for type
     if (key === "type") {
-      return <select value={editValue} onChange={e => setEditValue(e.target.value)}
-        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
-        autoFocus style={{ ...inputStyle, cursor: "pointer" }}>
-        {Object.entries(DOC_TYPES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-      </select>;
+      return <CellDropdown value={editValue}
+        options={Object.entries(DOC_TYPES).map(([k, v]) => ({ value: k, label: v.label }))}
+        onChange={v => handleDropdownSelect(key, v)}
+        onClose={cancelEdit}
+        onKeyDown={e => { if (e.key === "Tab") handleDropdownTab(key, e); }}
+      />;
     }
-    // Select for contractor
+    // CellDropdown for contractor
     if (key === "contractor") {
-      return <select value={editValue} onChange={e => setEditValue(e.target.value)}
-        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
-        autoFocus style={{ ...inputStyle, cursor: "pointer" }}>
-        <option value="">— brak —</option>
-        {CONTRACTORS.map(c => <option key={c} value={c}>{c}</option>)}
-      </select>;
+      return <CellDropdown value={editValue}
+        options={[{ value: "", label: "— brak —" }, ...CONTRACTORS.map(c => ({ value: c, label: c }))]}
+        onChange={v => handleDropdownSelect(key, v)}
+        onClose={cancelEdit}
+        onKeyDown={e => { if (e.key === "Tab") handleDropdownTab(key, e); }}
+      />;
     }
-    // Select for dept
+    // CellDropdown for dept
     if (key === "dept") {
-      return <select value={editValue} onChange={e => setEditValue(e.target.value)}
-        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
-        autoFocus style={{ ...inputStyle, cursor: "pointer" }}>
-        <option value="">— brak —</option>
-        {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
-      </select>;
+      return <CellDropdown value={editValue}
+        options={[{ value: "", label: "— brak —" }, ...DEPARTMENTS.map(d => ({ value: d, label: d }))]}
+        onChange={v => handleDropdownSelect(key, v)}
+        onClose={cancelEdit}
+        onKeyDown={e => { if (e.key === "Tab") handleDropdownTab(key, e); }}
+      />;
     }
-    // Select for status — filtered by document type
+    // CellDropdown for status
     if (key === "status") {
       const allowedStatuses = DOC_TYPE_STATUSES[doc.type] || [];
       if (allowedStatuses.length === 0) return <span style={{ ...typo.bodySmall, color: DS.textDisabled }}>—</span>;
-      return <select value={editValue} onChange={e => setEditValue(e.target.value)}
-        onKeyDown={e => handleKeyDown(e, key)} onBlur={() => handleBlur(key)}
-        autoFocus style={{ ...inputStyle, cursor: "pointer" }}>
-        {allowedStatuses.map(k => <option key={k} value={k}>{DOC_STATUSES[k]?.label || k}</option>)}
-      </select>;
+      return <CellDropdown value={editValue}
+        options={allowedStatuses.map(k => ({ value: k, label: DOC_STATUSES[k]?.label || k }))}
+        onChange={v => handleDropdownSelect(key, v)}
+        onClose={cancelEdit}
+        onKeyDown={e => { if (e.key === "Tab") handleDropdownTab(key, e); }}
+      />;
     }
     // Date input
     if (key === "dateEnd") {
@@ -1589,14 +1713,14 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
     <React.Fragment>
     <div onClick={() => onSelectDoc(doc)}
       draggable onDragStart={e => { e.dataTransfer.setData("text/plain", String(doc.id)); e.dataTransfer.effectAllowed = "move"; }}
-      onMouseEnter={e => { setHoveredRow(doc.id); if (!isSelected && !isExpanded) e.currentTarget.style.background = DS.primaryLighter; }}
-      onMouseLeave={e => { setHoveredRow(null); if (!isSelected && !isExpanded) e.currentTarget.style.background = isChecked ? `${DS.primaryLight}08` : isZebra ? DS.neutralLighter : DS.neutralWhite; }}
+      onMouseEnter={e => { setHoveredRow(doc.id); if (!isSelected && !isExpanded) e.currentTarget.style.background = "#F5F7FC"; }}
+      onMouseLeave={e => { setHoveredRow(null); if (!isSelected && !isExpanded) e.currentTarget.style.background = isChecked ? `${DS.primaryLight}06` : DS.neutralWhite; }}
       style={{
       ...S.row, padding: "0 20px", position: "relative",
-      minHeight: 48, cursor: "pointer", transition: "background 0.1s",
-      background: isSelected ? DS.primaryLighter : isExpanded ? `${DS.primaryMain}06` : isChecked ? `${DS.primaryLight}08` : isZebra ? DS.neutralLighter : DS.neutralWhite,
-      borderBottom: `1px solid ${DS.borderLight}`,
-      borderLeft: isSelected ? `3px solid ${DS.primaryLight}` : isExpanded ? `3px solid ${DS.primaryMain}40` : "3px solid transparent",
+      minHeight: 44, cursor: "pointer", transition: "background 0.08s",
+      background: isSelected ? DS.primaryLighter : isExpanded ? "#F5F7FC" : isChecked ? `${DS.primaryLight}06` : DS.neutralWhite,
+      borderBottom: `1px solid ${DS.borderLightLight || "#EDF0F5"}`,
+      borderLeft: isSelected ? `3px solid ${DS.primaryLight}` : isExpanded ? `3px solid ${DS.primaryLight}50` : "3px solid transparent",
     }}
     >
         {/* Expand chevron column */}
@@ -1610,78 +1734,78 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
           </div>
         )}
       </div>
-      {multiSelectMode && <div style={{ width: 36, padding: "8px 6px" }} onClick={e => e.stopPropagation()}>
+      {multiSelectMode && <div style={{ width: 36, padding: "6px 8px" }} onClick={e => e.stopPropagation()}>
         <Checkbox checked={isChecked} onChange={() => onToggleSelect(doc.id)} />
       </div>}
-      {showCol("type") && <div style={{ ...colStyle("type"), padding: "8px 6px", ...S.row, gap: 4, background: editingCell === "type" ? editCellBg : undefined }} {...editableCellProps("type")}>
+      {showCol("type") && <div style={{ ...colStyle("type"), padding: "6px 8px", ...S.row, gap: 4, background: editingCell === "type" ? editCellBg : undefined }} {...editableCellProps("type")}>
         {editingCell === "type" ? renderEditInput("type") : <>
           <Icon name={typeInfo.icon} size={14} color={DS.neutralMain} />
           <span style={{ ...typo.bodySmall, color: DS.textSecondary, ...S.truncate }}>{typeInfo.label}</span>
         </>}
       </div>}
-      {showCol("alerts") && <div style={{ ...colStyle("alerts"), padding: "8px 4px", ...S.row, gap: 3, justifyContent: "center" }}>
+      {showCol("alerts") && <div style={{ ...colStyle("alerts"), padding: "6px 4px", ...S.row, gap: 3, justifyContent: "center" }}>
         {docAlerts.length > 0 ? docAlerts.map(code => <AlertBadge key={code} code={code} />) : <span style={{ color: DS.textDisabled }}>—</span>}
       </div>}
-      {showCol("number") && <div style={{ ...colStyle("number"), padding: "8px 6px", background: editingCell === "number" ? editCellBg : undefined }} {...editableCellProps("number")}>
+      {showCol("number") && <div style={{ ...colStyle("number"), padding: "6px 8px", background: editingCell === "number" ? editCellBg : undefined }} {...editableCellProps("number")}>
         {editingCell === "number" ? renderEditInput("number") :
           <span style={{ ...typo.bodySmall, color: DS.textSecondary, fontFamily: "monospace", ...S.truncate, display: "block", fontSize: 12 }}>{doc.number || "—"}</span>}
       </div>}
-      {showCol("nrEwidencyjny") && <div style={{ ...colStyle("nrEwidencyjny"), padding: "8px 6px", background: editingCell === "nrEwidencyjny" ? editCellBg : undefined }} {...editableCellProps("nrEwidencyjny")}>
+      {showCol("nrEwidencyjny") && <div style={{ ...colStyle("nrEwidencyjny"), padding: "6px 8px", background: editingCell === "nrEwidencyjny" ? editCellBg : undefined }} {...editableCellProps("nrEwidencyjny")}>
         {editingCell === "nrEwidencyjny" ? renderEditInput("nrEwidencyjny") :
           <span style={{ ...typo.bodySmall, color: doc.nrEwidencyjny ? DS.primaryDark : DS.textDisabled, fontFamily: "monospace", ...S.truncate, display: "block", fontSize: 11, fontWeight: doc.nrEwidencyjny ? 600 : 400 }}>{doc.nrEwidencyjny || "—"}</span>}
       </div>}
-      {showCol("title") && <div style={{ ...colStyle("title"), padding: "8px 6px", background: editingCell === "title" ? editCellBg : undefined }} {...editableCellProps("title")}>
+      {showCol("title") && <div style={{ ...colStyle("title"), padding: "6px 8px", background: editingCell === "title" ? editCellBg : undefined }} {...editableCellProps("title")}>
         {editingCell === "title" ? renderEditInput("title") :
           <span style={{ ...typo.bodySmall, fontWeight: 500, color: DS.textPrimary, ...S.truncate, display: "block" }}>
             {doc.title || "Bez tytułu"}
           </span>}
       </div>}
-      {showCol("contractor") && <div style={{ ...colStyle("contractor"), padding: "8px 6px", background: editingCell === "contractor" ? editCellBg : undefined }} {...editableCellProps("contractor")}>
+      {showCol("contractor") && <div style={{ ...colStyle("contractor"), padding: "6px 8px", background: editingCell === "contractor" ? editCellBg : undefined }} {...editableCellProps("contractor")}>
         {editingCell === "contractor" ? renderEditInput("contractor") :
           <span style={{ ...typo.bodySmall, color: DS.textSecondary, ...S.truncate, display: "block" }}>
             {doc.contractor || "—"}
           </span>}
       </div>}
-      {showCol("assignee") && <div style={{ ...colStyle("assignee"), padding: "8px 4px", ...S.row, justifyContent: "center" }}>
+      {showCol("assignee") && <div style={{ ...colStyle("assignee"), padding: "6px 4px", ...S.row, justifyContent: "center" }}>
         {(() => { const u = USERS_LIST.find(u => u.id === doc.assignee); return u ? (
           <div title={u.name} style={{ width: 26, height: 26, borderRadius: "50%", background: DS.primaryLighter, ...S.row, justifyContent: "center", alignItems: "center" }}>
             <span style={{ ...typo.labelSmall, color: DS.primaryDark, fontWeight: 600, fontSize: 10 }}>{u.initials}</span>
           </div>
         ) : <span style={{ ...typo.labelSmall, color: DS.textDisabled }}>—</span>; })()}
       </div>}
-      {showCol("dept") && <div style={{ ...colStyle("dept"), padding: "8px 6px", background: editingCell === "dept" ? editCellBg : undefined }} {...editableCellProps("dept")}>
+      {showCol("dept") && <div style={{ ...colStyle("dept"), padding: "6px 8px", background: editingCell === "dept" ? editCellBg : undefined }} {...editableCellProps("dept")}>
         {editingCell === "dept" ? renderEditInput("dept") :
           <span style={{ ...typo.bodySmall, color: DS.textSecondary, ...S.truncate, display: "block" }}>
             {doc.dept}
           </span>}
       </div>}
-      {showCol("dateEnd") && <div style={{ ...colStyle("dateEnd"), padding: "8px 6px", background: editingCell === "dateEnd" ? editCellBg : undefined }} {...editableCellProps("dateEnd")}>
+      {showCol("dateEnd") && <div style={{ ...colStyle("dateEnd"), padding: "6px 8px", background: editingCell === "dateEnd" ? editCellBg : undefined }} {...editableCellProps("dateEnd")}>
         {editingCell === "dateEnd" ? renderEditInput("dateEnd") :
           <span style={{ ...typo.bodySmall, color: DS.textSecondary }}>{doc.dateEnd ? formatDate(doc.dateEnd) : "—"}</span>}
       </div>}
-      {showCol("grossValue") && <div style={{ ...colStyle("grossValue"), padding: "8px 6px", textAlign: "right", background: editingCell === "grossValue" ? editCellBg : undefined }} {...editableCellProps("grossValue")}>
+      {showCol("grossValue") && <div style={{ ...colStyle("grossValue"), padding: "6px 8px", textAlign: "right", background: editingCell === "grossValue" ? editCellBg : undefined }} {...editableCellProps("grossValue")}>
         {editingCell === "grossValue" ? renderEditInput("grossValue") :
           <span style={{ ...typo.bodySmall, fontWeight: 500, color: DS.textPrimary, fontVariantNumeric: "tabular-nums" }}>
             {doc.grossValue ? formatCurrency(doc.grossValue) : "—"}
           </span>}
       </div>}
-      {showCol("classification") && <div style={{ ...colStyle("classification"), padding: "8px 6px" }}>
+      {showCol("classification") && <div style={{ ...colStyle("classification"), padding: "6px 8px" }}>
         <span style={{ ...typo.labelSmall, color: DS.textSecondary, ...S.truncate, display: "block" }}>
           {doc.classification || "—"}
         </span>
       </div>}
-      {showCol("tags") && <div style={{ ...colStyle("tags"), padding: "8px 4px", ...S.row, gap: 3, flexWrap: "wrap" }}>
+      {showCol("tags") && <div style={{ ...colStyle("tags"), padding: "6px 4px", ...S.row, gap: 3, flexWrap: "wrap" }}>
         {visibleTags.map(tag => (
           <Badge key={tag.id} color={tag.color} bg={tag.color + "18"} small>{tag.label}</Badge>
         ))}
         {extraTags > 0 && <span style={{ ...typo.labelSmall, color: DS.textDisabled, fontWeight: 500 }}>+{extraTags}</span>}
       </div>}
-      {showCol("status") && <div style={{ ...colStyle("status"), padding: "8px 6px", background: editingCell === "status" ? editCellBg : undefined }} {...editableCellProps("status")}>
+      {showCol("status") && <div style={{ ...colStyle("status"), padding: "6px 8px", background: editingCell === "status" ? editCellBg : undefined }} {...editableCellProps("status")}>
         {editingCell === "status" ? renderEditInput("status") :
           statusInfo ? <Badge color={statusInfo.color} bg={statusInfo.bg}>{statusInfo.label}</Badge> : <span style={{ ...typo.bodySmall, color: DS.textDisabled }}>—</span>}
       </div>}
       {/* Actions column — children counter only */}
-      <div style={{ width: 60, minWidth: 60, flex: "0 0 auto", padding: "8px 6px", ...S.row, gap: 6, justifyContent: "flex-end" }}>
+      <div style={{ width: 60, minWidth: 60, flex: "0 0 auto", padding: "6px 8px", ...S.row, gap: 6, justifyContent: "flex-end" }}>
         {hasChildren && !isExpanded && (
           <span style={{
             ...typo.labelSmall, color: DS.primaryMain, fontWeight: 500,
@@ -4261,12 +4385,12 @@ const KsefView = ({ invoices, setInvoices, onSelectInvoice }) => {
         {/* Table header */}
         <div style={{
           display: "grid", gridTemplateColumns: "1.4fr 1fr 1.1fr 0.8fr 0.7fr 0.8fr 1.2fr",
-          padding: "0 20px", minHeight: 38, alignItems: "center",
-          borderBottom: `2px solid ${DS.borderLight}`, background: DS.neutralWhite,
+          padding: "0 20px", minHeight: 36, alignItems: "center",
+          borderBottom: `1px solid ${DS.borderMedium}`, background: DS.tableHeaderBg,
           position: "sticky", top: 0, zIndex: 2,
         }}>
-          {["Sprzedawca", "NIP sprzedawcy", "Nr faktury", "Data wyst.", "Netto", "Brutto", "Akcje"].map(h => (
-            <div key={h} style={{ padding: "8px 6px", ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>{h}</div>
+          {["Sprzedawca", "NIP sprzedawcy", "Nr faktury", "Data wyst.", "Netto", "Brutto", "Akcje"].map((h, i) => (
+            <div key={h} style={{ padding: "6px 8px", ...typo.labelSmall, color: DS.neutralDark, textTransform: "uppercase", letterSpacing: 0.5, fontSize: 10, fontWeight: 600, borderRight: i < 6 ? `1px solid ${DS.borderLight}` : "none" }}>{h}</div>
           ))}
         </div>
 
@@ -4282,16 +4406,16 @@ const KsefView = ({ invoices, setInvoices, onSelectInvoice }) => {
           return (
             <div key={inv.id} style={{
               display: "grid", gridTemplateColumns: "1.4fr 1fr 1.1fr 0.8fr 0.7fr 0.8fr 1.2fr",
-              padding: "0 20px", minHeight: 48, alignItems: "center",
-              borderBottom: `1px solid ${DS.borderLight}`,
-              transition: "background 0.1s",
-              background: isZebra ? DS.neutralLighter : DS.neutralWhite,
+              padding: "0 20px", minHeight: 44, alignItems: "center",
+              borderBottom: `1px solid ${DS.borderLightLight}`,
+              transition: "background 0.08s",
+              background: DS.neutralWhite,
               borderLeft: inv.isCorrection ? `3px solid ${DS.warningMain}` : "3px solid transparent",
             }}
-              onMouseEnter={e => e.currentTarget.style.background = DS.primaryLighter}
-              onMouseLeave={e => e.currentTarget.style.background = isZebra ? DS.neutralLighter : DS.neutralWhite}
+              onMouseEnter={e => e.currentTarget.style.background = "#F5F7FC"}
+              onMouseLeave={e => e.currentTarget.style.background = DS.neutralWhite}
             >
-              <div style={{ padding: "8px 6px" }}>
+              <div style={{ padding: "6px 8px", borderRight: `1px solid ${DS.borderLightLight}` }}>
                 <span style={{ ...typo.bodySmall, fontWeight: 500, color: DS.textPrimary, ...S.truncate, display: "block" }}>{inv.seller.name}</span>
                 {inv.isCorrection && (
                   <span style={{
@@ -4300,19 +4424,19 @@ const KsefView = ({ invoices, setInvoices, onSelectInvoice }) => {
                   }}>KOREKTA</span>
                 )}
               </div>
-              <div style={{ padding: "8px 6px" }}>
+              <div style={{ padding: "6px 8px", borderRight: `1px solid ${DS.borderLightLight}` }}>
                 <span style={{ ...typo.bodySmall, color: DS.textSecondary, fontVariantNumeric: "tabular-nums", ...S.truncate, display: "block" }}>{inv.seller.nip}</span>
               </div>
-              <div style={{ padding: "8px 6px" }}>
+              <div style={{ padding: "6px 8px", borderRight: `1px solid ${DS.borderLightLight}` }}>
                 <span style={{ ...typo.bodySmall, color: DS.textSecondary, fontFamily: "monospace", fontSize: 12, ...S.truncate, display: "block" }}>{inv.invoiceNumber}</span>
               </div>
-              <div style={{ padding: "8px 6px" }}>
+              <div style={{ padding: "6px 8px", borderRight: `1px solid ${DS.borderLightLight}` }}>
                 <span style={{ ...typo.bodySmall, color: DS.textSecondary }}>{formatDate(inv.issueDate)}</span>
               </div>
-              <div style={{ padding: "8px 6px", textAlign: "right" }}>
+              <div style={{ padding: "6px 8px", textAlign: "right", borderRight: `1px solid ${DS.borderLightLight}` }}>
                 <span style={{ ...typo.bodySmall, color: DS.textSecondary, fontVariantNumeric: "tabular-nums" }}>{formatCurrency(inv.netTotal)}</span>
               </div>
-              <div style={{ padding: "8px 6px", textAlign: "right" }}>
+              <div style={{ padding: "6px 8px", textAlign: "right", borderRight: `1px solid ${DS.borderLightLight}` }}>
                 <span style={{ ...typo.bodySmall, fontWeight: 500, color: inv.grossTotal < 0 ? DS.errorMain : DS.textPrimary, fontVariantNumeric: "tabular-nums" }}>{formatCurrency(inv.grossTotal)}</span>
               </div>
               <div style={{ ...S.row, gap: 6, justifyContent: "flex-end" }}>

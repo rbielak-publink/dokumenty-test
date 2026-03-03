@@ -5,10 +5,10 @@ const ColumnSelector = ({ allColumns, visibleColumns, onChange, open, onToggle }
   if (!open) return null;
   return (
     <div style={{
-      position: "absolute", top: "100%", right: 0, marginTop: 4, zIndex: 40,
-      background: DS.neutralWhite, borderRadius: 10, padding: "10px 0",
-      boxShadow: DS.shadowLg, border: `1px solid ${DS.borderLight}`, width: 220,
-      animation: "slideDown 0.12s ease",
+      position: "absolute", top: "calc(100% + 4px)", right: 0, zIndex: 40,
+      background: DS.neutralWhite, borderRadius: 8, padding: "8px 0",
+      boxShadow: DS.elevation3, border: "none", width: 220,
+      animation: "fadeIn 0.12s ease",
     }}>
       <div style={{ padding: "0 14px 8px", ...typo.labelSmall, color: DS.textDisabled, textTransform: "uppercase", letterSpacing: 0.5 }}>Widoczne kolumny</div>
       {allColumns.map(col => {

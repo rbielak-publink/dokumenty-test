@@ -20,10 +20,19 @@ const DS = {
   textPrimary: "#0F172A", textSecondary: "#64748B", textDisabled: "#94A3B8",
   borderLight: "#E2E8F0", borderMedium: "#CBD5E1",
   disabledMain: "#9CA3AF", disabledLighter: "#F1F5F9",
+  borderLightLight: "#EDF0F5",
+  tableHeaderBg: "#F0F3F9",
   shadowSm: "0 1px 2px rgba(0,0,0,0.05)",
+  shadow2: "0 3px 14px rgba(0,0,0,0.12), 0 1px 5px rgba(0,0,0,0.08)",
+  shadow3: "0 8px 28px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08)",
   shadowMd: "0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05)",
   shadowLg: "0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04)",
   shadowXl: "0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.06)",
+  // Material elevation
+  elevation1: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)",
+  elevation2: "0 3px 6px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.06)",
+  elevation3: "0 6px 16px rgba(0,0,0,0.12), 0 3px 6px rgba(0,0,0,0.08)",
+  elevation4: "0 10px 24px rgba(0,0,0,0.14), 0 4px 8px rgba(0,0,0,0.08)",
 };
 
 const typo = {

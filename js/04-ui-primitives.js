@@ -91,24 +91,107 @@ const Input = ({ value, onChange, placeholder, icon, style = {}, type = "text" }
     <input type={type} value={value} onChange={e => onChange(type === "number" ? (e.target.value === "" ? "" : Number(e.target.value)) : e.target.value)}
       placeholder={placeholder} style={{
         width: "100%", padding: `8px ${icon ? "12px" : "12px"} 8px ${icon ? "32px" : "12px"}`,
-        border: `1px solid ${DS.borderLight}`, borderRadius: 8,
+        border: `1px solid ${DS.borderLight}`, borderRadius: 6,
         fontSize: 13, fontFamily: DS.fontFamily, color: DS.textPrimary,
-        background: DS.neutralWhite, outline: "none", transition: "border-color 0.15s",
-      }} />
+        background: DS.neutralWhite, outline: "none", transition: "border-color 0.2s, box-shadow 0.2s",
+      }}
+      onFocus={e => { e.target.style.borderColor = DS.primaryLight; e.target.style.boxShadow = `0 0 0 3px ${DS.primaryLight}18`; }}
+      onBlur={e => { e.target.style.borderColor = DS.borderLight; e.target.style.boxShadow = "none"; }}
+    />
   </div>
 );
 
 const Select = ({ value, onChange, options, placeholder, style = {} }) => (
   <select value={value || ""} onChange={e => onChange(e.target.value)} style={{
-    width: "100%", padding: "8px 12px", border: `1px solid ${DS.borderLight}`,
-    borderRadius: 8, fontSize: 13, fontFamily: DS.fontFamily,
+    width: "100%", padding: "8px 32px 8px 12px", border: `1px solid ${DS.borderLight}`,
+    borderRadius: 6, fontSize: 13, fontFamily: DS.fontFamily,
     color: value ? DS.textPrimary : DS.textDisabled, background: DS.neutralWhite,
-    outline: "none", appearance: "auto", cursor: "pointer", ...style,
-  }}>
+    outline: "none", appearance: "none", cursor: "pointer", transition: "border-color 0.2s, box-shadow 0.2s",
+    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394A3B8' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+    backgroundRepeat: "no-repeat", backgroundPosition: "right 10px center",
+    ...style,
+  }}
+    onFocus={e => { e.target.style.borderColor = DS.primaryLight; e.target.style.boxShadow = `0 0 0 3px ${DS.primaryLight}18`; }}
+    onBlur={e => { e.target.style.borderColor = DS.borderLight; e.target.style.boxShadow = "none"; }}
+  >
     {placeholder && <option value="">{placeholder}</option>}
     {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
   </select>
 );
+
+/* ── CellDropdown — Material Design floating dropdown for inline table editing ── */
+const CellDropdown = ({ options, value, onChange, onKeyDown, onClose }) => {
+  const listRef = useRef(null);
+  const [highlight, setHighlight] = useState(() => {
+    const idx = options.findIndex(o => o.value === value);
+    return idx >= 0 ? idx : 0;
+  });
+
+  useEffect(() => {
+    if (listRef.current) listRef.current.focus();
+  }, []);
+
+  useEffect(() => {
+    const el = listRef.current?.children[highlight];
+    if (el) el.scrollIntoView({ block: "nearest" });
+  }, [highlight]);
+
+  const handleKey = (e) => {
+    if (e.key === "ArrowDown") { e.preventDefault(); setHighlight(h => Math.min(h + 1, options.length - 1)); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setHighlight(h => Math.max(h - 1, 0)); }
+    else if (e.key === "Enter") { e.preventDefault(); onChange(options[highlight].value); }
+    else if (e.key === "Escape") { e.preventDefault(); onClose(); }
+    else if (e.key === "Tab") { e.preventDefault(); onChange(options[highlight].value); if (onKeyDown) onKeyDown(e); }
+  };
+
+  return (
+    <div style={{ position: "relative", width: "100%" }}>
+      <div style={{
+        ...S.row, gap: 4, padding: "3px 6px", border: `1px solid ${DS.primaryLight}`, borderRadius: 4,
+        background: DS.neutralWhite, cursor: "pointer", minHeight: 22,
+        boxShadow: `0 0 0 2px ${DS.primaryLight}18`,
+      }}>
+        <span style={{ ...typo.bodySmall, fontSize: 12, color: DS.textPrimary, flex: 1, ...S.truncate }}>
+          {(options.find(o => o.value === value) || {}).label || "—"}
+        </span>
+        <svg width={8} height={5} viewBox="0 0 8 5" style={{ flexShrink: 0 }}>
+          <path d="M0.5 0.5L4 4L7.5 0.5" stroke={DS.primaryLight} strokeWidth="1.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+      <div ref={listRef} tabIndex={-1} onKeyDown={handleKey}
+        onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) onClose(); }}
+        style={{
+          position: "absolute", top: "calc(100% + 2px)", left: 0, minWidth: "100%", maxWidth: 320,
+          zIndex: 50, background: DS.neutralWhite, borderRadius: 6,
+          boxShadow: DS.elevation4, border: "none",
+          maxHeight: 220, overflowY: "auto", padding: "4px 0",
+          outline: "none",
+        }}>
+        {options.map((opt, i) => {
+          const isSel = opt.value === value;
+          const isHl = i === highlight;
+          return (
+            <div key={opt.value}
+              onMouseEnter={() => setHighlight(i)}
+              onClick={(e) => { e.stopPropagation(); onChange(opt.value); }}
+              style={{
+                padding: "7px 12px", cursor: "pointer",
+                background: isSel ? DS.primaryLighter : isHl ? "#F5F7FC" : "transparent",
+                borderLeft: isSel ? `3px solid ${DS.primaryLight}` : "3px solid transparent",
+                transition: "background 0.06s",
+              }}>
+              <span style={{
+                ...typo.bodySmall, fontSize: 12, whiteSpace: "nowrap",
+                color: isSel ? DS.primaryDark : DS.textPrimary,
+                fontWeight: isSel ? 600 : 400,
+              }}>{opt.label}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 const Field = ({ label, children, hint }) => (
   <div style={{ marginBottom: 14 }}>

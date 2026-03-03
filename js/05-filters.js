@@ -88,9 +88,9 @@ const MultiSelect = ({ values, onChange, options, placeholder, style }) => {
       </div>
       {open && (
         <div style={{
-          position: "absolute", top: "100%", left: 0, right: 0, marginTop: 4, zIndex: 30,
-          background: DS.neutralWhite, borderRadius: 8, border: `1px solid ${DS.borderLight}`,
-          boxShadow: DS.shadowMd, maxHeight: 220, overflowY: "auto", padding: "4px 0",
+          position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 30,
+          background: DS.neutralWhite, borderRadius: 8, border: "none",
+          boxShadow: DS.elevation3, maxHeight: 220, overflowY: "auto", padding: "4px 0",
         }}>
           {options.map(opt => {
             const checked = values.includes(opt.value);
