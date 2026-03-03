@@ -299,7 +299,18 @@ const App = () => {
             <DocTable
               docs={filteredDocs}
               onSelectDoc={doc => { setSelectedDoc(doc); setShowForm(false); }}
-              onInlineAdd={() => setShowForm(true)}
+              onInlineAdd={() => {
+                const newId = Math.max(...docs.map(d => d.id), 0) + 1;
+                const newDoc = {
+                  id: newId, type: "umowa", status: "w_przygotowaniu", title: "", number: "", nrEwidencyjny: "",
+                  rodzajUmowy: "wydatkowa", contractor: "", dept: DEPARTMENTS[0], assignee: 1,
+                  netValue: 0, grossValue: 0, classification: "",
+                  dateCreated: new Date().toISOString().split("T")[0],
+                  dateStart: "", dateEnd: "", tags: [], alerts: [], notes: "",
+                };
+                setDocs(prev => [newDoc, ...prev]);
+                return newId;
+              }}
               selectedId={selectedDoc?.id}
               sortConfig={sortConfig}
               onSort={handleSort}
