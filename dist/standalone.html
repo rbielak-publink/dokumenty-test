@@ -206,6 +206,36 @@ const CLASSIFICATIONS = [
   { code: "921-92109-4270", label: "Domy i ośrodki kultury — remonty", budget: 450000, used: 180000 },
 ];
 
+// Zadania z planu budżetu — powiązane z klasyfikacją budżetową
+const BUDGET_TASKS = {
+  "600-60016-4270": [
+    { id: "ZB-600-1", name: "Remont nawierzchni ul. Lipowa", planned: 1200000, engaged: 522750 },
+    { id: "ZB-600-2", name: "Remont chodników os. Słoneczne", planned: 800000, engaged: 340000 },
+    { id: "ZB-600-3", name: "Naprawy dróg gruntowych — sołectwa", planned: 500000, engaged: 210000 },
+  ],
+  "750-75023-4300": [
+    { id: "ZB-750-1", name: "Obsługa prawna urzędu", planned: 200000, engaged: 118080 },
+    { id: "ZB-750-2", name: "Usługi informatyczne i serwisowe", planned: 350000, engaged: 155000 },
+    { id: "ZB-750-3", name: "Szkolenia pracowników", planned: 120000, engaged: 45000 },
+    { id: "ZB-750-4", name: "Usługi pocztowe i kurierskie", planned: 130000, engaged: 62000 },
+  ],
+  "801-80101-4210": [
+    { id: "ZB-801-1", name: "Podręczniki i materiały szkolne", planned: 180000, engaged: 41697 },
+    { id: "ZB-801-2", name: "Wyposażenie sal lekcyjnych", planned: 120000, engaged: 55000 },
+    { id: "ZB-801-3", name: "Materiały biurowe dla szkół", planned: 50000, engaged: 8300 },
+  ],
+  "900-90003-4300": [
+    { id: "ZB-900-1", name: "Odbiór odpadów komunalnych", planned: 700000, engaged: 520000 },
+    { id: "ZB-900-2", name: "Odbiór odpadów wielkogabarytowych", planned: 300000, engaged: 280000 },
+    { id: "ZB-900-3", name: "Likwidacja dzikich wysypisk", planned: 200000, engaged: 160000 },
+  ],
+  "921-92109-4270": [
+    { id: "ZB-921-1", name: "Remont dachu Domu Kultury", planned: 250000, engaged: 0 },
+    { id: "ZB-921-2", name: "Modernizacja sceny GOK", planned: 120000, engaged: 95000 },
+    { id: "ZB-921-3", name: "Naprawa instalacji grzewczej DK", planned: 80000, engaged: 85000 },
+  ],
+};
+
 const TAGS = [
   { id: "pilne", label: "Pilne", color: DS.errorMain },
   { id: "inwestycja", label: "Inwestycja", color: DS.primaryLight },
@@ -2482,7 +2512,7 @@ const DocFormStepBasic = ({ form, set, docs, ocrStep, setOcrStep }) => {
 
 // ──── 12-doc-form-class.js ────
 /* ═══════════════════════════════════════════════════════════════
-   DOC FORM — Step 2 (Klasyfikacja) + Step 3 (Formalności)
+   DOC FORM — Step 2 (Zaangażowanie) + Step 3 (Pozostałe)
    ═══════════════════════════════════════════════════════════════ */
 const DocFormStepClassification = ({ form, set }) => {
   /* AI suggestion heuristic */
@@ -2595,27 +2625,54 @@ const DocFormStepClassification = ({ form, set }) => {
         </div>
       )}
 
-      {/* ── Zadanie budżetowe — disabled, connects to zaangażowanie module ── */}
-      {form.classification && (
-        <div style={{ marginTop: 16 }}>
-          <div style={{ ...typo.labelSmall, fontWeight: 600, color: DS.textSecondary, marginBottom: 8 }}>Zadanie budżetowe:</div>
-          <div style={{ position: "relative" }}>
-            <div style={{
-              display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 10,
-              border: `1px solid ${DS.borderLight}`, background: DS.disabledLighter, opacity: 0.7, cursor: "not-allowed",
-            }}>
-              <Icon name="search" size={16} color={DS.textDisabled} />
-              <span style={{ ...typo.bodySmall, color: DS.textDisabled }}>Wyszukaj zadanie budżetowe...</span>
-            </div>
-            <div style={{ ...S.row, gap: 6, marginTop: 8, padding: "8px 12px", borderRadius: 8, background: DS.infoLighter, border: `1px solid ${DS.infoLight}` }}>
-              <Icon name="info" size={14} color={DS.infoMain} />
-              <span style={{ ...typo.labelSmall, color: DS.infoDark }}>
-                Powiązanie z zadaniem budżetowym będzie dostępne w module Zaangażowania
-              </span>
-            </div>
+      {/* ── Zadanie z planu budżetu ── */}
+      {form.classification && (() => {
+        const tasks = BUDGET_TASKS[form.classification] || [];
+        return (
+          <div style={{ marginTop: 16 }}>
+            <div style={{ ...typo.labelSmall, fontWeight: 600, color: DS.textSecondary, marginBottom: 8 }}>Zadanie z planu budżetu:</div>
+            {tasks.length > 0 ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {tasks.map(task => {
+                  const isSelected = form.budgetTask === task.id;
+                  const engagedPct = Math.round((task.engaged / task.planned) * 100);
+                  const free = task.planned - task.engaged;
+                  const barColor = engagedPct >= 85 ? DS.errorMain : engagedPct >= 60 ? DS.warningMain : DS.successMain;
+                  return (
+                    <div key={task.id} onClick={() => set("budgetTask", isSelected ? "" : task.id)} style={{
+                      padding: "12px 14px", borderRadius: 10, cursor: "pointer", transition: "all 0.15s",
+                      border: `2px solid ${isSelected ? DS.primaryLight : DS.borderLight}`,
+                      background: isSelected ? DS.primaryLighter : DS.neutralWhite,
+                    }}>
+                      <div style={{ ...S.rowBetween, marginBottom: 4 }}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ ...typo.bodySmall, fontWeight: 600, color: DS.textPrimary }}>{task.name}</div>
+                          <div style={{ ...typo.labelSmall, color: DS.textDisabled, fontFamily: "monospace", marginTop: 2 }}>{task.id}</div>
+                        </div>
+                        {isSelected && <Icon name="check" size={16} color={DS.primaryLight} />}
+                      </div>
+                      <div style={{ height: 5, borderRadius: 3, background: DS.borderLight, overflow: "hidden", marginTop: 6, marginBottom: 4 }}>
+                        <div style={{ height: "100%", width: `${Math.min(engagedPct, 100)}%`, borderRadius: 3, background: barColor, transition: "width 0.4s ease" }} />
+                      </div>
+                      <div style={{ ...S.rowBetween }}>
+                        <span style={{ ...typo.labelSmall, color: DS.textDisabled }}>{engagedPct}% zaangażowane</span>
+                        <span style={{ ...typo.labelSmall, fontWeight: 600, color: free > 0 ? DS.successDark : DS.errorDark }}>
+                          {formatCurrency(free)} wolne z {formatCurrency(task.planned)}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div style={{ ...S.row, gap: 6, padding: "10px 14px", borderRadius: 8, background: DS.neutralLighter, border: `1px solid ${DS.borderLight}` }}>
+                <Icon name="info" size={14} color={DS.textDisabled} />
+                <span style={{ ...typo.bodySmall, color: DS.textDisabled }}>Brak zadań budżetowych dla wybranej klasyfikacji</span>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 };
@@ -2815,14 +2872,14 @@ const DocFormStepFormalities = ({ form, set }) => {
 const DocFormModal = ({ onClose, onSave, docs, editDoc }) => {
   const isEdit = !!editDoc;
   const isSimple = (type) => DOC_TYPE_META[type]?.simpleForm;
-  const getStepLabels = (type) => isSimple(type) ? ["Typ dokumentu", "Dane dokumentu"] : ["Typ dokumentu", "Dane podstawowe", "Klasyfikacja", "Formalności"];
+  const getStepLabels = (type) => isSimple(type) ? ["Typ dokumentu", "Dane dokumentu"] : ["Typ dokumentu", "Dane podstawowe", "Zaangażowanie", "Pozostałe"];
   const [step, setStep] = useState(isEdit ? 1 : 0);
   const [form, setForm] = useState(() => {
     if (editDoc) return { ...editDoc };
     return {
       type: "", status: "w_przygotowaniu", title: "", number: "", nrEwidencyjny: "", rodzajUmowy: "wydatkowa",
       contractor: "", dept: DEPARTMENTS[0], assignee: 1, netValue: 0, grossValue: 0,
-      classification: "", dateCreated: new Date().toISOString().split("T")[0],
+      classification: "", budgetTask: "", dateCreated: new Date().toISOString().split("T")[0],
       dateStart: "", dateEnd: "", tags: [], alerts: [], notes: "",
       linkedTo: null, uploadedFile: null,
       zamowieniePubliczne: false, tryb_pzp: "", nr_postepowania: "",
@@ -2851,7 +2908,7 @@ const DocFormModal = ({ onClose, onSave, docs, editDoc }) => {
   return (
       <div style={{ position: "fixed", inset: 0, background: "rgba(10,15,42,0.35)", zIndex: 200, animation: "fadeIn 0.15s ease", display: "flex", alignItems: "center", justifyContent: "center" }} onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{
-        width: 600, maxHeight: "85vh", background: DS.neutralWhite, borderRadius: 16,
+        width: 780, maxHeight: "90vh", background: DS.neutralWhite, borderRadius: 16,
         boxShadow: "0 24px 64px rgba(10,15,42,0.18)", zIndex: 201,
         animation: "modalIn 0.2s ease", overflow: "hidden", ...S.col,
       }}>
@@ -2898,8 +2955,8 @@ const DocFormModal = ({ onClose, onSave, docs, editDoc }) => {
                       <span style={{ ...typo.labelSmall, fontWeight: 700, color: isCurrent ? "#fff" : DS.textDisabled }}>{i + 1}</span>}
                   </div>
                   <span style={{
-                    ...typo.labelSmall, fontSize: 9, color: isDone ? DS.successDark : isCurrent ? DS.primaryDark : DS.textDisabled,
-                    maxWidth: 64, textAlign: "center", lineHeight: "1.2",
+                    ...typo.labelSmall, fontSize: 11, color: isDone ? DS.successDark : isCurrent ? DS.primaryDark : DS.textDisabled,
+                    maxWidth: 100, textAlign: "center", lineHeight: "1.2",
                     whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
                   }}>{label}</span>
                 </div>
