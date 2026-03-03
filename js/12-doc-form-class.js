@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   DOC FORM — Step 2 (Klasyfikacja) + Step 3 (Formalności)
+   DOC FORM — Step 2 (Zaangażowanie) + Step 3 (Pozostałe)
    ═══════════════════════════════════════════════════════════════ */
 const DocFormStepClassification = ({ form, set }) => {
   /* AI suggestion heuristic */
@@ -112,27 +112,54 @@ const DocFormStepClassification = ({ form, set }) => {
         </div>
       )}
 
-      {/* ── Zadanie budżetowe — disabled, connects to zaangażowanie module ── */}
-      {form.classification && (
-        <div style={{ marginTop: 16 }}>
-          <div style={{ ...typo.labelSmall, fontWeight: 600, color: DS.textSecondary, marginBottom: 8 }}>Zadanie budżetowe:</div>
-          <div style={{ position: "relative" }}>
-            <div style={{
-              display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 10,
-              border: `1px solid ${DS.borderLight}`, background: DS.disabledLighter, opacity: 0.7, cursor: "not-allowed",
-            }}>
-              <Icon name="search" size={16} color={DS.textDisabled} />
-              <span style={{ ...typo.bodySmall, color: DS.textDisabled }}>Wyszukaj zadanie budżetowe...</span>
-            </div>
-            <div style={{ ...S.row, gap: 6, marginTop: 8, padding: "8px 12px", borderRadius: 8, background: DS.infoLighter, border: `1px solid ${DS.infoLight}` }}>
-              <Icon name="info" size={14} color={DS.infoMain} />
-              <span style={{ ...typo.labelSmall, color: DS.infoDark }}>
-                Powiązanie z zadaniem budżetowym będzie dostępne w module Zaangażowania
-              </span>
-            </div>
+      {/* ── Zadanie z planu budżetu ── */}
+      {form.classification && (() => {
+        const tasks = BUDGET_TASKS[form.classification] || [];
+        return (
+          <div style={{ marginTop: 16 }}>
+            <div style={{ ...typo.labelSmall, fontWeight: 600, color: DS.textSecondary, marginBottom: 8 }}>Zadanie z planu budżetu:</div>
+            {tasks.length > 0 ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {tasks.map(task => {
+                  const isSelected = form.budgetTask === task.id;
+                  const engagedPct = Math.round((task.engaged / task.planned) * 100);
+                  const free = task.planned - task.engaged;
+                  const barColor = engagedPct >= 85 ? DS.errorMain : engagedPct >= 60 ? DS.warningMain : DS.successMain;
+                  return (
+                    <div key={task.id} onClick={() => set("budgetTask", isSelected ? "" : task.id)} style={{
+                      padding: "12px 14px", borderRadius: 10, cursor: "pointer", transition: "all 0.15s",
+                      border: `2px solid ${isSelected ? DS.primaryLight : DS.borderLight}`,
+                      background: isSelected ? DS.primaryLighter : DS.neutralWhite,
+                    }}>
+                      <div style={{ ...S.rowBetween, marginBottom: 4 }}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ ...typo.bodySmall, fontWeight: 600, color: DS.textPrimary }}>{task.name}</div>
+                          <div style={{ ...typo.labelSmall, color: DS.textDisabled, fontFamily: "monospace", marginTop: 2 }}>{task.id}</div>
+                        </div>
+                        {isSelected && <Icon name="check" size={16} color={DS.primaryLight} />}
+                      </div>
+                      <div style={{ height: 5, borderRadius: 3, background: DS.borderLight, overflow: "hidden", marginTop: 6, marginBottom: 4 }}>
+                        <div style={{ height: "100%", width: `${Math.min(engagedPct, 100)}%`, borderRadius: 3, background: barColor, transition: "width 0.4s ease" }} />
+                      </div>
+                      <div style={{ ...S.rowBetween }}>
+                        <span style={{ ...typo.labelSmall, color: DS.textDisabled }}>{engagedPct}% zaangażowane</span>
+                        <span style={{ ...typo.labelSmall, fontWeight: 600, color: free > 0 ? DS.successDark : DS.errorDark }}>
+                          {formatCurrency(free)} wolne z {formatCurrency(task.planned)}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div style={{ ...S.row, gap: 6, padding: "10px 14px", borderRadius: 8, background: DS.neutralLighter, border: `1px solid ${DS.borderLight}` }}>
+                <Icon name="info" size={14} color={DS.textDisabled} />
+                <span style={{ ...typo.bodySmall, color: DS.textDisabled }}>Brak zadań budżetowych dla wybranej klasyfikacji</span>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 };

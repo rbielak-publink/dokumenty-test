@@ -73,6 +73,36 @@ const CLASSIFICATIONS = [
   { code: "921-92109-4270", label: "Domy i ośrodki kultury — remonty", budget: 450000, used: 180000 },
 ];
 
+// Zadania z planu budżetu — powiązane z klasyfikacją budżetową
+const BUDGET_TASKS = {
+  "600-60016-4270": [
+    { id: "ZB-600-1", name: "Remont nawierzchni ul. Lipowa", planned: 1200000, engaged: 522750 },
+    { id: "ZB-600-2", name: "Remont chodników os. Słoneczne", planned: 800000, engaged: 340000 },
+    { id: "ZB-600-3", name: "Naprawy dróg gruntowych — sołectwa", planned: 500000, engaged: 210000 },
+  ],
+  "750-75023-4300": [
+    { id: "ZB-750-1", name: "Obsługa prawna urzędu", planned: 200000, engaged: 118080 },
+    { id: "ZB-750-2", name: "Usługi informatyczne i serwisowe", planned: 350000, engaged: 155000 },
+    { id: "ZB-750-3", name: "Szkolenia pracowników", planned: 120000, engaged: 45000 },
+    { id: "ZB-750-4", name: "Usługi pocztowe i kurierskie", planned: 130000, engaged: 62000 },
+  ],
+  "801-80101-4210": [
+    { id: "ZB-801-1", name: "Podręczniki i materiały szkolne", planned: 180000, engaged: 41697 },
+    { id: "ZB-801-2", name: "Wyposażenie sal lekcyjnych", planned: 120000, engaged: 55000 },
+    { id: "ZB-801-3", name: "Materiały biurowe dla szkół", planned: 50000, engaged: 8300 },
+  ],
+  "900-90003-4300": [
+    { id: "ZB-900-1", name: "Odbiór odpadów komunalnych", planned: 700000, engaged: 520000 },
+    { id: "ZB-900-2", name: "Odbiór odpadów wielkogabarytowych", planned: 300000, engaged: 280000 },
+    { id: "ZB-900-3", name: "Likwidacja dzikich wysypisk", planned: 200000, engaged: 160000 },
+  ],
+  "921-92109-4270": [
+    { id: "ZB-921-1", name: "Remont dachu Domu Kultury", planned: 250000, engaged: 0 },
+    { id: "ZB-921-2", name: "Modernizacja sceny GOK", planned: 120000, engaged: 95000 },
+    { id: "ZB-921-3", name: "Naprawa instalacji grzewczej DK", planned: 80000, engaged: 85000 },
+  ],
+};
+
 const TAGS = [
   { id: "pilne", label: "Pilne", color: DS.errorMain },
   { id: "inwestycja", label: "Inwestycja", color: DS.primaryLight },

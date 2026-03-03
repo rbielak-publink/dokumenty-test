@@ -6,14 +6,14 @@
 const DocFormModal = ({ onClose, onSave, docs, editDoc }) => {
   const isEdit = !!editDoc;
   const isSimple = (type) => DOC_TYPE_META[type]?.simpleForm;
-  const getStepLabels = (type) => isSimple(type) ? ["Typ dokumentu", "Dane dokumentu"] : ["Typ dokumentu", "Dane podstawowe", "Klasyfikacja", "Formalności"];
+  const getStepLabels = (type) => isSimple(type) ? ["Typ dokumentu", "Dane dokumentu"] : ["Typ dokumentu", "Dane podstawowe", "Zaangażowanie", "Pozostałe"];
   const [step, setStep] = useState(isEdit ? 1 : 0);
   const [form, setForm] = useState(() => {
     if (editDoc) return { ...editDoc };
     return {
       type: "", status: "w_przygotowaniu", title: "", number: "", nrEwidencyjny: "", rodzajUmowy: "wydatkowa",
       contractor: "", dept: DEPARTMENTS[0], assignee: 1, netValue: 0, grossValue: 0,
-      classification: "", dateCreated: new Date().toISOString().split("T")[0],
+      classification: "", budgetTask: "", dateCreated: new Date().toISOString().split("T")[0],
       dateStart: "", dateEnd: "", tags: [], alerts: [], notes: "",
       linkedTo: null, uploadedFile: null,
       zamowieniePubliczne: false, tryb_pzp: "", nr_postepowania: "",
@@ -42,7 +42,7 @@ const DocFormModal = ({ onClose, onSave, docs, editDoc }) => {
   return (
       <div style={{ position: "fixed", inset: 0, background: "rgba(10,15,42,0.35)", zIndex: 200, animation: "fadeIn 0.15s ease", display: "flex", alignItems: "center", justifyContent: "center" }} onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{
-        width: 600, maxHeight: "85vh", background: DS.neutralWhite, borderRadius: 16,
+        width: 780, maxHeight: "90vh", background: DS.neutralWhite, borderRadius: 16,
         boxShadow: "0 24px 64px rgba(10,15,42,0.18)", zIndex: 201,
         animation: "modalIn 0.2s ease", overflow: "hidden", ...S.col,
       }}>
@@ -89,8 +89,8 @@ const DocFormModal = ({ onClose, onSave, docs, editDoc }) => {
                       <span style={{ ...typo.labelSmall, fontWeight: 700, color: isCurrent ? "#fff" : DS.textDisabled }}>{i + 1}</span>}
                   </div>
                   <span style={{
-                    ...typo.labelSmall, fontSize: 9, color: isDone ? DS.successDark : isCurrent ? DS.primaryDark : DS.textDisabled,
-                    maxWidth: 64, textAlign: "center", lineHeight: "1.2",
+                    ...typo.labelSmall, fontSize: 11, color: isDone ? DS.successDark : isCurrent ? DS.primaryDark : DS.textDisabled,
+                    maxWidth: 100, textAlign: "center", lineHeight: "1.2",
                     whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
                   }}>{label}</span>
                 </div>
