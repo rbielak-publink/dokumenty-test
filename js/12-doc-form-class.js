@@ -2,164 +2,185 @@
    DOC FORM — Step 2 (Zaangażowanie) + Step 3 (Pozostałe)
    ═══════════════════════════════════════════════════════════════ */
 const DocFormStepClassification = ({ form, set }) => {
+  const [taskSearch, setTaskSearch] = useState("");
+
   /* AI suggestion heuristic */
   const t = ((form.title || "") + " " + (form.contractor || "")).toLowerCase();
-  const suggestions = CLASSIFICATIONS.map(c => {
-    let score = 0;
-    const cl = c.label.toLowerCase();
-    const words = t.split(/\s+/).filter(w => w.length > 3);
-    words.forEach(w => { if (cl.includes(w)) score += 30; });
-    if (t.includes("drog") || t.includes("remont")) { if (c.code.startsWith("600")) score += 40; }
-    if (t.includes("it") || t.includes("usług") || t.includes("obsług") || t.includes("prawn")) { if (c.code.includes("4300") || c.code.startsWith("750")) score += 40; }
-    if (t.includes("szkoł") || t.includes("eduk")) { if (c.code.startsWith("801")) score += 40; }
-    if (t.includes("odpad") || t.includes("oczyszcz")) { if (c.code.startsWith("900")) score += 40; }
-    if (t.includes("kultur")) { if (c.code.startsWith("921")) score += 40; }
-    return { ...c, score: Math.min(score, 99) };
-  }).filter(c => c.score > 0).sort((a, b) => b.score - a.score).slice(0, 2);
-  const hasSuggestions = suggestions.length > 0 && t.length > 4;
+  const suggestedCodes = useMemo(() => {
+    return CLASSIFICATIONS.map(c => {
+      let score = 0;
+      const cl = c.label.toLowerCase();
+      const words = t.split(/\s+/).filter(w => w.length > 3);
+      words.forEach(w => { if (cl.includes(w)) score += 30; });
+      if (t.includes("drog") || t.includes("remont")) { if (c.code.startsWith("600")) score += 40; }
+      if (t.includes("it") || t.includes("usług") || t.includes("obsług") || t.includes("prawn")) { if (c.code.includes("4300") || c.code.startsWith("750")) score += 40; }
+      if (t.includes("szkoł") || t.includes("eduk")) { if (c.code.startsWith("801")) score += 40; }
+      if (t.includes("odpad") || t.includes("oczyszcz")) { if (c.code.startsWith("900")) score += 40; }
+      if (t.includes("kultur")) { if (c.code.startsWith("921")) score += 40; }
+      return { code: c.code, score: Math.min(score, 99) };
+    }).filter(s => s.score > 0 && t.length > 4).reduce((m, s) => { m[s.code] = s.score; return m; }, {});
+  }, [t]);
 
   const selectedClassification = CLASSIFICATIONS.find(c => c.code === form.classification);
   const budgetPct = selectedClassification ? Math.round(((selectedClassification.used + form.grossValue) / selectedClassification.budget) * 100) : null;
   const budgetColor = budgetPct === null ? DS.textDisabled : budgetPct >= 85 ? DS.errorMain : budgetPct >= 60 ? DS.warningMain : DS.successMain;
 
+  /* tasks for selected classification */
+  const allTasks = form.classification ? (BUDGET_TASKS[form.classification] || []) : [];
+  const filteredTasks = taskSearch
+    ? allTasks.filter(t => t.name.toLowerCase().includes(taskSearch.toLowerCase()) || t.id.toLowerCase().includes(taskSearch.toLowerCase()))
+    : allTasks;
+
   return (
     <div>
-      {/* AI suggestions banner */}
-      {hasSuggestions && (
-        <div style={{ padding: "16px", borderRadius: 12, background: `linear-gradient(135deg, ${DS.primaryLighter}, ${DS.secondaryLighter})`, border: `1px solid ${DS.primaryLight}`, marginBottom: 16 }}>
-          <div style={{ ...S.row, gap: 8, marginBottom: 12 }}>
-            <Icon name="sparkles" size={16} color={DS.primaryLight} />
-            <span style={{ ...typo.bodySmall, fontWeight: 600, color: DS.primaryDark }}>Na podstawie danych dokumentu — prawdopodobnie pasują:</span>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {suggestions.map(sg => {
-              const pct = Math.round((sg.used / sg.budget) * 100);
-              const free = sg.budget - sg.used;
+      {/* ── Two-column layout: Classification | Budget Tasks ── */}
+      <div style={{ display: "grid", gridTemplateColumns: form.classification ? "1fr 1fr" : "1fr", gap: 16 }}>
+
+        {/* ── LEFT: Classification selector ── */}
+        <div>
+          <div style={{ ...typo.labelSmall, fontWeight: 600, color: DS.textSecondary, marginBottom: 8 }}>Klasyfikacja budżetowa</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            {CLASSIFICATIONS.map(c => {
+              const isSelected = form.classification === c.code;
+              const pct = Math.round((c.used / c.budget) * 100);
+              const free = c.budget - c.used;
+              const barColor = pct >= 85 ? DS.errorMain : pct >= 60 ? DS.warningMain : DS.primaryLight;
+              const aiScore = suggestedCodes[c.code];
               return (
-                <div key={sg.code} onClick={() => set("classification", sg.code)} style={{
-                  padding: "12px 14px", borderRadius: 10, cursor: "pointer", transition: "all 0.15s",
-                  border: `1.5px solid ${form.classification === sg.code ? DS.primaryLight : DS.borderLight}`,
-                  background: form.classification === sg.code ? DS.primaryLighter : DS.neutralWhite,
-                }}>
-                  <div style={{ ...S.rowBetween }}>
-                    <div>
-                      <span style={{ ...typo.bodySmall, fontWeight: 700, color: DS.textPrimary }}>{sg.code}</span>
-                      <span style={{ ...typo.bodySmall, color: DS.textSecondary, marginLeft: 8 }}>{sg.label}</span>
+                <div key={c.code} onClick={() => { set("classification", c.code); set("budgetTask", ""); setTaskSearch(""); }} style={{
+                  padding: "8px 10px", borderRadius: 8, cursor: "pointer", transition: "all 0.12s",
+                  border: `1.5px solid ${isSelected ? DS.primaryLight : "transparent"}`,
+                  background: isSelected ? DS.primaryLighter : "transparent",
+                }}
+                  onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = DS.neutralLighter; }}
+                  onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = "transparent"; }}
+                >
+                  <div style={{ ...S.row, gap: 8, marginBottom: 3 }}>
+                    <span style={{ ...typo.labelSmall, fontWeight: 700, color: DS.textPrimary, fontFamily: "monospace", flexShrink: 0 }}>{c.code}</span>
+                    {aiScore && <span style={{
+                      ...typo.labelSmall, fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 999, flexShrink: 0,
+                      background: aiScore >= 80 ? DS.successLighter : DS.warningLighter,
+                      color: aiScore >= 80 ? DS.successDark : DS.warningDark,
+                    }}><Icon name="sparkles" size={8} color={aiScore >= 80 ? DS.successDark : DS.warningDark} /> {aiScore}%</span>}
+                    {isSelected && <Icon name="check" size={12} color={DS.primaryLight} />}
+                  </div>
+                  <div style={{ ...typo.labelSmall, color: DS.textSecondary, marginBottom: 4, lineHeight: "1.3" }}>{c.label}</div>
+                  <div style={{ ...S.row, gap: 6, alignItems: "center" }}>
+                    <div style={{ flex: 1, height: 4, borderRadius: 2, background: DS.borderLight, overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${Math.min(pct, 100)}%`, borderRadius: 2, background: barColor }} />
                     </div>
-                    <span style={{
-                      ...typo.labelSmall, fontWeight: 700, padding: "3px 10px", borderRadius: 999,
-                      background: sg.score >= 80 ? DS.successLighter : DS.warningLighter,
-                      color: sg.score >= 80 ? DS.successDark : DS.warningDark,
-                    }}>{sg.score}%</span>
+                    <span style={{ ...typo.labelSmall, fontSize: 9, color: DS.textDisabled, flexShrink: 0, whiteSpace: "nowrap" }}>{formatCurrency(free)} wolne</span>
                   </div>
                 </div>
               );
             })}
           </div>
-          <div style={{ ...typo.labelSmall, color: DS.textDisabled, marginTop: 8 }}>Możesz też wybrać inną klasyfikację poniżej:</div>
         </div>
-      )}
 
-      {/* Classification cards — all options */}
-      <div style={{ ...typo.labelSmall, fontWeight: 600, color: DS.textSecondary, marginBottom: 10 }}>Klasyfikacja budżetowa:</div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {CLASSIFICATIONS.map(c => {
-          const isSelected = form.classification === c.code;
-          const pct = Math.round((c.used / c.budget) * 100);
-          const free = c.budget - c.used;
-          const barColor = pct >= 85 ? DS.errorMain : pct >= 60 ? DS.warningMain : DS.primaryLight;
-          return (
-            <div key={c.code} onClick={() => set("classification", c.code)} style={{
-              padding: "14px 16px", borderRadius: 12, cursor: "pointer", transition: "all 0.15s",
-              border: `2px solid ${isSelected ? DS.primaryLight : DS.borderLight}`,
-              background: isSelected ? DS.primaryLighter : DS.neutralWhite,
-            }}>
-              <div style={{ ...S.rowBetween, marginBottom: 6 }}>
-                <div>
-                  <span style={{ ...typo.bodySmall, fontWeight: 700, color: DS.textPrimary }}>{c.code}</span>
-                  {isSelected && <Icon name="check" size={14} color={DS.primaryLight} style={{ marginLeft: 8 }} />}
+        {/* ── RIGHT: Budget tasks panel (visible after classification selected) ── */}
+        {form.classification && (
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {/* Selected classification summary */}
+            {selectedClassification && (
+              <div style={{ padding: "8px 10px", borderRadius: 8, background: DS.neutralLighter, marginBottom: 10, border: `1px solid ${DS.borderLight}` }}>
+                <div style={{ ...S.rowBetween, marginBottom: 4 }}>
+                  <span style={{ ...typo.labelSmall, fontWeight: 600, color: DS.textPrimary }}>{selectedClassification.code}</span>
+                  {budgetPct !== null && form.grossValue > 0 && (
+                    <span style={{ ...typo.labelSmall, fontWeight: 700, color: budgetColor }}>{budgetPct}% po dodaniu</span>
+                  )}
                 </div>
-              </div>
-              <div style={{ ...typo.bodySmall, color: DS.textSecondary, marginBottom: 8 }}>{c.label}</div>
-              {/* budget bar */}
-              <div style={{ height: 6, borderRadius: 3, background: DS.borderLight, overflow: "hidden", marginBottom: 6 }}>
-                <div style={{ height: "100%", width: `${Math.min(pct, 100)}%`, borderRadius: 3, background: barColor, transition: "width 0.4s ease" }} />
-              </div>
-              <div style={{ ...S.rowBetween }}>
-                <span style={{ ...typo.labelSmall, color: DS.textDisabled }}>{pct}% zaangażowane</span>
-                <span style={{ ...typo.labelSmall, fontWeight: 600, color: free > 0 ? DS.successDark : DS.errorDark }}>
-                  {formatCurrency(free)} wolne
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* budget impact after selection */}
-      {budgetPct !== null && form.grossValue > 0 && (
-        <div style={{ padding: "12px 14px", borderRadius: 10, marginTop: 12, background: budgetColor === DS.errorMain ? "#FEF2F2" : budgetColor === DS.warningMain ? "#FFFBEB" : DS.successLighter, border: `1px solid ${budgetColor}33` }}>
-          <div style={{ ...S.rowBetween, marginBottom: 4 }}>
-            <span style={{ ...typo.bodySmall, color: DS.textPrimary }}>Po dodaniu dokumentu ({formatCurrency(form.grossValue)})</span>
-            <span style={{ ...typo.bodySmall, fontWeight: 700, color: budgetColor }}>{budgetPct}%</span>
-          </div>
-          <div style={{ height: 6, borderRadius: 3, background: DS.borderLight, overflow: "hidden" }}>
-            <div style={{ height: "100%", width: `${Math.min(budgetPct, 100)}%`, borderRadius: 3, background: budgetColor, transition: "width 0.4s ease" }} />
-          </div>
-          <div style={{ ...typo.labelSmall, color: DS.textDisabled, marginTop: 4 }}>
-            {formatCurrency(selectedClassification.used + form.grossValue)} z {formatCurrency(selectedClassification.budget)}
-          </div>
-        </div>
-      )}
-
-      {/* ── Zadanie z planu budżetu ── */}
-      {form.classification && (() => {
-        const tasks = BUDGET_TASKS[form.classification] || [];
-        return (
-          <div style={{ marginTop: 16 }}>
-            <div style={{ ...typo.labelSmall, fontWeight: 600, color: DS.textSecondary, marginBottom: 8 }}>Zadanie z planu budżetu:</div>
-            {tasks.length > 0 ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {tasks.map(task => {
-                  const isSelected = form.budgetTask === task.id;
-                  const engagedPct = Math.round((task.engaged / task.planned) * 100);
-                  const free = task.planned - task.engaged;
-                  const barColor = engagedPct >= 85 ? DS.errorMain : engagedPct >= 60 ? DS.warningMain : DS.successMain;
-                  return (
-                    <div key={task.id} onClick={() => set("budgetTask", isSelected ? "" : task.id)} style={{
-                      padding: "12px 14px", borderRadius: 10, cursor: "pointer", transition: "all 0.15s",
-                      border: `2px solid ${isSelected ? DS.primaryLight : DS.borderLight}`,
-                      background: isSelected ? DS.primaryLighter : DS.neutralWhite,
-                    }}>
-                      <div style={{ ...S.rowBetween, marginBottom: 4 }}>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ ...typo.bodySmall, fontWeight: 600, color: DS.textPrimary }}>{task.name}</div>
-                          <div style={{ ...typo.labelSmall, color: DS.textDisabled, fontFamily: "monospace", marginTop: 2 }}>{task.id}</div>
-                        </div>
-                        {isSelected && <Icon name="check" size={16} color={DS.primaryLight} />}
-                      </div>
-                      <div style={{ height: 5, borderRadius: 3, background: DS.borderLight, overflow: "hidden", marginTop: 6, marginBottom: 4 }}>
-                        <div style={{ height: "100%", width: `${Math.min(engagedPct, 100)}%`, borderRadius: 3, background: barColor, transition: "width 0.4s ease" }} />
-                      </div>
-                      <div style={{ ...S.rowBetween }}>
-                        <span style={{ ...typo.labelSmall, color: DS.textDisabled }}>{engagedPct}% zaangażowane</span>
-                        <span style={{ ...typo.labelSmall, fontWeight: 600, color: free > 0 ? DS.successDark : DS.errorDark }}>
-                          {formatCurrency(free)} wolne z {formatCurrency(task.planned)}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div style={{ ...S.row, gap: 6, padding: "10px 14px", borderRadius: 8, background: DS.neutralLighter, border: `1px solid ${DS.borderLight}` }}>
-                <Icon name="info" size={14} color={DS.textDisabled} />
-                <span style={{ ...typo.bodySmall, color: DS.textDisabled }}>Brak zadań budżetowych dla wybranej klasyfikacji</span>
+                <div style={{ height: 4, borderRadius: 2, background: DS.borderLight, overflow: "hidden" }}>
+                  <div style={{ height: "100%", width: `${Math.min(budgetPct || 0, 100)}%`, borderRadius: 2, background: budgetColor }} />
+                </div>
+                {budgetPct !== null && form.grossValue > 0 && (
+                  <div style={{ ...typo.labelSmall, fontSize: 9, color: DS.textDisabled, marginTop: 3 }}>
+                    {formatCurrency(selectedClassification.used + form.grossValue)} z {formatCurrency(selectedClassification.budget)}
+                  </div>
+                )}
               </div>
             )}
+
+            {/* Task header + search */}
+            <div style={{ ...S.rowBetween, marginBottom: 6 }}>
+              <span style={{ ...typo.labelSmall, fontWeight: 600, color: DS.textSecondary }}>Zadanie budżetowe</span>
+              <span style={{ ...typo.labelSmall, color: DS.textDisabled }}>{allTasks.length} zadań</span>
+            </div>
+
+            {allTasks.length > 0 && (
+              <div style={{ position: "relative", marginBottom: 8 }}>
+                <Icon name="search" size={13} color={DS.textDisabled} style={{ position: "absolute", left: 8, top: 7 }} />
+                <input
+                  value={taskSearch} onChange={e => setTaskSearch(e.target.value)}
+                  placeholder="Szukaj zadania..."
+                  style={{
+                    width: "100%", padding: "6px 8px 6px 28px", border: `1px solid ${DS.borderLight}`, borderRadius: 6,
+                    fontSize: 12, fontFamily: DS.fontFamily, color: DS.textPrimary, background: DS.neutralWhite,
+                    outline: "none", boxSizing: "border-box",
+                  }}
+                  onFocus={e => e.target.style.borderColor = DS.primaryLight}
+                  onBlur={e => e.target.style.borderColor = DS.borderLight}
+                />
+              </div>
+            )}
+
+            {/* Task list */}
+            <div style={{ flex: 1, overflowY: "auto", maxHeight: 220, display: "flex", flexDirection: "column", gap: 3 }}>
+              {filteredTasks.map(task => {
+                const isSelected = form.budgetTask === task.id;
+                const engPct = Math.round((task.engaged / task.planned) * 100);
+                const free = task.planned - task.engaged;
+                const bColor = engPct >= 85 ? DS.errorMain : engPct >= 60 ? DS.warningMain : DS.successMain;
+                return (
+                  <div key={task.id} onClick={() => set("budgetTask", isSelected ? "" : task.id)} style={{
+                    padding: "7px 10px", borderRadius: 6, cursor: "pointer", transition: "all 0.12s",
+                    border: `1.5px solid ${isSelected ? DS.primaryLight : "transparent"}`,
+                    background: isSelected ? DS.primaryLighter : "transparent",
+                  }}
+                    onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = DS.neutralLighter; }}
+                    onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = isSelected ? DS.primaryLighter : "transparent"; }}
+                  >
+                    <div style={{ ...S.row, gap: 6, marginBottom: 2 }}>
+                      <div style={{
+                        width: 16, height: 16, borderRadius: 4, flexShrink: 0, ...S.row, justifyContent: "center",
+                        border: `1.5px solid ${isSelected ? DS.primaryLight : DS.borderMedium}`,
+                        background: isSelected ? DS.primaryLight : DS.neutralWhite,
+                      }}>
+                        {isSelected && <Icon name="check" size={9} color="#fff" />}
+                      </div>
+                      <span style={{ ...typo.labelSmall, fontWeight: 600, color: DS.textPrimary, flex: 1, minWidth: 0, ...S.truncate }}>{task.name}</span>
+                    </div>
+                    <div style={{ ...S.row, gap: 6, alignItems: "center", paddingLeft: 22 }}>
+                      <div style={{ flex: 1, height: 3, borderRadius: 2, background: DS.borderLight, overflow: "hidden" }}>
+                        <div style={{ height: "100%", width: `${Math.min(engPct, 100)}%`, borderRadius: 2, background: bColor }} />
+                      </div>
+                      <span style={{ ...typo.labelSmall, fontSize: 9, color: DS.textDisabled, flexShrink: 0, whiteSpace: "nowrap" }}>{formatCurrency(free)} wolne</span>
+                    </div>
+                  </div>
+                );
+              })}
+              {filteredTasks.length === 0 && allTasks.length > 0 && (
+                <div style={{ ...typo.labelSmall, color: DS.textDisabled, padding: "12px 0", textAlign: "center" }}>Brak wyników dla „{taskSearch}"</div>
+              )}
+              {allTasks.length === 0 && (
+                <div style={{ ...typo.labelSmall, color: DS.textDisabled, padding: "12px 0", textAlign: "center" }}>Brak zadań dla tej klasyfikacji</div>
+              )}
+            </div>
+
+            {/* Add task button */}
+            <button onClick={() => {/* placeholder — would open add-task form */}} style={{
+              ...S.row, gap: 6, justifyContent: "center", padding: "7px 0", marginTop: 6, borderRadius: 6,
+              border: `1px dashed ${DS.borderMedium}`, background: "transparent", cursor: "pointer",
+              fontFamily: DS.fontFamily, transition: "all 0.12s",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.background = DS.neutralLighter; e.currentTarget.style.borderColor = DS.primaryLight; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = DS.borderMedium; }}
+            >
+              <Icon name="plus" size={12} color={DS.primaryLight} />
+              <span style={{ ...typo.labelSmall, fontWeight: 600, color: DS.primaryDark }}>Dodaj zadanie</span>
+            </button>
           </div>
-        );
-      })()}
+        )}
+      </div>
     </div>
   );
 };
