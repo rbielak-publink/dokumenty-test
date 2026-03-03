@@ -3,7 +3,7 @@
    ═══════════════════════════════════════════════════════════════ */
 const EDITABLE_COLS = ["type", "number", "nrEwidencyjny", "title", "contractor", "dept", "dateEnd", "grossValue", "status"];
 
-const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiSelectMode, expandedRows, toggleExpand, hoveredRow, setHoveredRow, setFilePreview, onToggleSelect, onSelectDoc, colStyle, onUpdateDoc }) => {
+const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiSelectMode, expandedRows, toggleExpand, hoveredRow, setHoveredRow, setFilePreview, onToggleSelect, onSelectDoc, colStyle, onUpdateDoc, newRowId, clearNewRowId }) => {
   const typeInfo = DOC_TYPES[doc.type] || DOC_TYPES.inne;
   const statusInfo = DOC_STATUSES[doc.status] || null;
   const isSelected = selectedId === doc.id;
@@ -26,6 +26,16 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
   const tabMovingRef = useRef(false);
 
   const visibleEditableCols = EDITABLE_COLS.filter(k => showCol(k));
+
+  // Auto-enter edit mode for new inline rows
+  useEffect(() => {
+    if (newRowId && doc.id === newRowId && visibleEditableCols.length > 0) {
+      const firstKey = visibleEditableCols[0];
+      setEditingCell(firstKey);
+      setEditValue(firstKey === "grossValue" ? (doc[firstKey] || 0) : (doc[firstKey] || ""));
+      if (clearNewRowId) clearNewRowId();
+    }
+  }, [newRowId, doc.id]);
 
   const commitEdit = useCallback((key, value) => {
     if (onUpdateDoc && value !== doc[key]) {

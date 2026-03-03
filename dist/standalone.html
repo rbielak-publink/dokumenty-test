@@ -1210,6 +1210,7 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [hoveredRow, setHoveredRow] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
+  const [newRowId, setNewRowId] = useState(null);
 
   const toggleExpand = useCallback((docId, e) => {
     e.stopPropagation();
@@ -1288,7 +1289,7 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
   const someSelected = docs.some(d => selectedIds.has(d.id)) && !allSelected;
 
   /* shared props for DocTableRow */
-  const rowProps = { selectedId, selectedIds, visibleColumns, multiSelectMode, expandedRows, toggleExpand, hoveredRow, setHoveredRow, setFilePreview, onToggleSelect, onSelectDoc, colStyle, onUpdateDoc };
+  const rowProps = { selectedId, selectedIds, visibleColumns, multiSelectMode, expandedRows, toggleExpand, hoveredRow, setHoveredRow, setFilePreview, onToggleSelect, onSelectDoc, colStyle, onUpdateDoc, newRowId, clearNewRowId: () => setNewRowId(null) };
 
   return (
     <div style={{ flex: 1, ...S.col, overflow: "hidden" }}>
@@ -1374,7 +1375,6 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
           </div>}
         </div>
         <div style={{ flex: 1 }} />
-        <span style={{ ...typo.labelSmall, color: DS.textDisabled }}>{docs.length} dok.</span>
       </div>
 
       {/* Table header + body with horizontal scroll */}
@@ -1385,26 +1385,27 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
         borderBottom: `1px solid ${DS.borderMedium}`, background: DS.tableHeaderBg,
         minHeight: 36, position: "sticky", top: 0, zIndex: 2,
       }}>
-        <div style={{ width: 28, minWidth: 28, flex: "0 0 auto" }} />
+        <div onClick={e => { e.stopPropagation(); const id = onInlineAdd(); if (id) setNewRowId(id); }} style={{
+          width: 28, minWidth: 28, flex: "0 0 auto", ...S.row, justifyContent: "center",
+          cursor: "pointer", borderRadius: 4, transition: "background 0.1s",
+        }}
+          onMouseEnter={e => e.currentTarget.style.background = DS.primaryLighter}
+          onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+          title="Dodaj wiersz"
+        >
+          <Icon name="plus" size={16} color={DS.primaryLight} />
+        </div>
         {multiSelectMode && <div style={{ width: 36, padding: "6px 6px" }}>
           <Checkbox checked={allSelected} indeterminate={someSelected}
             onChange={() => onSelectAll(!allSelected)} />
         </div>}
         {filteredCols.map((col, ci) => (
           <div key={col.key} style={{
-            ...colStyle(col), padding: col.key === "grossValue" ? "4px 8px" : "6px 8px", position: "relative",
-            ...(col.key === "grossValue" ? { ...S.col, alignItems: "flex-end", justifyContent: "center", cursor: "pointer", userSelect: "none" } : { ...S.row, gap: 4, cursor: "pointer", userSelect: "none" }),
+            ...colStyle(col), padding: "6px 8px", position: "relative",
+            ...S.row, gap: 4, cursor: "pointer", userSelect: "none",
           }} onClick={() => onSort(col.key)}>
-            {col.key === "grossValue" ? <>
-              <div style={{ ...S.row, gap: 4 }}>
-                <span style={{ ...typo.labelSmall, color: DS.neutralDark, textTransform: "uppercase", letterSpacing: 0.5, fontSize: 10, fontWeight: 600 }}>{col.label}</span>
-                <SortIcon colKey={col.key} />
-              </div>
-              <span style={{ ...typo.labelSmall, color: DS.primaryMain, fontWeight: 600, fontSize: 11, fontVariantNumeric: "tabular-nums" }}>{formatCurrency(totalGrossValue)}</span>
-            </> : <>
-              <span style={{ ...typo.labelSmall, color: DS.neutralDark, textTransform: "uppercase", letterSpacing: 0.5, fontSize: 10, fontWeight: 600 }}>{col.label}</span>
-              <SortIcon colKey={col.key} />
-            </>}
+            <span style={{ ...typo.labelSmall, color: DS.neutralDark, textTransform: "uppercase", letterSpacing: 0.5, fontSize: 10, fontWeight: 600 }}>{col.label}</span>
+            <SortIcon colKey={col.key} />
             {col.key === "title" && <div ref={titleDragRef} onMouseDown={handleTitleResize} onClick={e => e.stopPropagation()}
               style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 5, cursor: "col-resize", background: "transparent", zIndex: 3 }}
               onMouseEnter={e => e.currentTarget.style.background = DS.primaryLight + "40"}
@@ -1443,22 +1444,33 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
         })()}
       </div>
 
-      {/* Inline add row */}
-      <div onClick={onInlineAdd} style={{
+      {/* ── Summary row — under last table row ── */}
+      <div style={{
         ...S.row, padding: "0 20px",
-        minHeight: 40, cursor: "pointer", transition: "background 0.08s",
-        background: DS.neutralWhite, borderTop: `1px dashed ${DS.borderMedium}`,
-        flexShrink: 0,
-      }}
-        onMouseEnter={e => e.currentTarget.style.background = "#F5F7FC"}
-        onMouseLeave={e => e.currentTarget.style.background = DS.neutralWhite}
-      >
-        {multiSelectMode && <div style={{ width: 36 }} />}
-        <div style={{ ...S.row, gap: 8, padding: "8px 8px" }}>
-          <Icon name="plus" size={15} color={DS.primaryLight} />
-          <span style={{ ...typo.bodySmall, color: DS.primaryLight, fontWeight: 500 }}>Dodaj dokument</span>
-        </div>
+        minHeight: 36, borderTop: `1px solid ${DS.borderMedium}`,
+        background: DS.neutralWhite,
+      }}>
+        <div style={{ width: 28, minWidth: 28, flex: "0 0 auto" }} />
+        {filteredCols.map((col, ci) => {
+          if (col.key === "type") return (
+            <div key={col.key} style={{ ...colStyle(col), padding: "6px 8px", ...S.row }}>
+              <span style={{ ...typo.labelSmall, color: DS.neutralDark, fontWeight: 600 }}>
+                {docs.length} {docs.length === 1 ? "dokument" : docs.length < 5 ? "dokumenty" : "dokumentów"}
+              </span>
+            </div>
+          );
+          if (col.key === "grossValue") return (
+            <div key={col.key} style={{ ...colStyle(col), padding: "6px 8px", textAlign: "right" }}>
+              <span style={{ ...typo.bodySmall, color: DS.primaryMain, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
+                {formatCurrency(totalGrossValue)}
+              </span>
+            </div>
+          );
+          return <div key={col.key} style={{ ...colStyle(col), padding: "6px 8px" }} />;
+        })}
+        <div style={{ width: 60, minWidth: 60, flex: "0 0 auto" }} />
       </div>
+
       </div>{/* close minWidth wrapper */}
       </div>{/* close scroll container */}
 
@@ -1530,7 +1542,7 @@ const DocTable = ({ docs, onSelectDoc, onInlineAdd, selectedId, sortConfig, onSo
    ═══════════════════════════════════════════════════════════════ */
 const EDITABLE_COLS = ["type", "number", "nrEwidencyjny", "title", "contractor", "dept", "dateEnd", "grossValue", "status"];
 
-const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiSelectMode, expandedRows, toggleExpand, hoveredRow, setHoveredRow, setFilePreview, onToggleSelect, onSelectDoc, colStyle, onUpdateDoc }) => {
+const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiSelectMode, expandedRows, toggleExpand, hoveredRow, setHoveredRow, setFilePreview, onToggleSelect, onSelectDoc, colStyle, onUpdateDoc, newRowId, clearNewRowId }) => {
   const typeInfo = DOC_TYPES[doc.type] || DOC_TYPES.inne;
   const statusInfo = DOC_STATUSES[doc.status] || null;
   const isSelected = selectedId === doc.id;
@@ -1553,6 +1565,16 @@ const DocTableRow = ({ doc, idx, selectedId, selectedIds, visibleColumns, multiS
   const tabMovingRef = useRef(false);
 
   const visibleEditableCols = EDITABLE_COLS.filter(k => showCol(k));
+
+  // Auto-enter edit mode for new inline rows
+  useEffect(() => {
+    if (newRowId && doc.id === newRowId && visibleEditableCols.length > 0) {
+      const firstKey = visibleEditableCols[0];
+      setEditingCell(firstKey);
+      setEditValue(firstKey === "grossValue" ? (doc[firstKey] || 0) : (doc[firstKey] || ""));
+      if (clearNewRowId) clearNewRowId();
+    }
+  }, [newRowId, doc.id]);
 
   const commitEdit = useCallback((key, value) => {
     if (onUpdateDoc && value !== doc[key]) {
@@ -5270,7 +5292,18 @@ const App = () => {
             <DocTable
               docs={filteredDocs}
               onSelectDoc={doc => { setSelectedDoc(doc); setShowForm(false); }}
-              onInlineAdd={() => setShowForm(true)}
+              onInlineAdd={() => {
+                const newId = Math.max(...docs.map(d => d.id), 0) + 1;
+                const newDoc = {
+                  id: newId, type: "umowa", status: "w_przygotowaniu", title: "", number: "", nrEwidencyjny: "",
+                  rodzajUmowy: "wydatkowa", contractor: "", dept: DEPARTMENTS[0], assignee: 1,
+                  netValue: 0, grossValue: 0, classification: "",
+                  dateCreated: new Date().toISOString().split("T")[0],
+                  dateStart: "", dateEnd: "", tags: [], alerts: [], notes: "",
+                };
+                setDocs(prev => [newDoc, ...prev]);
+                return newId;
+              }}
               selectedId={selectedDoc?.id}
               sortConfig={sortConfig}
               onSort={handleSort}
